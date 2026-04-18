@@ -1628,10 +1628,11 @@ function iniciarOnboarding() {
 
 function renderOnbAvatares() {
   const grid = document.getElementById('onb-av-grid');
+  const nombre = document.getElementById('onb-nombre')?.value?.trim() || avatarNombre || '';
   grid.innerHTML = AVATARES.map(av => `
     <div class="onb-av-card ${av.id === onbAvatarSel ? 'sel' : ''}" id="onbav-${av.id}" onclick="selOnbAvatar('${av.id}')">
       <div class="onb-av-burbuja" style="background:${av.bg}">${av.emoji}</div>
-      <div class="onb-av-nombre">${av.nombre}</div>
+      <div class="onb-av-nombre">${nombre || '&nbsp;'}</div>
     </div>`).join('');
 }
 
@@ -1655,6 +1656,7 @@ function onbPaso2() {
     guardarDatos();
   }
   onbSiguiente();
+  renderOnbAvatares();
 }
 
 function moverOnbSlide() {
