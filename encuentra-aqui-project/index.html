@@ -1621,7 +1621,10 @@ let onbPasoActual = 0;
 let onbAvatarSel = 'av1';
 
 function iniciarOnboarding() {
-  if (localStorage.getItem('onbCompletado')) return;
+  if (localStorage.getItem('onbCompletado')) {
+    pedirUbicacion();
+    return;
+  }
   document.getElementById('onboarding').classList.remove('oculto');
   renderOnbAvatares();
 }
@@ -1682,6 +1685,19 @@ function onbFinalizar() {
   renderAvatar();
   actualizarPerfil();
   mostrarToast('🎉 ¡Bienvenido a Encuentra Aquí!');
+  pedirUbicacion();
+}
+
+function pedirUbicacion() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      localStorage.setItem('userLat', pos.coords.latitude);
+      localStorage.setItem('userLng', pos.coords.longitude);
+      mostrarToast('📍 Ubicación activada — te mostramos lo más cercano');
+    },
+    () => mostrarToast('📍 Sin ubicación — mostrando ' + CIUDAD_ACTIVA.nombre)
+  );
 }
 // ── FIN ONBOARDING ─────────────────────────────────────────
 
