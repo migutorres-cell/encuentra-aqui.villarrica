@@ -1104,7 +1104,7 @@
     <div style="font-size:15px;font-weight:600" id="detalle-header-nombre">Detalle</div>
     <div style="margin-left:auto;display:flex;gap:8px">
       <button class="btn-back" onclick="editarDesdeDetalle()">✏️</button>
-      <button class="btn-back" onclick="mostrarToast('🗑️ Reportar eliminación')">🗑️</button>
+      <button class="btn-back" onclick="eliminarDesdeDetalle()">🗑️</button>
     </div>
   </div>
   <div id="detalle-hero" class="detalle-hero">🚻</div>
@@ -1751,9 +1751,13 @@ function pedirUbicacion() {
     pos => {
       localStorage.setItem('userLat', pos.coords.latitude);
       localStorage.setItem('userLng', pos.coords.longitude);
-      mostrarToast('📍 Ubicación activada — te mostramos lo más cercano');
+      mostrarToast('📍 Ubicación activada — mostrando lo más cercano a ti');
+      if (mapaLeaflet) {
+        mapaLeaflet.setView([pos.coords.latitude, pos.coords.longitude], 15);
+      }
     },
-    () => mostrarToast('📍 Sin ubicación — mostrando ' + CIUDAD_ACTIVA.nombre)
+    () => mostrarToast('📍 Activa el GPS para ver servicios cerca tuyo'),
+    { enableHighAccuracy: true, timeout: 10000 }
   );
 }
 // ── FIN ONBOARDING ─────────────────────────────────────────
@@ -1976,7 +1980,12 @@ function iniciarFirebase() {
 function iniciarMapa() {
   if (mapaLeaflet) { setTimeout(() => mapaLeaflet.invalidateSize(), 100); return; }
 
-  mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView([-35.6751, -71.5430], 6);
+  const savedLat = parseFloat(localStorage.getItem('userLat'));
+  const savedLng = parseFloat(localStorage.getItem('userLng'));
+  const centroInicial = (savedLat && savedLng) ? [savedLat, savedLng] : [-35.6751, -71.5430];
+  const zoomInicial = (savedLat && savedLng) ? 15 : 6;
+
+  mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView(centroInicial, zoomInicial);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap © CARTO',
@@ -1990,6 +1999,8 @@ function iniciarMapa() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       const { latitude: lat, longitude: lng } = pos.coords;
+      localStorage.setItem('userLat', lat);
+      localStorage.setItem('userLng', lng);
       mapaLeaflet.setView([lat, lng], 15);
       L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
         .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí').openPopup();
@@ -2204,6 +2215,19 @@ function eliminarPinAdmin() {
   dbRef.child(pinEditando.s.id).remove();
   cerrarEditarPin();
   mostrarToast('🗑️ Servicio eliminado');
+}
+
+function eliminarDesdeDetalle() {
+  if (!adminActivo) {
+    mostrarToast('🔒 Solo el admin puede eliminar puntos');
+    return;
+  }
+  const pin = serviciosPins.find(s => s.id === currentDetalleId);
+  if (!pin) return;
+  if (!confirm('¿Eliminar "' + pin.nombre + '"?')) return;
+  dbRef.child(pin.id).remove();
+  mostrarToast('🗑️ Punto eliminado');
+  irAtras();
 }
 
 function editarDesdeDetalle() {
