@@ -1076,7 +1076,7 @@
     </div>
     <div style="height:16px"></div>
     <button class="btn-primario" onclick="abrirQR()">📲 Reservar con QR</button>
-    <button class="btn-secundario" onclick="mostrarToast('📍 Abriendo en Google Maps...')">🗺️ Cómo llegar</button>
+    <button class="btn-secundario" onclick="abrirComoLlegar()">🗺️ Cómo llegar</button>
   </div>
 </div>
 
@@ -1364,6 +1364,9 @@ const datos = {
 
 let pantallaAnterior = 'inicio';
 let currentDetalleId = null;
+let currentDetalleLat = null;
+let currentDetalleLng = null;
+let currentDetalleDir = '';
 let pendienteEditarDesdeDetalle = false;
 let qrInterval;
 
@@ -1399,6 +1402,9 @@ function verDetalle(id) {
     };
   }
   const d = datos[id] || datos['baño-plaza'];
+  currentDetalleLat = pinData?.lat || null;
+  currentDetalleLng = pinData?.lng || null;
+  currentDetalleDir = d.dir || d.nombre || '';
   document.getElementById('detalle-header-nombre').textContent = d.nombre;
   document.getElementById('detalle-titulo').textContent = d.nombre;
   document.getElementById('detalle-dir').innerHTML = '<i class="pin"></i> ' + d.dir;
@@ -1412,6 +1418,20 @@ function verDetalle(id) {
 }
 
 function volverAtras() { irPantalla(pantallaAnterior || 'inicio'); }
+
+function abrirComoLlegar() {
+  let url;
+  if (currentDetalleLat && currentDetalleLng) {
+    url = `https://www.google.com/maps/dir/?api=1&destination=${currentDetalleLat},${currentDetalleLng}&travelmode=walking`;
+  } else if (currentDetalleDir) {
+    url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(currentDetalleDir + ', Villarrica, Chile')}&travelmode=walking`;
+  } else {
+    mostrarToast('No hay dirección disponible');
+    return;
+  }
+  mostrarToast('📍 Abriendo Google Maps...');
+  setTimeout(() => window.open(url, '_blank'), 400);
+}
 
 function mostrarToast(msg) {
   const t = document.getElementById('toast');
