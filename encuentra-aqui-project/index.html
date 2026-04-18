@@ -6,6 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="Encuentra Aquí" />
 <title>Encuentra Aquí — Villarrica</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
@@ -501,7 +502,28 @@
 </style>
 
 <div id="splash">
-  <div class="splash-logo"><i class="pin xl"></i></div>
+  <div class="splash-logo">
+    <svg width="90" height="90" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 6px 18px rgba(0,0,0,0.35))">
+      <defs>
+        <linearGradient id="icoBg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#2BB885"/><stop offset="100%" stop-color="#0F6E56"/>
+        </linearGradient>
+        <clipPath id="icoClip">
+          <path d="M256 445C172 382,108 314,108 198A148 148 0 0 1 404 198C404 314,340 382,256 445Z"/>
+        </clipPath>
+      </defs>
+      <rect width="512" height="512" rx="100" fill="url(#icoBg)"/>
+      <path d="M261 458C177 395,113 327,113 198A143 143 0 0 1 399 198C399 327,335 395,261 458Z" fill="rgba(0,0,0,0.2)"/>
+      <path d="M256 450C172 387,108 319,108 198A148 148 0 0 1 404 198C404 319,340 387,256 450Z" fill="#E53E3E"/>
+      <g clip-path="url(#icoClip)">
+        <path d="M75 355 L196 148 L256 95 L316 148 L437 355Z" fill="white"/>
+        <path d="M228 162 L256 95 L284 162Z" fill="rgba(255,255,255,0.35)"/>
+      </g>
+      <path d="M256 78C246 56,234 40,250 27C253 24,259 24,262 27C278 40,266 56,256 78Z" fill="#FF8C42"/>
+      <path d="M256 72C250 56,248 44,254 38C255 36,257 36,258 38C264 44,262 56,256 72Z" fill="#FFD166"/>
+      <ellipse cx="185" cy="155" rx="27" ry="16" fill="rgba(255,255,255,0.2)" transform="rotate(-35 185 155)"/>
+    </svg>
+  </div>
   <div class="splash-titulo">Encuentra Aquí</div>
   <div class="splash-sub">Servicios ocultos de tu ciudad</div>
   <div class="splash-loader"></div>
@@ -2227,8 +2249,20 @@ function aplicarIdioma() {
 }
 // ── FIN IDIOMAS ────────────────────────────────────────────
 
+const APP_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="icoBg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2BB885"/><stop offset="100%" stop-color="#0F6E56"/></linearGradient><clipPath id="icoClip"><path d="M256 445C172 382,108 314,108 198A148 148 0 0 1 404 198C404 314,340 382,256 445Z"/></clipPath></defs><rect width="512" height="512" rx="100" fill="url(%23icoBg)"/><path d="M261 458C177 395,113 327,113 198A143 143 0 0 1 399 198C399 327,335 395,261 458Z" fill="rgba(0,0,0,0.2)"/><path d="M256 450C172 387,108 319,108 198A148 148 0 0 1 404 198C404 319,340 387,256 450Z" fill="%23E53E3E"/><g clip-path="url(%23icoClip)"><path d="M75 355 L196 148 L256 95 L316 148 L437 355Z" fill="white"/><path d="M228 162 L256 95 L284 162Z" fill="rgba(255,255,255,0.35)"/></g><path d="M256 78C246 56,234 40,250 27C253 24,259 24,262 27C278 40,266 56,256 78Z" fill="%23FF8C42"/><path d="M256 72C250 56,248 44,254 38C255 36,257 36,258 38C264 44,262 56,256 72Z" fill="%23FFD166"/><ellipse cx="185" cy="155" rx="27" ry="16" fill="rgba(255,255,255,0.2)" transform="rotate(-35 185 155)"/></svg>`;
+
 function aplicarCiudad() {
   const c = CIUDAD_ACTIVA;
+  // Favicon dinámico
+  const favicon = document.querySelector("link[rel='icon']") || document.createElement('link');
+  favicon.rel = 'icon'; favicon.type = 'image/svg+xml';
+  favicon.href = 'data:image/svg+xml,' + APP_ICON_SVG;
+  document.head.appendChild(favicon);
+  // Apple touch icon
+  const apple = document.querySelector("link[rel='apple-touch-icon']") || document.createElement('link');
+  apple.rel = 'apple-touch-icon';
+  apple.href = 'data:image/svg+xml,' + APP_ICON_SVG;
+  document.head.appendChild(apple);
 
   // Colores del tema
   document.documentElement.style.setProperty('--verde', c.colorVerde);
