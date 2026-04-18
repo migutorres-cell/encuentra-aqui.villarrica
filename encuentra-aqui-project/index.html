@@ -100,6 +100,20 @@
   .onb-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.35); transition:all 0.3s; }
   .onb-dot.activo { background:white; width:24px; border-radius:4px; }
 
+  /* ATM ANIMADO */
+  .ico-atm { display:inline-flex; flex-direction:column; align-items:center; justify-content:flex-start; width:34px; height:36px; background:linear-gradient(180deg,#2563EB,#1D4ED8); border-radius:5px 5px 3px 3px; padding:4px 3px 3px; gap:2px; box-shadow:0 2px 6px rgba(37,99,235,0.35); }
+  .ico-atm-screen { width:22px; height:11px; background:#22C55E; border-radius:2px; animation:atmScreen 2s ease-in-out infinite; }
+  .ico-atm-keys { display:grid; grid-template-columns:repeat(3,5px); gap:1.5px; }
+  .ico-atm-key { width:5px; height:3px; background:rgba(255,255,255,0.55); border-radius:1px; }
+  .ico-atm-slot { width:18px; height:2.5px; background:rgba(255,255,255,0.35); border-radius:1px; margin-top:1px; }
+  @keyframes atmScreen { 0%,100%{background:#22C55E;box-shadow:0 0 4px #22C55E} 50%{background:#4ADE80;box-shadow:0 0 9px #4ADE80} }
+
+  /* SELECTOR DE IDIOMA */
+  .lang-selector { display:flex; gap:8px; margin:0 16px 4px; }
+  .lang-btn { flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px; background:var(--gris-card); border:1.5px solid var(--gris-borde); border-radius:var(--radio-sm); cursor:pointer; font-size:13px; font-weight:600; transition:all 0.15s; color:var(--texto); }
+  .lang-btn.activo { border-color:var(--verde); color:var(--verde); background:var(--verde-claro); }
+  .lang-lbl { font-size:13px; font-weight:700; color:var(--gris-texto); text-transform:uppercase; letter-spacing:0.6px; margin:16px 16px 8px; }
+
   /* TOGGLE MODO OSCURO */
   .dark-toggle { display:flex; align-items:center; justify-content:space-between; }
   .toggle-switch { position:relative; width:46px; height:26px; }
@@ -635,7 +649,7 @@
     <div class="filtro-chip" onclick="toggleFiltro(this,'cajeros')">🏧 Cajeros</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'miradores')">🏞️ Miradores</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'baños')">🚻 Baños</div>
-    <div class="filtro-chip" onclick="toggleFiltro(this,'parking')">🅿️ Parking</div>
+    <div class="filtro-chip" onclick="toggleFiltro(this,'parking')">🅿️ <span data-i18n="estacionamiento">Estacionamiento</span></div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'agua')">💧 Agua</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'barberia')">💈 Barbería</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'veterinario')">🐾 Veterinario</div>
@@ -652,15 +666,15 @@
   <div class="seccion-titulo">¿Qué buscas?</div>
 
   <div class="cats-grid">
-    <div class="cat-card" onclick="irCategoria('cajeros')"><span class="cat-emoji">🏧</span><span class="cat-nombre">Cajeros</span><span class="cat-count">7 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('veterinario')"><span class="cat-emoji">🐾</span><span class="cat-nombre">Veterinarios</span><span class="cat-count">3 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('miradores')"><span class="cat-emoji">🏞️</span><span class="cat-nombre">Miradores</span><span class="cat-count">10 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('barberia')"><span class="cat-emoji">💈</span><span class="cat-nombre">Barbería</span><span class="cat-count">5 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('baños')"><span class="cat-emoji">🚻</span><span class="cat-nombre">Baños</span><span class="cat-count">6 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('estacionamiento')"><span class="cat-emoji">🅿️</span><span class="cat-nombre">Parking</span><span class="cat-count">5 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('fotografia')"><span class="cat-emoji">📷</span><span class="cat-nombre">Fotografía</span><span class="cat-count">3 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('agua')"><span class="cat-emoji">💧</span><span class="cat-nombre">Agua gratis</span><span class="cat-count">4 puntos</span></div>
-    <div class="cat-card" onclick="irCategoria('reciclaje')"><span class="cat-emoji">♻️</span><span class="cat-nombre">Reciclaje</span><span class="cat-count">4 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('cajeros')"><span class="cat-emoji"><span class="ico-atm"><span class="ico-atm-screen"></span><span class="ico-atm-keys"><span class="ico-atm-key"></span><span class="ico-atm-key"></span><span class="ico-atm-key"></span><span class="ico-atm-key"></span><span class="ico-atm-key"></span><span class="ico-atm-key"></span></span><span class="ico-atm-slot"></span></span></span><span class="cat-nombre" data-i18n="cajeros">Cajeros</span><span class="cat-count">7 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('veterinario')"><span class="cat-emoji">🐾</span><span class="cat-nombre" data-i18n="veterinario">Veterinarios</span><span class="cat-count">3 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('miradores')"><span class="cat-emoji">🏞️</span><span class="cat-nombre" data-i18n="miradores">Miradores</span><span class="cat-count">10 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('barberia')"><span class="cat-emoji">💈</span><span class="cat-nombre" data-i18n="barberia">Barbería</span><span class="cat-count">5 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('baños')"><span class="cat-emoji">🚻</span><span class="cat-nombre" data-i18n="baños">Baños</span><span class="cat-count">6 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('estacionamiento')"><span class="cat-emoji">🅿️</span><span class="cat-nombre" data-i18n="estacionamiento">Estacionamiento</span><span class="cat-count">5 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('fotografia')"><span class="cat-emoji">📷</span><span class="cat-nombre" data-i18n="fotografia">Fotografía</span><span class="cat-count">3 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('agua')"><span class="cat-emoji">💧</span><span class="cat-nombre" data-i18n="agua">Agua gratis</span><span class="cat-count">4 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('reciclaje')"><span class="cat-emoji">♻️</span><span class="cat-nombre" data-i18n="reciclaje">Reciclaje</span><span class="cat-count">4 puntos</span></div>
     <div class="cat-ver-todo" onclick="irCategoria('todo')">🗺️ Ver todos los 47 puntos</div>
   </div>
 
@@ -713,7 +727,7 @@
     <div class="filtro-chip" onclick="toggleFiltro(this,'cajeros')">🏧 Cajeros</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'miradores')">🏞️ Miradores</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'baños')">🚻 Baños</div>
-    <div class="filtro-chip" onclick="toggleFiltro(this,'parking')">🅿️ Parking</div>
+    <div class="filtro-chip" onclick="toggleFiltro(this,'parking')">🅿️ <span data-i18n="estacionamiento">Estacionamiento</span></div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'agua')">💧 Agua</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'barberia')">💈 Barbería</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'veterinario')">🐾 Veterinario</div>
@@ -735,7 +749,7 @@
     <div class="tipos-mini" id="tipos-mini-sel">
       <div class="tipo-mini sel" onclick="selTipoPin(this,'baños','🚻','#1D9E75')">🚻 Baños</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'cajeros','🏧','#D85A30')">🏧 Cajeros</div>
-      <div class="tipo-mini" onclick="selTipoPin(this,'parking','🅿️','#185FA5')">🅿️ Parking</div>
+      <div class="tipo-mini" onclick="selTipoPin(this,'parking','🅿️','#185FA5')">🅿️ Estac.</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'agua','💧','#2DB560')">💧 Agua</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'miradores','🏞️','#BA7517')">🏞️ Mirador</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'barberia','💈','#9333ea')">💈 Barbería</div>
@@ -799,7 +813,7 @@
     <div class="tipos-mini" id="edit-tipos-mini" style="margin-bottom:14px">
       <div class="tipo-mini" onclick="selTipoEdit(this,'baños','🚻','#1D9E75')">🚻 Baños</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'cajeros','🏧','#D85A30')">🏧 Cajeros</div>
-      <div class="tipo-mini" onclick="selTipoEdit(this,'parking','🅿️','#185FA5')">🅿️ Parking</div>
+      <div class="tipo-mini" onclick="selTipoEdit(this,'parking','🅿️','#185FA5')">🅿️ Estac.</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'agua','💧','#2DB560')">💧 Agua</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'miradores','🏞️','#BA7517')">🏞️ Mirador</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'barberia','💈','#9333ea')">💈 Barbería</div>
@@ -928,7 +942,7 @@
       <div class="perfil-ticker">
         <div class="ticker-card"><div class="ticker-emoji">🏧</div><div class="ticker-name">Cajeros</div></div>
         <div class="ticker-card"><div class="ticker-emoji">🚻</div><div class="ticker-name">Baños</div></div>
-        <div class="ticker-card"><div class="ticker-emoji">🅿️</div><div class="ticker-name">Parking</div></div>
+        <div class="ticker-card"><div class="ticker-emoji">🅿️</div><div class="ticker-name" data-i18n="estacionamiento">Estacionamiento</div></div>
         <div class="ticker-card"><div class="ticker-emoji">💧</div><div class="ticker-name">Agua gratis</div></div>
         <div class="ticker-card"><div class="ticker-emoji">🏞️</div><div class="ticker-name">Miradores</div></div>
         <div class="ticker-card"><div class="ticker-emoji">💈</div><div class="ticker-name">Barbería</div></div>
@@ -938,7 +952,7 @@
         <!-- duplicado para loop infinito -->
         <div class="ticker-card"><div class="ticker-emoji">🏧</div><div class="ticker-name">Cajeros</div></div>
         <div class="ticker-card"><div class="ticker-emoji">🚻</div><div class="ticker-name">Baños</div></div>
-        <div class="ticker-card"><div class="ticker-emoji">🅿️</div><div class="ticker-name">Parking</div></div>
+        <div class="ticker-card"><div class="ticker-emoji">🅿️</div><div class="ticker-name" data-i18n="estacionamiento">Estacionamiento</div></div>
         <div class="ticker-card"><div class="ticker-emoji">💧</div><div class="ticker-name">Agua gratis</div></div>
         <div class="ticker-card"><div class="ticker-emoji">🏞️</div><div class="ticker-name">Miradores</div></div>
         <div class="ticker-card"><div class="ticker-emoji">💈</div><div class="ticker-name">Barbería</div></div>
@@ -997,6 +1011,12 @@
       </div>
     </div>
   </div>
+  <div class="lang-lbl">🌐 Idioma / Language</div>
+  <div class="lang-selector">
+    <button class="lang-btn activo" id="lang-es" onclick="cambiarIdioma('es')">🇨🇱 Español</button>
+    <button class="lang-btn" id="lang-en" onclick="cambiarIdioma('en')">🇺🇸 English</button>
+  </div>
+
   <div class="insignias-seccion">
     <div class="insignias-titulo">🏅 Mis insignias</div>
     <div class="insignias-grid" id="insignias-grid"></div>
@@ -1126,23 +1146,23 @@
 <nav class="bottom-nav">
   <button class="nav-btn activo" id="nav-inicio" onclick="irPantalla('inicio')">
     <span class="nav-icon">🏠</span>
-    <span class="nav-label">Inicio</span>
+    <span class="nav-label" data-i18n="nav_inicio">Inicio</span>
   </button>
   <button class="nav-btn" id="nav-mapa" onclick="irPantalla('mapa')">
     <span class="nav-icon">🗺️</span>
-    <span class="nav-label">Mapa</span>
+    <span class="nav-label" data-i18n="nav_mapa">Mapa</span>
   </button>
   <button class="nav-btn" id="nav-agregar" onclick="irPantalla('agregar')">
     <span class="nav-icon">➕</span>
-    <span class="nav-label">Agregar</span>
+    <span class="nav-label" data-i18n="nav_agregar">Agregar</span>
   </button>
   <button class="nav-btn" id="nav-ranking" onclick="irPantalla('ranking')">
     <span class="nav-icon">🏆</span>
-    <span class="nav-label">Ranking</span>
+    <span class="nav-label" data-i18n="nav_ranking">Ranking</span>
   </button>
   <button class="nav-btn" id="nav-perfil" onclick="irPantalla('perfil')">
     <span class="nav-icon">👤</span>
-    <span class="nav-label">Perfil</span>
+    <span class="nav-label" data-i18n="nav_perfil">Perfil</span>
   </button>
 </nav>
 
@@ -2135,6 +2155,57 @@ function cerrarEditarPin() {
 }
 // ── FIN MAPA LEAFLET ───────────────────────────────────────
 
+// ── SISTEMA DE IDIOMAS ─────────────────────────────────────
+const TRADUCCIONES = {
+  es: {
+    nav_inicio:'Inicio', nav_mapa:'Mapa', nav_agregar:'Agregar', nav_ranking:'Ranking', nav_perfil:'Perfil',
+    cajeros:'Cajeros', estacionamiento:'Estacionamiento', baños:'Baños', miradores:'Miradores',
+    barberia:'Barbería', agua:'Agua gratis', veterinario:'Veterinarios', fotografia:'Fotografía', reciclaje:'Reciclaje',
+    como_llegar:'🗺️ Cómo llegar', ver_mapa:'Ver mapa →', buscar_ph:'Buscar baños, parking, cajero...',
+    agregados_lbl:'Agregados', resenas_lbl:'Reseñas', puntos_lbl:'Puntos',
+    stat_puntos:'Puntos', stat_cats:'Categorías', stat_nuevos:'Nuevos',
+  },
+  en: {
+    nav_inicio:'Home', nav_mapa:'Map', nav_agregar:'Add', nav_ranking:'Ranking', nav_perfil:'Profile',
+    cajeros:'ATMs', estacionamiento:'Parking', baños:'Restrooms', miradores:'Viewpoints',
+    barberia:'Barbershop', agua:'Free water', veterinario:'Veterinary', fotografia:'Photography', reciclaje:'Recycling',
+    como_llegar:'🗺️ Get directions', ver_mapa:'See map →', buscar_ph:'Search restrooms, parking, ATM...',
+    agregados_lbl:'Added', resenas_lbl:'Reviews', puntos_lbl:'Points',
+    stat_puntos:'Points', stat_cats:'Categories', stat_nuevos:'New today',
+  }
+};
+
+let idiomaActivo = localStorage.getItem('idioma') || 'es';
+
+function cambiarIdioma(lang) {
+  idiomaActivo = lang;
+  localStorage.setItem('idioma', lang);
+  aplicarIdioma();
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('activo'));
+  const btn = document.getElementById('lang-' + lang);
+  if (btn) btn.classList.add('activo');
+}
+
+function aplicarIdioma() {
+  const t = TRADUCCIONES[idiomaActivo] || TRADUCCIONES.es;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+  const ph = document.getElementById('busq-input-real');
+  if (ph) ph.placeholder = t.buscar_ph;
+  const btnLlegar = document.querySelector('#screen-detalle .btn-secundario');
+  if (btnLlegar) btnLlegar.textContent = t.como_llegar;
+  const cercaMapa = document.querySelector('.cerca-mapa');
+  if (cercaMapa) cercaMapa.textContent = t.ver_mapa;
+  const langBtnActivo = document.getElementById('lang-' + idiomaActivo);
+  if (langBtnActivo) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('activo'));
+    langBtnActivo.classList.add('activo');
+  }
+}
+// ── FIN IDIOMAS ────────────────────────────────────────────
+
 function aplicarCiudad() {
   const c = CIUDAD_ACTIVA;
 
@@ -2162,6 +2233,7 @@ function aplicarCiudad() {
 
 window.addEventListener('load', () => {
   aplicarCiudad();
+  aplicarIdioma();
   aplicarModoOscuro();
   actualizarPerfil();
   renderAvatar();
