@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
   :root {
     --verde: #1D9E75;
@@ -1920,6 +1922,19 @@ function cerrarGaleriaAv(e) {
 }
 // ── FIN AVATARES 3D ────────────────────────────────────────
 
+// ── FIREBASE ──────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyCTK1FYa7MSfUAISR_2_2Ie2-BYnwaXUbA",
+  authDomain: "encuentra-aqui.firebaseapp.com",
+  databaseURL: "https://encuentra-aqui-default-rtdb.firebaseio.com",
+  projectId: "encuentra-aqui",
+  storageBucket: "encuentra-aqui.firebasestorage.app",
+  messagingSenderId: "1096646472475",
+  appId: "1:1096646472475:web:663fae3f8ee74e5fb659be"
+};
+firebase.initializeApp(firebaseConfig);
+const dbRef = firebase.database().ref('servicios');
+
 // ── MAPA LEAFLET ──────────────────────────────────────────
 const ADMIN_PIN = '4321';
 let mapaLeaflet = null;
@@ -1930,21 +1945,38 @@ let pinEditando = null;
 
 const VILLARRICA = CIUDAD_ACTIVA.coords;
 
-let serviciosPins = JSON.parse(localStorage.getItem('serviciosPins') || 'null') || [
-  { id:'baño-plaza',        emoji:'🚻', nombre:'Baños Plaza de Armas',  lat:-39.2847, lng:-72.2268, tipo:'baños',      color:'#1D9E75' },
-  { id:'parking-costanera', emoji:'🅿️', nombre:'Parking Costanera',     lat:-39.2878, lng:-72.2254, tipo:'parking',    color:'#185FA5' },
-  { id:'mirador-volcan',    emoji:'🏞️', nombre:'Mirador Volcán',        lat:-39.2720, lng:-72.1980, tipo:'miradores',  color:'#BA7517' },
-  { id:'agua-municipalidad',emoji:'💧', nombre:'Fuente Municipalidad',   lat:-39.2843, lng:-72.2278, tipo:'agua',       color:'#2DB560' },
-  { id:'barberia-1',        emoji:'💈', nombre:'Barbería Don Carlos',    lat:-39.2852, lng:-72.2263, tipo:'barberia',   color:'#9333ea' },
-  { id:'cajero-1',          emoji:'🏧', nombre:'Cajero BancoEstado',     lat:-39.2844, lng:-72.2265, tipo:'cajeros',    color:'#D85A30' },
+let serviciosPins = [];
+const PINS_INICIALES = [
+  { id:'baño-plaza',        emoji:'🚻', nombre:'Baños Plaza de Armas',  lat:-39.2847, lng:-72.2268, tipo:'baños',      color:'#1D9E75', ciudad:'Villarrica' },
+  { id:'parking-costanera', emoji:'🅿️', nombre:'Parking Costanera',     lat:-39.2878, lng:-72.2254, tipo:'parking',    color:'#185FA5', ciudad:'Villarrica' },
+  { id:'mirador-volcan',    emoji:'🏞️', nombre:'Mirador Volcán',        lat:-39.2720, lng:-72.1980, tipo:'miradores',  color:'#BA7517', ciudad:'Villarrica' },
+  { id:'agua-municipalidad',emoji:'💧', nombre:'Fuente Municipalidad',   lat:-39.2843, lng:-72.2278, tipo:'agua',       color:'#2DB560', ciudad:'Villarrica' },
+  { id:'barberia-1',        emoji:'💈', nombre:'Barbería Don Carlos',    lat:-39.2852, lng:-72.2263, tipo:'barberia',   color:'#9333ea', ciudad:'Villarrica' },
+  { id:'cajero-1',          emoji:'🏧', nombre:'Cajero BancoEstado',     lat:-39.2844, lng:-72.2265, tipo:'cajeros',    color:'#D85A30', ciudad:'Villarrica' },
 ];
 
-function guardarPins() { localStorage.setItem('serviciosPins', JSON.stringify(serviciosPins)); }
+function guardarPins() { /* Firebase handles persistence */ }
+
+function iniciarFirebase() {
+  dbRef.once('value', snap => {
+    if (!snap.exists()) {
+      PINS_INICIALES.forEach(p => dbRef.child(p.id).set(p));
+    }
+  });
+  dbRef.on('value', snap => {
+    const data = snap.val() || {};
+    serviciosPins = Object.values(data);
+    if (mapaLeaflet) {
+      mapaLeaflet.eachLayer(l => { if (l instanceof L.Marker) mapaLeaflet.removeLayer(l); });
+      serviciosPins.forEach(s => agregarPinMapa(s));
+    }
+  });
+}
 
 function iniciarMapa() {
   if (mapaLeaflet) { setTimeout(() => mapaLeaflet.invalidateSize(), 100); return; }
 
-  mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView(VILLARRICA, 15);
+  mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView([-35.6751, -71.5430], 6);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap © CARTO',
@@ -1958,10 +1990,10 @@ function iniciarMapa() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(pos => {
       const { latitude: lat, longitude: lng } = pos.coords;
-      mapaLeaflet.setView([lat, lng], 16);
+      mapaLeaflet.setView([lat, lng], 15);
       L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
         .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí').openPopup();
-    }, () => mostrarToast('📡 Mostrando ' + CIUDAD_ACTIVA.nombre));
+    }, () => mostrarToast('📡 Activa el GPS para ver lo más cercano'));
   }
 
   mapaLeaflet.on('click', e => {
@@ -2012,11 +2044,10 @@ function confirmarNuevoPin() {
   if (!nombre) { mostrarToast('Escribe el nombre del lugar po'); return; }
   const nuevo = {
     id: 'pin-' + Date.now(), emoji: pinSelEmoji, nombre,
-    lat: pinTempLat, lng: pinTempLng, tipo: pinSelTipo, color: pinSelColor
+    lat: pinTempLat, lng: pinTempLng, tipo: pinSelTipo, color: pinSelColor,
+    ciudad: localStorage.getItem('ciudadUsuario') || 'Chile'
   };
-  serviciosPins.push(nuevo);
-  guardarPins();
-  agregarPinMapa(nuevo);
+  dbRef.child(nuevo.id).set(nuevo);
   cerrarModalPin();
   sumarPuntos('agregar');
   agregarNotif('nuevo_pin', pinSelEmoji, `Nuevo punto agregado: <b>${nombre}</b>`);
@@ -2164,16 +2195,13 @@ function guardarEditPin() {
     estado: pinEditando.s.estado, bgGrad: `linear-gradient(135deg,${pinSelColor}88,${pinSelColor})`
   };
 
-  guardarPins();
+  dbRef.child(pinEditando.s.id).set(pinEditando.s);
   cerrarEditarPin();
   mostrarToast('✅ Servicio actualizado');
 }
 
 function eliminarPinAdmin() {
-  const idx = serviciosPins.indexOf(pinEditando.s);
-  if (idx > -1) serviciosPins.splice(idx, 1);
-  mapaLeaflet.removeLayer(pinEditando.marker);
-  guardarPins();
+  dbRef.child(pinEditando.s.id).remove();
   cerrarEditarPin();
   mostrarToast('🗑️ Servicio eliminado');
 }
@@ -2306,6 +2334,7 @@ window.addEventListener('load', () => {
   actualizarPerfil();
   renderAvatar();
   actualizarBadge();
+  iniciarFirebase();
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
     setTimeout(iniciarOnboarding, 600);
