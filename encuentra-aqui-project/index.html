@@ -861,12 +861,12 @@
 <!-- PANTALLA AGREGAR -->
 <div id="screen-agregar" class="screen">
   <div class="header" style="padding-bottom:14px">
-    <div class="header-marca">➕ Agregar servicio</div>
-    <div style="font-size:13px;color:var(--gris-texto);margin-top:3px">Ayuda a tu comunidad mapeando un lugar</div>
+    <div class="header-marca" data-i18n="agregar_titulo">➕ Agregar servicio</div>
+    <div style="font-size:13px;color:var(--gris-texto);margin-top:3px" data-i18n="agregar_sub">Ayuda a tu comunidad mapeando un lugar</div>
   </div>
   <div class="form-scroll">
     <div class="form-group">
-      <label class="form-label">Tipo de servicio</label>
+      <label class="form-label" data-i18n="lbl_tipo">Tipo de servicio</label>
       <div class="tipos-grid">
         <div class="tipo-btn sel" onclick="selTipo(this)"><span>🚻</span>Baños</div>
         <div class="tipo-btn" onclick="selTipo(this)"><span>🅿️</span>Parking</div>
@@ -880,22 +880,22 @@
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Nombre del lugar</label>
+      <label class="form-label" data-i18n="lbl_nombre">Nombre del lugar</label>
       <input type="text" class="form-input" placeholder="Ej: Baños Municipales Playa" />
     </div>
     <div class="form-group">
-      <label class="form-label">Dirección o referencia</label>
+      <label class="form-label" data-i18n="lbl_dir">Dirección o referencia</label>
       <input type="text" class="form-input" placeholder="Ej: Frente al kiosco, Av. Pedro Montt" />
     </div>
     <div class="form-group">
-      <label class="form-label">¿Qué deben saber los usuarios?</label>
+      <label class="form-label" data-i18n="lbl_desc">¿Qué deben saber los usuarios?</label>
       <textarea class="form-input" rows="3" placeholder="Horario, condiciones de uso, acceso..." style="resize:none"></textarea>
     </div>
     <div class="form-group">
-      <label class="form-label">¿Tiene costo?</label>
+      <label class="form-label" data-i18n="lbl_costo">¿Tiene costo?</label>
       <div class="costo-row">
-        <div class="costo-btn sel" onclick="selCosto(this, 'gratis')">✅ Gratuito</div>
-        <div class="costo-btn" onclick="selCosto(this, 'pago')">💰 Con costo</div>
+        <div class="costo-btn sel" onclick="selCosto(this, 'gratis')"><span data-i18n="costo_gratis">✅ Gratuito</span></div>
+        <div class="costo-btn" onclick="selCosto(this, 'pago')"><span data-i18n="costo_pago">💰 Con costo</span></div>
       </div>
     </div>
     <div class="form-group" id="campo-monto" style="display:none">
@@ -963,9 +963,9 @@
     </div>
 
     <div class="perfil-stats">
-      <div class="ps-item" onclick="irPantalla('ranking')"><div class="ps-num" id="stat-agregados">0</div><div class="ps-lbl">Agregados</div></div>
-      <div class="ps-item" onclick="irPantalla('ranking')"><div class="ps-num" id="stat-resenas">0</div><div class="ps-lbl">Reseñas</div></div>
-      <div class="ps-item" onclick="irPantalla('ranking')"><div class="ps-num" id="stat-puntos">0</div><div class="ps-lbl">Puntos</div></div>
+      <div class="ps-item" onclick="irPantalla('ranking')"><div class="ps-num" id="stat-agregados">0</div><div class="ps-lbl" data-i18n="agregados_lbl">Agregados</div></div>
+      <div class="ps-item" onclick="irPantalla('ranking')"><div class="ps-num" id="stat-resenas">0</div><div class="ps-lbl" data-i18n="resenas_lbl">Reseñas</div></div>
+      <div class="ps-item" onclick="irPantalla('ranking')"><div class="ps-num" id="stat-puntos">0</div><div class="ps-lbl" data-i18n="puntos_lbl">Puntos</div></div>
     </div>
   </div>
   <div style="padding:16px;font-size:13px;font-weight:600;color:var(--gris-texto);text-transform:uppercase;letter-spacing:0.6px">Mi actividad</div>
@@ -1001,7 +1001,7 @@
     <div class="menu-item">
       <div class="menu-item-left">
         <div class="menu-ico" style="background:var(--gris-bg)">⚙️</div>
-        <div><div class="menu-nombre">Configuración</div><div class="menu-desc">Notificaciones y cuenta</div></div>
+        <div><div class="menu-nombre" data-i18n="modo_oscuro">Modo oscuro</div><div class="menu-desc">Notificaciones y cuenta</div></div>
       </div>
       <div class="dark-toggle">
         <label class="toggle-switch">
@@ -1018,7 +1018,7 @@
   </div>
 
   <div class="insignias-seccion">
-    <div class="insignias-titulo">🏅 Mis insignias</div>
+    <div class="insignias-titulo" data-i18n="insignias_titulo">🏅 Mis insignias</div>
     <div class="insignias-grid" id="insignias-grid"></div>
   </div>
   <div class="version-txt" onclick="resetOnboarding()">🇨🇱 Versión 1.0.0 · Hecho con ❤️ en Chile</div>
@@ -1030,7 +1030,7 @@
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
       <button class="btn-back" onclick="volverAtras()" style="background:rgba(255,255,255,0.15);color:white">←</button>
       <div>
-        <div class="ranking-titulo">🏆 Top Colaboradores</div>
+        <div class="ranking-titulo" data-i18n="ranking_titulo">🏆 Top Colaboradores</div>
         <div class="ranking-sub" id="ranking-sub-ciudad">Los más activos de Villarrica</div>
       </div>
     </div>
@@ -1038,8 +1038,8 @@
 
   <div class="ranking-yo-pos" id="ranking-yo-banner">
     <div>
-      <div class="ranking-yo-txt">Tu posición</div>
-      <div style="font-size:11px;opacity:0.8;margin-top:2px">Sigue agregando lugares para subir</div>
+      <div class="ranking-yo-txt" data-i18n="ranking_tupos">Tu posición</div>
+      <div style="font-size:11px;opacity:0.8;margin-top:2px" data-i18n="ranking_sigue">Sigue agregando lugares para subir</div>
     </div>
     <div>
       <div class="ranking-yo-pts" id="ranking-yo-pts">0 pts</div>
@@ -1048,7 +1048,7 @@
   </div>
 
   <div class="puntos-info">
-    <div class="puntos-titulo">¿Cómo ganar puntos?</div>
+    <div class="puntos-titulo" data-i18n="como_ganar">¿Cómo ganar puntos?</div>
     <div class="puntos-item"><span class="puntos-accion">➕ Agregar un servicio</span><span class="puntos-valor">+50 pts</span></div>
     <div class="puntos-item"><span class="puntos-accion">✅ Servicio verificado</span><span class="puntos-valor">+30 pts</span></div>
     <div class="puntos-item"><span class="puntos-accion">⭐ Dejar una reseña</span><span class="puntos-valor">+10 pts</span></div>
@@ -1940,13 +1940,22 @@ function iniciarMapa() {
   setTimeout(() => mapaLeaflet.invalidateSize(), 200);
 }
 
+function atmPinHtml(color) {
+  return `<div style="background:${color};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2.5px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.35);cursor:pointer;overflow:hidden">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:1.5px">
+      <div style="width:18px;height:9px;background:#22C55E;border-radius:1.5px;box-shadow:0 0 5px #22C55E"></div>
+      <div style="display:grid;grid-template-columns:repeat(3,4px);gap:1px">${Array(6).fill('<div style="width:4px;height:2.5px;background:rgba(255,255,255,0.65);border-radius:0.5px"></div>').join('')}</div>
+      <div style="width:14px;height:2px;background:rgba(255,255,255,0.4);border-radius:1px"></div>
+    </div>
+  </div>`;
+}
+
 function agregarPinMapa(s) {
   if (!mapaLeaflet) return;
-  const icon = L.divIcon({
-    className: '',
-    html: `<div style="background:${s.color};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2.5px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.35);cursor:pointer">${s.emoji}</div>`,
-    iconSize: [38, 38], iconAnchor: [19, 19]
-  });
+  const html = s.tipo === 'cajeros'
+    ? atmPinHtml(s.color)
+    : `<div style="background:${s.color};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2.5px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.35);cursor:pointer">${s.emoji}</div>`;
+  const icon = L.divIcon({ className:'', html, iconSize:[38,38], iconAnchor:[19,19] });
   const marker = L.marker([s.lat, s.lng], { icon }).addTo(mapaLeaflet);
   marker.on('click', () => {
     if (adminActivo) { abrirEditarPin(s, marker); }
@@ -2163,7 +2172,13 @@ const TRADUCCIONES = {
     barberia:'Barbería', agua:'Agua gratis', veterinario:'Veterinarios', fotografia:'Fotografía', reciclaje:'Reciclaje',
     como_llegar:'🗺️ Cómo llegar', ver_mapa:'Ver mapa →', buscar_ph:'Buscar baños, parking, cajero...',
     agregados_lbl:'Agregados', resenas_lbl:'Reseñas', puntos_lbl:'Puntos',
-    stat_puntos:'Puntos', stat_cats:'Categorías', stat_nuevos:'Nuevos',
+    agregar_titulo:'➕ Agregar servicio', agregar_sub:'Ayuda a tu comunidad mapeando un lugar',
+    lbl_tipo:'Tipo de servicio', lbl_nombre:'Nombre del lugar', lbl_dir:'Dirección o referencia',
+    lbl_desc:'¿Qué deben saber los usuarios?', lbl_costo:'¿Tiene costo?',
+    costo_gratis:'✅ Gratuito', costo_pago:'💰 Con costo',
+    ranking_titulo:'🏆 Top Colaboradores', ranking_tupos:'Tu posición',
+    ranking_sigue:'Sigue agregando lugares para subir', como_ganar:'¿Cómo ganar puntos?',
+    insignias_titulo:'🏅 Mis insignias', modo_oscuro:'Modo oscuro',
   },
   en: {
     nav_inicio:'Home', nav_mapa:'Map', nav_agregar:'Add', nav_ranking:'Ranking', nav_perfil:'Profile',
@@ -2171,7 +2186,13 @@ const TRADUCCIONES = {
     barberia:'Barbershop', agua:'Free water', veterinario:'Veterinary', fotografia:'Photography', reciclaje:'Recycling',
     como_llegar:'🗺️ Get directions', ver_mapa:'See map →', buscar_ph:'Search restrooms, parking, ATM...',
     agregados_lbl:'Added', resenas_lbl:'Reviews', puntos_lbl:'Points',
-    stat_puntos:'Points', stat_cats:'Categories', stat_nuevos:'New today',
+    agregar_titulo:'➕ Add service', agregar_sub:'Help your community by mapping a place',
+    lbl_tipo:'Service type', lbl_nombre:'Place name', lbl_dir:'Address or reference',
+    lbl_desc:'What should users know?', lbl_costo:'Is there a cost?',
+    costo_gratis:'✅ Free', costo_pago:'💰 Paid',
+    ranking_titulo:'🏆 Top Contributors', ranking_tupos:'Your position',
+    ranking_sigue:'Keep adding places to climb the ranking', como_ganar:'How to earn points?',
+    insignias_titulo:'🏅 My badges', modo_oscuro:'Dark mode',
   }
 };
 
