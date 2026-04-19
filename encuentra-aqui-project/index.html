@@ -796,7 +796,13 @@
       <div class="tipo-mini" onclick="selTipoPin(this,'fotografia','📷','#6b5b95')">📷 Fotografía</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'reciclaje','♻️','#2e7d32')">♻️ Reciclaje</div>
     </div>
-    <input type="text" class="form-input" id="pin-nombre-input" placeholder="Nombre del lugar (ej: Baños Playa)" style="margin-bottom:12px" />
+    <input type="text" class="form-input" id="pin-nombre-input" placeholder="Nombre del lugar (ej: Punto Reciclaje)" style="margin-bottom:12px" />
+    <div id="pin-foto-preview" onclick="document.getElementById('pin-foto-file').click()" style="width:100%;height:90px;border-radius:12px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:12px;position:relative;overflow:hidden;border:2px dashed #aaa">
+      <span style="font-size:24px">📷</span>
+      <span style="font-size:11px;color:#555;margin-top:3px">Toca para agregar foto (opcional)</span>
+      <img id="pin-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+    </div>
+    <input type="file" id="pin-foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFotoNuevoPin(event)" />
     <div style="display:flex;gap:10px">
       <button class="favz-btn-limpiar" onclick="cerrarModalPin()">Cancelar</button>
       <button class="favz-btn-aplicar" onclick="confirmarNuevoPin()">Agregar</button>
@@ -2050,15 +2056,34 @@ function selTipoPin(el, tipo, emoji, color) {
   pinSelTipo = tipo; pinSelEmoji = emoji; pinSelColor = color;
 }
 
-function cerrarModalPin() { document.getElementById('modal-agregar-pin').classList.remove('show'); }
+function cerrarModalPin() {
+  document.getElementById('modal-agregar-pin').classList.remove('show');
+  document.getElementById('pin-foto-img').src = '';
+  document.getElementById('pin-foto-img').style.display = 'none';
+  document.getElementById('pin-foto-file').value = '';
+}
+
+function previewFotoNuevoPin(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('pin-foto-img');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
 
 function confirmarNuevoPin() {
   const nombre = document.getElementById('pin-nombre-input').value.trim();
   if (!nombre) { mostrarToast('Escribe el nombre del lugar po'); return; }
+  const fotoImg = document.getElementById('pin-foto-img');
   const nuevo = {
     id: 'pin-' + Date.now(), emoji: pinSelEmoji, nombre,
     lat: pinTempLat, lng: pinTempLng, tipo: pinSelTipo, color: pinSelColor,
-    ciudad: localStorage.getItem('ciudadUsuario') || 'Chile'
+    ciudad: localStorage.getItem('ciudadUsuario') || 'Chile',
+    foto: (fotoImg.style.display !== 'none' && fotoImg.src) ? fotoImg.src : null
   };
   dbRef.child(nuevo.id).set(nuevo);
   cerrarModalPin();
