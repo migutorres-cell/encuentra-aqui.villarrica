@@ -693,6 +693,7 @@
     <div class="filtro-chip" onclick="toggleFiltro(this,'veterinario')">🐾 Veterinario</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'fotografia')">📷 Fotografía</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'reciclaje')">♻️ Reciclaje</div>
+    <div class="filtro-chip" onclick="toggleFiltro(this,'hospedaje')">🏨 Hospedaje</div>
   </div>
 
   <div class="stats-row">
@@ -713,6 +714,7 @@
     <div class="cat-card" onclick="irCategoria('fotografia')"><span class="cat-emoji">📷</span><span class="cat-nombre" data-i18n="fotografia">Fotografía</span><span class="cat-count">3 puntos</span></div>
     <div class="cat-card" onclick="irCategoria('agua')"><span class="cat-emoji">💧</span><span class="cat-nombre" data-i18n="agua">Agua gratis</span><span class="cat-count">4 puntos</span></div>
     <div class="cat-card" onclick="irCategoria('reciclaje')"><span class="cat-emoji">♻️</span><span class="cat-nombre" data-i18n="reciclaje">Reciclaje</span><span class="cat-count">4 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('hospedaje')"><span class="cat-emoji">🏨</span><span class="cat-nombre">Hospedaje</span><span class="cat-count">0 puntos</span></div>
     <div class="cat-ver-todo" onclick="irCategoria('todo')">🗺️ Ver todos los 47 puntos</div>
   </div>
 
@@ -771,6 +773,7 @@
     <div class="filtro-chip" onclick="toggleFiltro(this,'veterinario')">🐾 Veterinario</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'fotografia')">📷 Fotografía</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'reciclaje')">♻️ Reciclaje</div>
+    <div class="filtro-chip" onclick="toggleFiltro(this,'hospedaje')">🏨 Hospedaje</div>
   </div>
   <div class="mapa-container">
     <div id="mapa-real"></div>
@@ -795,6 +798,7 @@
       <div class="tipo-mini" onclick="selTipoPin(this,'veterinario','🐾','#22863a')">🐾 Veterinario</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'fotografia','📷','#6b5b95')">📷 Fotografía</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'reciclaje','♻️','#2e7d32')">♻️ Reciclaje</div>
+      <div class="tipo-mini" onclick="selTipoPin(this,'hospedaje','🏨','#c0392b')">🏨 Hospedaje</div>
     </div>
     <input type="text" class="form-input" id="pin-nombre-input" placeholder="Nombre del lugar (ej: Punto Reciclaje)" style="margin-bottom:12px" />
     <div id="pin-subtipos" style="display:none;margin-bottom:12px"></div>
@@ -866,6 +870,7 @@
       <div class="tipo-mini" onclick="selTipoEdit(this,'veterinario','🐾','#22863a')">🐾 Veterinario</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'fotografia','📷','#6b5b95')">📷 Fotografía</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'reciclaje','♻️','#2e7d32')">♻️ Reciclaje</div>
+      <div class="tipo-mini" onclick="selTipoEdit(this,'hospedaje','🏨','#c0392b')">🏨 Hospedaje</div>
     </div>
 
     <!-- NOMBRE -->
@@ -923,6 +928,7 @@
         <div class="tipo-btn" data-tipo="miradores" data-emoji="🏞️" data-color="#BA7517" onclick="selTipo(this)"><span>🏞️</span>Mirador</div>
         <div class="tipo-btn" data-tipo="barberia" data-emoji="💈" data-color="#9333ea" onclick="selTipo(this)"><span>💈</span>Barbería</div>
         <div class="tipo-btn" data-tipo="cajeros" data-emoji="🏧" data-color="#D85A30" onclick="selTipo(this)"><span>🏧</span>Cajero</div>
+        <div class="tipo-btn" data-tipo="hospedaje" data-emoji="🏨" data-color="#c0392b" onclick="selTipo(this)"><span>🏨</span>Hospedaje</div>
       </div>
     </div>
     <div class="form-group">
@@ -1521,8 +1527,15 @@ function usarGPS() {
     document.getElementById('agr-gps-btn').style.background = 'var(--verde)';
     document.getElementById('agr-gps-btn').style.color = 'white';
     mostrarToast('📍 Ubicación capturada correctamente');
-  }, () => mostrarToast('No se pudo obtener el GPS — intenta de nuevo'),
-  { enableHighAccuracy: true, timeout: 10000 });
+  }, err => {
+    if (err.code === 1) {
+      mostrarToast('🔒 GPS bloqueado — ve a Ajustes > Permisos del sitio > Ubicación y actívalo');
+    } else if (err.code === 3) {
+      mostrarToast('⏱️ GPS tardó mucho — asegúrate de tener señal y vuelve a intentar');
+    } else {
+      mostrarToast('📡 No se pudo obtener el GPS — activa la ubicación en tu celular');
+    }
+  }, { enableHighAccuracy: true, timeout: 15000 });
 }
 
 function previewFotoAgregar(e) {
@@ -2067,7 +2080,10 @@ function iniciarMapa() {
         mapaLeaflet.setView([lat, lng], 15);
         primeraCentracion = false;
       }
-    }, () => mostrarToast('📡 Activa el GPS para ver lo más cercano'),
+    }, err => {
+      if (err.code === 1) mostrarToast('🔒 GPS bloqueado — actívalo en Ajustes > Permisos del sitio');
+      else mostrarToast('📡 Activa el GPS para ver servicios cerca tuyo');
+    },
     { enableHighAccuracy: true, maximumAge: 5000 });
   }
 
@@ -2108,7 +2124,8 @@ function agregarPinMapa(s) {
 
 const SUBTIPOS = {
   reciclaje: ['📦 Cartón','🍾 Vidrio','🥫 Latas','🧴 Plástico','🔋 Pilas','👗 Ropa','💻 Electrónicos','🛢️ Aceite'],
-  cajeros:   ['💳 Débito','💰 Efectivo','🏦 BancoEstado','🔵 Santander','🟠 Scotiabank'],
+  cajeros:   ['🏧 Cajero automático','🏪 Caja vecina','🏦 BancoEstado','🔵 Santander','🟠 Scotiabank','💳 Débito','💰 Efectivo'],
+  hospedaje: ['🏨 Hotel','🛏️ Hostal','🏠 Cabaña','🏕️ Camping','🛖 Residencial','🌟 Económico','💎 Premium'],
   baños:     ['♿ Accesible','👶 Con mudador','🔓 Público libre','🔑 Pedir llave'],
 };
 let pinSubtiposSeleccionados = [];
