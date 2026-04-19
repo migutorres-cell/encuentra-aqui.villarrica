@@ -797,12 +797,13 @@
       <div class="tipo-mini" onclick="selTipoPin(this,'reciclaje','♻️','#2e7d32')">♻️ Reciclaje</div>
     </div>
     <input type="text" class="form-input" id="pin-nombre-input" placeholder="Nombre del lugar (ej: Punto Reciclaje)" style="margin-bottom:12px" />
-    <div id="pin-foto-preview" onclick="document.getElementById('pin-foto-file').click()" style="width:100%;height:90px;border-radius:12px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:12px;position:relative;overflow:hidden;border:2px dashed #aaa">
+    <div id="pin-subtipos" style="display:none;margin-bottom:12px"></div>
+    <label for="pin-foto-file" id="pin-foto-preview" style="width:100%;height:90px;border-radius:12px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:12px;position:relative;overflow:hidden;border:2px dashed #aaa;box-sizing:border-box">
       <span style="font-size:24px">📷</span>
       <span style="font-size:11px;color:#555;margin-top:3px">Toca para agregar foto (opcional)</span>
       <img id="pin-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
-    </div>
-    <input type="file" id="pin-foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFotoNuevoPin(event)" />
+    </label>
+    <input type="file" id="pin-foto-file" accept="image/*" style="display:none" onchange="previewFotoNuevoPin(event)" />
     <div style="display:flex;gap:10px">
       <button class="favz-btn-limpiar" onclick="cerrarModalPin()">Cancelar</button>
       <button class="favz-btn-aplicar" onclick="confirmarNuevoPin()">Agregar</button>
@@ -1952,6 +1953,8 @@ const ADMIN_PIN = '4321';
 let mapaLeaflet = null;
 let adminActivo = false;
 let pinTempLat = null, pinTempLng = null;
+let marcadorUsuario = null;
+let watchId = null;
 let pinSelTipo = 'baños', pinSelEmoji = '🚻', pinSelColor = '#1D9E75';
 let pinEditando = null;
 
@@ -1994,6 +1997,10 @@ function iniciarMapa() {
   const zoomInicial = (savedLat && savedLng) ? 15 : 6;
 
   mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView(centroInicial, zoomInicial);
+  if (savedLat && savedLng) {
+    marcadorUsuario = L.circleMarker([savedLat, savedLng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
+      .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí');
+  }
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap © CARTO',
@@ -2005,14 +2012,19 @@ function iniciarMapa() {
   serviciosPins.forEach(s => agregarPinMapa(s));
 
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
+    watchId = navigator.geolocation.watchPosition(pos => {
       const { latitude: lat, longitude: lng } = pos.coords;
       localStorage.setItem('userLat', lat);
       localStorage.setItem('userLng', lng);
-      mapaLeaflet.setView([lat, lng], 15);
-      L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
-        .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí').openPopup();
-    }, () => mostrarToast('📡 Activa el GPS para ver lo más cercano'));
+      if (!marcadorUsuario) {
+        marcadorUsuario = L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
+          .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí');
+        mapaLeaflet.setView([lat, lng], 15);
+      } else {
+        marcadorUsuario.setLatLng([lat, lng]);
+      }
+    }, () => mostrarToast('📡 Activa el GPS para ver lo más cercano'),
+    { enableHighAccuracy: true, maximumAge: 5000 });
   }
 
   mapaLeaflet.on('click', e => {
@@ -2050,10 +2062,33 @@ function agregarPinMapa(s) {
   s._marker = marker;
 }
 
+const SUBTIPOS = {
+  reciclaje: ['📦 Cartón','🍾 Vidrio','🥫 Latas','🧴 Plástico','🔋 Pilas','👗 Ropa','💻 Electrónicos','🛢️ Aceite'],
+  cajeros:   ['💳 Débito','💰 Efectivo','🏦 BancoEstado','🔵 Santander','🟠 Scotiabank'],
+  baños:     ['♿ Accesible','👶 Con mudador','🔓 Público libre','🔑 Pedir llave'],
+};
+let pinSubtiposSeleccionados = [];
+
 function selTipoPin(el, tipo, emoji, color) {
   document.querySelectorAll('.tipo-mini').forEach(b => b.classList.remove('sel'));
   el.classList.add('sel');
   pinSelTipo = tipo; pinSelEmoji = emoji; pinSelColor = color;
+  pinSubtiposSeleccionados = [];
+  const cont = document.getElementById('pin-subtipos');
+  if (SUBTIPOS[tipo]) {
+    cont.style.display = 'block';
+    cont.innerHTML = '<div style="font-size:11px;font-weight:600;color:#555;margin-bottom:6px">¿Qué acepta / características?</div>'
+      + SUBTIPOS[tipo].map(s => `<span onclick="toggleSubtipo(this,'${s}')" style="display:inline-block;padding:5px 10px;margin:3px;border-radius:20px;border:1.5px solid #ccc;font-size:12px;cursor:pointer;background:white">${s}</span>`).join('');
+  } else {
+    cont.style.display = 'none';
+    cont.innerHTML = '';
+  }
+}
+
+function toggleSubtipo(el, val) {
+  const idx = pinSubtiposSeleccionados.indexOf(val);
+  if (idx > -1) { pinSubtiposSeleccionados.splice(idx,1); el.style.background='white'; el.style.borderColor='#ccc'; el.style.color=''; }
+  else { pinSubtiposSeleccionados.push(val); el.style.background='var(--verde)'; el.style.borderColor='var(--verde)'; el.style.color='white'; }
 }
 
 function cerrarModalPin() {
@@ -2083,6 +2118,7 @@ function confirmarNuevoPin() {
     id: 'pin-' + Date.now(), emoji: pinSelEmoji, nombre,
     lat: pinTempLat, lng: pinTempLng, tipo: pinSelTipo, color: pinSelColor,
     ciudad: localStorage.getItem('ciudadUsuario') || 'Chile',
+    subtipos: pinSubtiposSeleccionados.length ? pinSubtiposSeleccionados.join(', ') : null,
     foto: (fotoImg.style.display !== 'none' && fotoImg.src) ? fotoImg.src : null
   };
   dbRef.child(nuevo.id).set(nuevo);
@@ -2245,20 +2281,11 @@ function eliminarPinAdmin() {
 }
 
 function centrarEnMiUbicacion() {
-  if (!navigator.geolocation) { mostrarToast('Tu dispositivo no tiene GPS'); return; }
-  mostrarToast('📍 Buscando tu ubicación...');
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      const { latitude: lat, longitude: lng } = pos.coords;
-      localStorage.setItem('userLat', lat);
-      localStorage.setItem('userLng', lng);
-      mapaLeaflet.setView([lat, lng], 15);
-      L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
-        .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí').openPopup();
-    },
-    () => mostrarToast('No se pudo obtener tu ubicación — activa el GPS'),
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
+  if (marcadorUsuario) {
+    mapaLeaflet.setView(marcadorUsuario.getLatLng(), 15);
+  } else {
+    mostrarToast('📍 Esperando GPS...');
+  }
 }
 
 function eliminarDesdeDetalle() {
