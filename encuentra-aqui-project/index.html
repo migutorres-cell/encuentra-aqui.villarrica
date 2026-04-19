@@ -2039,16 +2039,9 @@ function iniciarFirebase() {
 function iniciarMapa() {
   if (mapaLeaflet) { setTimeout(() => mapaLeaflet.invalidateSize(), 100); return; }
 
-  const savedLat = parseFloat(localStorage.getItem('userLat'));
-  const savedLng = parseFloat(localStorage.getItem('userLng'));
-  const centroInicial = (savedLat && savedLng) ? [savedLat, savedLng] : [-35.6751, -71.5430];
-  const zoomInicial = (savedLat && savedLng) ? 15 : 6;
+  let primeraCentracion = true;
 
-  mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView(centroInicial, zoomInicial);
-  if (savedLat && savedLng) {
-    marcadorUsuario = L.circleMarker([savedLat, savedLng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
-      .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí');
-  }
+  mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView([-35.6751, -71.5430], 5);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
     attribution: '© OpenStreetMap © CARTO',
@@ -2067,9 +2060,12 @@ function iniciarMapa() {
       if (!marcadorUsuario) {
         marcadorUsuario = L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
           .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí');
-        mapaLeaflet.setView([lat, lng], 15);
       } else {
         marcadorUsuario.setLatLng([lat, lng]);
+      }
+      if (primeraCentracion) {
+        mapaLeaflet.setView([lat, lng], 15);
+        primeraCentracion = false;
       }
     }, () => mostrarToast('📡 Activa el GPS para ver lo más cercano'),
     { enableHighAccuracy: true, maximumAge: 5000 });
