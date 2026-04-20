@@ -1819,16 +1819,28 @@ function pedirUbicacion() {
   if (!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(
     pos => {
-      localStorage.setItem('userLat', pos.coords.latitude);
-      localStorage.setItem('userLng', pos.coords.longitude);
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      localStorage.setItem('userLat', lat);
+      localStorage.setItem('userLng', lng);
       mostrarToast('📍 Ubicación activada — mostrando lo más cercano a ti');
-      if (mapaLeaflet) {
-        mapaLeaflet.setView([pos.coords.latitude, pos.coords.longitude], 15);
-      }
+      if (mapaLeaflet) mapaLeaflet.setView([lat, lng], 15);
+      actualizarCiudadUsuario(lat, lng);
     },
     () => mostrarToast('📍 Activa el GPS para ver servicios cerca tuyo'),
     { enableHighAccuracy: true, timeout: 10000 }
   );
+}
+
+function actualizarCiudadUsuario(lat, lng) {
+  fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`)
+    .then(r => r.json())
+    .then(data => {
+      const ciudad = data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Mi ciudad';
+      localStorage.setItem('ciudadUsuario', ciudad);
+      document.querySelectorAll('.ciudad-nombre').forEach(el => el.textContent = ciudad);
+    })
+    .catch(() => {});
 }
 // ── FIN ONBOARDING ─────────────────────────────────────────
 
@@ -2052,8 +2064,6 @@ function iniciarFirebase() {
 function iniciarMapa() {
   if (mapaLeaflet) { setTimeout(() => mapaLeaflet.invalidateSize(), 100); return; }
 
-  let primeraCentracion = true;
-
   mapaLeaflet = L.map('mapa-real', { zoomControl: false }).setView([-35.6751, -71.5430], 5);
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -2062,30 +2072,35 @@ function iniciarMapa() {
   }).addTo(mapaLeaflet);
 
   L.control.zoom({ position: 'topright' }).addTo(mapaLeaflet);
-
   serviciosPins.forEach(s => agregarPinMapa(s));
 
-  if (navigator.geolocation) {
-    watchId = navigator.geolocation.watchPosition(pos => {
-      const { latitude: lat, longitude: lng } = pos.coords;
-      localStorage.setItem('userLat', lat);
-      localStorage.setItem('userLng', lng);
-      if (!marcadorUsuario) {
-        marcadorUsuario = L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
-          .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí');
-      } else {
-        marcadorUsuario.setLatLng([lat, lng]);
-      }
-      if (primeraCentracion) {
-        mapaLeaflet.setView([lat, lng], 15);
-        primeraCentracion = false;
-      }
-    }, err => {
-      if (err.code === 1) mostrarToast('🔒 GPS bloqueado — actívalo en Ajustes > Permisos del sitio');
-      else mostrarToast('📡 Activa el GPS para ver servicios cerca tuyo');
-    },
-    { enableHighAccuracy: true, maximumAge: 5000 });
+  if (!navigator.geolocation) return;
+
+  function actualizarMarcador(lat, lng) {
+    localStorage.setItem('userLat', lat);
+    localStorage.setItem('userLng', lng);
+    if (!marcadorUsuario) {
+      marcadorUsuario = L.circleMarker([lat, lng], { radius:10, fillColor:'#FF4444', color:'white', weight:3, fillOpacity:1 })
+        .addTo(mapaLeaflet).bindPopup('📍 Tú estás aquí');
+    } else {
+      marcadorUsuario.setLatLng([lat, lng]);
+    }
   }
+
+  // Paso 1: centrar rápido con baja precisión (WiFi/antenas ~1 segundo)
+  navigator.geolocation.getCurrentPosition(pos => {
+    actualizarMarcador(pos.coords.latitude, pos.coords.longitude);
+    mapaLeaflet.setView([pos.coords.latitude, pos.coords.longitude], 15);
+    actualizarCiudadUsuario(pos.coords.latitude, pos.coords.longitude);
+  }, () => {}, { enableHighAccuracy: false, timeout: 8000, maximumAge: 30000 });
+
+  // Paso 2: seguimiento preciso en tiempo real
+  watchId = navigator.geolocation.watchPosition(pos => {
+    actualizarMarcador(pos.coords.latitude, pos.coords.longitude);
+  }, err => {
+    if (err.code === 1) mostrarToast('🔒 GPS bloqueado — actívalo en Ajustes > Permisos del sitio');
+  }, { enableHighAccuracy: true, maximumAge: 5000 });
+}
 
   mapaLeaflet.on('click', e => {
     pinTempLat = e.latlng.lat;
@@ -2491,6 +2506,8 @@ window.addEventListener('load', () => {
   renderAvatar();
   actualizarBadge();
   iniciarFirebase();
+  const ciudadGuardada = localStorage.getItem('ciudadUsuario');
+  if (ciudadGuardada) document.querySelectorAll('.ciudad-nombre').forEach(el => el.textContent = ciudadGuardada);
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
     setTimeout(iniciarOnboarding, 600);
