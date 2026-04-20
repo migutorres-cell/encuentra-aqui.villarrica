@@ -2018,8 +2018,11 @@ const firebaseConfig = {
   messagingSenderId: "1096646472475",
   appId: "1:1096646472475:web:663fae3f8ee74e5fb659be"
 };
-firebase.initializeApp(firebaseConfig);
-const dbRef = firebase.database().ref('servicios');
+let dbRef = null;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  dbRef = firebase.database().ref('servicios');
+} catch(e) { console.warn('Firebase no disponible:', e); }
 
 // ── MAPA LEAFLET ──────────────────────────────────────────
 const ADMIN_PIN = '4321';
@@ -2046,19 +2049,23 @@ const PINS_INICIALES = [
 function guardarPins() { /* Firebase handles persistence */ }
 
 function iniciarFirebase() {
-  dbRef.once('value', snap => {
-    if (!snap.exists()) {
-      PINS_INICIALES.forEach(p => dbRef.child(p.id).set(p));
-    }
-  });
-  dbRef.on('value', snap => {
-    const data = snap.val() || {};
-    serviciosPins = Object.values(data);
-    if (mapaLeaflet) {
-      mapaLeaflet.eachLayer(l => { if (l instanceof L.Marker) mapaLeaflet.removeLayer(l); });
-      serviciosPins.forEach(s => agregarPinMapa(s));
-    }
-  });
+  if (!dbRef) {
+    serviciosPins = PINS_INICIALES.slice();
+    return;
+  }
+  try {
+    dbRef.once('value', snap => {
+      if (!snap.exists()) PINS_INICIALES.forEach(p => dbRef.child(p.id).set(p));
+    });
+    dbRef.on('value', snap => {
+      const data = snap.val() || {};
+      serviciosPins = Object.values(data);
+      if (mapaLeaflet) {
+        mapaLeaflet.eachLayer(l => { if (l instanceof L.Marker) mapaLeaflet.removeLayer(l); });
+        serviciosPins.forEach(s => agregarPinMapa(s));
+      }
+    }, () => { serviciosPins = PINS_INICIALES.slice(); });
+  } catch(e) { serviciosPins = PINS_INICIALES.slice(); }
 }
 
 function iniciarMapa() {
@@ -2197,7 +2204,7 @@ function confirmarNuevoPin() {
     subtipos: pinSubtiposSeleccionados.length ? pinSubtiposSeleccionados.join(', ') : null,
     foto: (fotoImg.style.display !== 'none' && fotoImg.src) ? fotoImg.src : null
   };
-  dbRef.child(nuevo.id).set(nuevo);
+  if (dbRef) dbRef.child(nuevo.id).set(nuevo);
   cerrarModalPin();
   sumarPuntos('agregar');
   agregarNotif('nuevo_pin', pinSelEmoji, `Nuevo punto agregado: <b>${nombre}</b>`);
@@ -2345,13 +2352,13 @@ function guardarEditPin() {
     estado: pinEditando.s.estado, bgGrad: `linear-gradient(135deg,${pinSelColor}88,${pinSelColor})`
   };
 
-  dbRef.child(pinEditando.s.id).set(pinEditando.s);
+  if (dbRef) dbRef.child(pinEditando.s.id).set(pinEditando.s);
   cerrarEditarPin();
   mostrarToast('✅ Servicio actualizado');
 }
 
 function eliminarPinAdmin() {
-  dbRef.child(pinEditando.s.id).remove();
+  if (dbRef) dbRef.child(pinEditando.s.id).remove();
   cerrarEditarPin();
   mostrarToast('🗑️ Servicio eliminado');
 }
@@ -2372,7 +2379,7 @@ function eliminarDesdeDetalle() {
   const pin = serviciosPins.find(s => s.id === currentDetalleId);
   if (!pin) return;
   if (!confirm('¿Eliminar "' + pin.nombre + '"?')) return;
-  dbRef.child(pin.id).remove();
+  if (dbRef) dbRef.child(pin.id).remove();
   mostrarToast('🗑️ Punto eliminado');
   irAtras();
 }
