@@ -11,8 +11,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <style>
   :root {
     --verde: #1D9E75;
@@ -1208,6 +1206,8 @@
   </button>
 </nav>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
 // ── CIUDAD ACTIVA ──────────────────────────────────────────
 // Para lanzar en otra ciudad: cambia solo este objeto
@@ -1570,6 +1570,7 @@ function publicarServicio() {
     ciudad: localStorage.getItem('ciudadUsuario') || 'Chile',
     foto:   (fotoImg?.style?.display !== 'none' && fotoImg?.src) ? fotoImg.src : null
   };
+  if (!dbRef) { mostrarToast('Sin conexión — intenta de nuevo'); return; }
   dbRef.child(nuevo.id).set(nuevo).then(() => {
     sumarPuntos('agregar');
     agregarNotif('nuevo_pin', emoji, `Nuevo punto agregado: <b>${nombre}</b>`);
