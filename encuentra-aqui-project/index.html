@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1824,7 +1827,6 @@ function pedirUbicacion() {
       const lng = pos.coords.longitude;
       localStorage.setItem('userLat', lat);
       localStorage.setItem('userLng', lng);
-      mostrarToast('📍 Ubicación activada — mostrando lo más cercano a ti');
       if (mapaLeaflet) mapaLeaflet.setView([lat, lng], 15);
       actualizarCiudadUsuario(lat, lng);
     },
@@ -1838,7 +1840,6 @@ function actualizarCiudadUsuario(lat, lng) {
     .then(r => r.json())
     .then(data => {
       const ciudad = data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Mi ciudad';
-      localStorage.setItem('ciudadUsuario', ciudad);
       document.querySelectorAll('.ciudad-nombre').forEach(el => el.textContent = ciudad);
     })
     .catch(() => {});
@@ -2491,8 +2492,8 @@ function aplicarCiudad() {
   const headerInicio = document.querySelector('#screen-inicio .header');
   if (headerInicio) headerInicio.style.backgroundImage = `url('${c.imagen}')`;
 
-  // Nombre de ciudad en todos los headers
-  document.querySelectorAll('.ciudad-nombre').forEach(el => el.textContent = c.nombre);
+  // Siempre parte con texto neutro — GPS lo actualiza al instante
+  document.querySelectorAll('.ciudad-nombre').forEach(el => el.textContent = 'Tu ciudad');
 
   // Textos dinámicos
   const onbSub = document.getElementById('onb-sub-ciudad');
@@ -2513,8 +2514,7 @@ window.addEventListener('load', () => {
   renderAvatar();
   actualizarBadge();
   iniciarFirebase();
-  const ciudadGuardada = localStorage.getItem('ciudadUsuario');
-  if (ciudadGuardada) document.querySelectorAll('.ciudad-nombre').forEach(el => el.textContent = ciudadGuardada);
+  pedirUbicacion();
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
     setTimeout(iniciarOnboarding, 600);
