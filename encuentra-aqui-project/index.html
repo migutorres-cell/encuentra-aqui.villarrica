@@ -2108,7 +2108,6 @@ function iniciarMapa() {
   }, err => {
     if (err.code === 1) mostrarToast('🔒 GPS bloqueado — actívalo en Ajustes > Permisos del sitio');
   }, { enableHighAccuracy: true, maximumAge: 5000 });
-}
 
   mapaLeaflet.on('click', e => {
     pinTempLat = e.latlng.lat;
