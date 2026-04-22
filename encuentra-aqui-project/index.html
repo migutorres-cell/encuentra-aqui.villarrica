@@ -2070,10 +2070,11 @@ const DATOS_REALES = [
   { id:'puc-parking',            emoji:'🅿️', nombre:'Parking Gratuito Centro',     dir:"O'Higgins con Urrutia",               lat:-39.2730, lng:-71.9790, tipo:'parking',   color:'#185FA5', ciudad:'Pucón' },
   { id:'puc-agua',               emoji:'💧', nombre:'Fuente de agua Municipalidad', dir:'Palguin 348',                         lat:-39.2720, lng:-71.9765, tipo:'agua',      color:'#2DB560', ciudad:'Pucón' },
   { id:'puc-hospedaje-1',        emoji:'🏨', nombre:"Hostal Écolle",               dir:'General Urrutia 592',                 lat:-39.2718, lng:-71.9762, tipo:'hospedaje', subtipos:['🛏️ Hostal','🌟 Económico'],                color:'#c0392b', ciudad:'Pucón' },
-  // ── CURARREHUE ──────────────────────────────────────────────────────────
-  { id:'cur-caja-vecina',        emoji:'🏧', nombre:'Caja Vecina',                  dir:'Centro s/n',                          lat:-39.3810, lng:-71.5520, tipo:'cajeros',   subtipos:['🏪 Caja vecina','💰 Efectivo'],             color:'#D85A30', ciudad:'Curarrehue' },
-  { id:'cur-bano-muni',          emoji:'🚻', nombre:'Baños Municipalidad',          dir:'Municipalidad s/n',                   lat:-39.3800, lng:-71.5530, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Curarrehue' },
-  { id:'cur-agua',               emoji:'💧', nombre:'Agua potable plaza',           dir:'Plaza s/n',                           lat:-39.3815, lng:-71.5515, tipo:'agua',      color:'#2DB560', ciudad:'Curarrehue' },
+  // ── CURARREHUE (coordenadas corregidas, centro real: -39.3589, -71.5878) ──
+  { id:'osm-cur-reciclaje',      emoji:'♻️', nombre:'Centro de Reciclaje Curarrehue', dir:'Centro s/n',                       lat:-39.3610, lng:-71.5840, tipo:'reciclaje', subtipos:['📦 Cartón','🍾 Vidrio','🥫 Latas'],         color:'#2e7d32', ciudad:'Curarrehue' },
+  { id:'osm-cur-termas-parking', emoji:'🅿️', nombre:'Parking Termas de Curarrehue', dir:'Ruta a Termas s/n',                  lat:-39.3480, lng:-71.5967, tipo:'parking',   color:'#185FA5', ciudad:'Curarrehue' },
+  { id:'osm-cur-plaza-centro',   emoji:'🏧', nombre:'Caja Vecina centro',           dir:'Plaza s/n',                          lat:-39.3589, lng:-71.5878, tipo:'cajeros',   subtipos:['🏪 Caja vecina','💰 Efectivo'],             color:'#D85A30', ciudad:'Curarrehue' },
+  { id:'osm-cur-bano-muni',      emoji:'🚻', nombre:'Baños Municipalidad',          dir:'Municipalidad s/n',                  lat:-39.3592, lng:-71.5875, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Curarrehue' },
   // ── TEMUCO ──────────────────────────────────────────────────────────────
   { id:'tem-cajero-bancoestado', emoji:'🏧', nombre:'Cajero BancoEstado',           dir:'Bulnes 655',                          lat:-38.7348, lng:-72.5884, tipo:'cajeros',   subtipos:['🏦 BancoEstado','💳 Débito','💰 Efectivo'], color:'#D85A30', ciudad:'Temuco' },
   { id:'tem-cajero-bci',         emoji:'🏧', nombre:'Cajero BCI',                   dir:'Av. Caupolicán 458',                  lat:-38.7360, lng:-72.5895, tipo:'cajeros',   subtipos:['💳 Débito'],                               color:'#D85A30', ciudad:'Temuco' },
@@ -2139,6 +2140,9 @@ const DATOS_REALES = [
 function sembrarDatosReales() {
   if (!adminActivo) { mostrarToast('🔒 Necesitas modo admin'); return; }
   if (!dbRef) { mostrarToast('Sin conexión a Firebase'); return; }
+  // Eliminar puntos incorrectos de Curarrehue (coords estaban ~3km corridas)
+  const incorrectos = ['cur-caja-vecina', 'cur-bano-muni', 'cur-agua'];
+  incorrectos.forEach(id => dbRef.child(id).remove());
   let agregados = 0;
   let promesas = DATOS_REALES.map(p =>
     dbRef.child(p.id).once('value').then(snap => {
@@ -2147,7 +2151,7 @@ function sembrarDatosReales() {
   );
   Promise.all(promesas).then(() => {
     if (agregados > 0) mostrarToast(`✅ ${agregados} puntos nuevos agregados`);
-    else mostrarToast('ℹ️ Todos los puntos ya estaban cargados');
+    else mostrarToast('ℹ️ Datos ya actualizados');
   });
 }
 
