@@ -260,6 +260,7 @@
   #mapa-real { width: 100%; height: calc(100vh - 145px); }
   .fab-admin-mapa { position: absolute; bottom: 20px; right: 14px; z-index: 999; background: white; border: none; border-radius: 20px; padding: 9px 14px; font-size: 13px; font-weight: 700; box-shadow: var(--shadow-md); cursor: pointer; display: flex; align-items: center; gap: 5px; }
   .fab-admin-mapa.activo { background: var(--verde); color: white; }
+  .fab-sembrar { position: absolute; bottom: 60px; right: 14px; z-index: 999; background: #F59E0B; color: white; border: none; border-radius: 20px; padding: 8px 12px; font-size: 12px; font-weight: 700; box-shadow: var(--shadow-md); cursor: pointer; display: none; align-items: center; gap: 4px; }
   .fab-mi-ubicacion { position: absolute; bottom: 20px; left: 14px; z-index: 999; background: var(--verde); color: white; border: none; border-radius: 20px; padding: 9px 14px; font-size: 13px; font-weight: 700; box-shadow: var(--shadow-md); cursor: pointer; display: flex; align-items: center; gap: 5px; }
   /* MODAL AGREGAR PIN */
   .pin-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: flex-end; justify-content: center; }
@@ -779,6 +780,7 @@
   <div class="mapa-container">
     <div id="mapa-real"></div>
     <button class="fab-admin-mapa" id="btn-admin-mapa" onclick="pedirPinAdmin()">🔒 Admin</button>
+    <button class="fab-sembrar" id="btn-sembrar-datos" onclick="sembrarDatosReales()">🌱 Sembrar datos</button>
     <button class="fab-mi-ubicacion" onclick="centrarEnMiUbicacion()">📍 Mi ubicación</button>
     <button class="fab-falta" onclick="abrirFaltaAlgo()"><span class="fab-falta-ico">❓</span> ¿Falta algo aquí?</button>
   </div>
@@ -2048,6 +2050,67 @@ const PINS_INICIALES = [
   { id:'cajero-1',          emoji:'🏧', nombre:'Cajero BancoEstado',     lat:-39.2844, lng:-72.2265, tipo:'cajeros',    color:'#D85A30', ciudad:'Villarrica' },
 ];
 
+const DATOS_REALES = [
+  // ── VILLARRICA ──────────────────────────────────────────────────────────
+  { id:'vll-cajero-bancoestado', emoji:'🏧', nombre:'Cajero BancoEstado',          dir:'Pedro de Valdivia 1050',              lat:-39.2844, lng:-72.2265, tipo:'cajeros',   subtipos:['🏦 BancoEstado','💳 Débito','💰 Efectivo'], color:'#D85A30', ciudad:'Villarrica' },
+  { id:'vll-cajero-santander',   emoji:'🏧', nombre:'Cajero Santander',             dir:'Camilo Henríquez 575',                lat:-39.2853, lng:-72.2258, tipo:'cajeros',   subtipos:['🔵 Santander','💳 Débito'],                 color:'#D85A30', ciudad:'Villarrica' },
+  { id:'vll-bano-costanera',     emoji:'🚻', nombre:'Baños Costanera',              dir:'Costanera s/n',                       lat:-39.2880, lng:-72.2240, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Villarrica' },
+  { id:'vll-reciclaje-muni',     emoji:'♻️', nombre:'Punto Limpio Municipalidad',  dir:'Pedro de Valdivia 480',               lat:-39.2840, lng:-72.2280, tipo:'reciclaje', subtipos:['📦 Cartón','🍾 Vidrio','🥫 Latas','🧴 Plástico'], color:'#2e7d32', ciudad:'Villarrica' },
+  { id:'vll-reciclaje-2',        emoji:'♻️', nombre:'Punto Limpio Villa Alegre',   dir:'Av. Diego Portales s/n',              lat:-39.2810, lng:-72.2310, tipo:'reciclaje', subtipos:['📦 Cartón','🍾 Vidrio'],                    color:'#2e7d32', ciudad:'Villarrica' },
+  { id:'vll-mirador-costanera',  emoji:'🏞️', nombre:'Mirador Lago Villarrica',     dir:'Costanera Benjamín Vicuña',           lat:-39.2880, lng:-72.2160, tipo:'miradores', color:'#BA7517', ciudad:'Villarrica' },
+  { id:'vll-hospedaje-colina',   emoji:'🏨', nombre:'Hostería de la Colina',        dir:'Las Colinas 115',                     lat:-39.2697, lng:-72.2244, tipo:'hospedaje', subtipos:['🏨 Hotel','💎 Premium'],                    color:'#c0392b', ciudad:'Villarrica' },
+  // ── PUCÓN ───────────────────────────────────────────────────────────────
+  { id:'puc-cajero-bancoestado', emoji:'🏧', nombre:'Cajero BancoEstado',          dir:"O'Higgins 480",                       lat:-39.2730, lng:-71.9755, tipo:'cajeros',   subtipos:['🏦 BancoEstado','💳 Débito','💰 Efectivo'], color:'#D85A30', ciudad:'Pucón' },
+  { id:'puc-cajero-santander',   emoji:'🏧', nombre:'Cajero Santander',             dir:"O'Higgins 340",                       lat:-39.2725, lng:-71.9770, tipo:'cajeros',   subtipos:['🔵 Santander','💳 Débito'],                 color:'#D85A30', ciudad:'Pucón' },
+  { id:'puc-cajero-bci',         emoji:'🏧', nombre:'Cajero BCI',                   dir:'Ansorena 299',                        lat:-39.2720, lng:-71.9780, tipo:'cajeros',   subtipos:['💳 Débito'],                               color:'#D85A30', ciudad:'Pucón' },
+  { id:'puc-bano-plaza',         emoji:'🚻', nombre:'Baños Plaza Pucón',            dir:'Palguin s/n',                         lat:-39.2715, lng:-71.9760, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Pucón' },
+  { id:'puc-bano-playa',         emoji:'🚻', nombre:'Baños Playa Grande',           dir:'Costanera s/n',                       lat:-39.2700, lng:-71.9750, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Pucón' },
+  { id:'puc-reciclaje-muni',     emoji:'♻️', nombre:'Punto Limpio Pucón',          dir:'Av. Fresia s/n',                      lat:-39.2740, lng:-71.9800, tipo:'reciclaje', subtipos:['📦 Cartón','🍾 Vidrio','🥫 Latas'],         color:'#2e7d32', ciudad:'Pucón' },
+  { id:'puc-mirador-volcan',     emoji:'🏞️', nombre:'Mirador Volcán Villarrica',   dir:'Playa Grande s/n',                    lat:-39.2705, lng:-71.9748, tipo:'miradores', color:'#BA7517', ciudad:'Pucón' },
+  { id:'puc-parking',            emoji:'🅿️', nombre:'Parking Gratuito Centro',     dir:"O'Higgins con Urrutia",               lat:-39.2730, lng:-71.9790, tipo:'parking',   color:'#185FA5', ciudad:'Pucón' },
+  { id:'puc-agua',               emoji:'💧', nombre:'Fuente de agua Municipalidad', dir:'Palguin 348',                         lat:-39.2720, lng:-71.9765, tipo:'agua',      color:'#2DB560', ciudad:'Pucón' },
+  { id:'puc-hospedaje-1',        emoji:'🏨', nombre:"Hostal Écolle",               dir:'General Urrutia 592',                 lat:-39.2718, lng:-71.9762, tipo:'hospedaje', subtipos:['🛏️ Hostal','🌟 Económico'],                color:'#c0392b', ciudad:'Pucón' },
+  // ── CURARREHUE ──────────────────────────────────────────────────────────
+  { id:'cur-caja-vecina',        emoji:'🏧', nombre:'Caja Vecina',                  dir:'Centro s/n',                          lat:-39.3810, lng:-71.5520, tipo:'cajeros',   subtipos:['🏪 Caja vecina','💰 Efectivo'],             color:'#D85A30', ciudad:'Curarrehue' },
+  { id:'cur-bano-muni',          emoji:'🚻', nombre:'Baños Municipalidad',          dir:'Municipalidad s/n',                   lat:-39.3800, lng:-71.5530, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Curarrehue' },
+  { id:'cur-agua',               emoji:'💧', nombre:'Agua potable plaza',           dir:'Plaza s/n',                           lat:-39.3815, lng:-71.5515, tipo:'agua',      color:'#2DB560', ciudad:'Curarrehue' },
+  // ── TEMUCO ──────────────────────────────────────────────────────────────
+  { id:'tem-cajero-bancoestado', emoji:'🏧', nombre:'Cajero BancoEstado',           dir:'Bulnes 655',                          lat:-38.7348, lng:-72.5884, tipo:'cajeros',   subtipos:['🏦 BancoEstado','💳 Débito','💰 Efectivo'], color:'#D85A30', ciudad:'Temuco' },
+  { id:'tem-cajero-bci',         emoji:'🏧', nombre:'Cajero BCI',                   dir:'Av. Caupolicán 458',                  lat:-38.7360, lng:-72.5895, tipo:'cajeros',   subtipos:['💳 Débito'],                               color:'#D85A30', ciudad:'Temuco' },
+  { id:'tem-cajero-santander',   emoji:'🏧', nombre:'Cajero Santander Portal',      dir:'Av. Alemania 0850, Portal Temuco',    lat:-38.7415, lng:-72.5968, tipo:'cajeros',   subtipos:['🔵 Santander','💳 Débito'],                 color:'#D85A30', ciudad:'Temuco' },
+  { id:'tem-bano-terminal',      emoji:'🚻', nombre:'Baños Terminal de Buses',      dir:'Av. Caupolicán 0399',                 lat:-38.7428, lng:-72.6068, tipo:'baños',     subtipos:['♿ Accesible'],                             color:'#1D9E75', ciudad:'Temuco' },
+  { id:'tem-bano-plaza',         emoji:'🚻', nombre:'Baños Plaza T. Schmidt',       dir:'Plaza Teodoro Schmidt',               lat:-38.7355, lng:-72.5890, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Temuco' },
+  { id:'tem-reciclaje-mall',     emoji:'♻️', nombre:'Punto Limpio Portal Temuco',  dir:'Av. Alemania 0850',                   lat:-38.7415, lng:-72.5960, tipo:'reciclaje', subtipos:['📦 Cartón','🍾 Vidrio','🥫 Latas','🧴 Plástico'], color:'#2e7d32', ciudad:'Temuco' },
+  { id:'tem-mirador-nielol',     emoji:'🏞️', nombre:'Mirador Cerro Ñielol',        dir:'Parque Monumento Cerro Ñielol',       lat:-38.7243, lng:-72.5955, tipo:'miradores', color:'#BA7517', ciudad:'Temuco' },
+  { id:'tem-parking-ferias',     emoji:'🅿️', nombre:'Parking Ferias Temuco',       dir:'Manuel Montt 1000',                   lat:-38.7380, lng:-72.6050, tipo:'parking',   color:'#185FA5', ciudad:'Temuco' },
+  // ── SANTIAGO ────────────────────────────────────────────────────────────
+  { id:'stg-cajero-bancoestado', emoji:'🏧', nombre:'Cajero BancoEstado Alameda',  dir:'Alameda 1111',                        lat:-33.4408, lng:-70.6540, tipo:'cajeros',   subtipos:['🏦 BancoEstado','💳 Débito','💰 Efectivo'], color:'#D85A30', ciudad:'Santiago' },
+  { id:'stg-cajero-bci',         emoji:'🏧', nombre:'Cajero BCI Centro',            dir:'Paseo Ahumada 340',                   lat:-33.4403, lng:-70.6507, tipo:'cajeros',   subtipos:['💳 Débito'],                               color:'#D85A30', ciudad:'Santiago' },
+  { id:'stg-cajero-santander',   emoji:'🏧', nombre:'Cajero Santander Providencia', dir:'Av. Providencia 2134',                lat:-33.4250, lng:-70.6100, tipo:'cajeros',   subtipos:['🔵 Santander','💳 Débito'],                 color:'#D85A30', ciudad:'Santiago' },
+  { id:'stg-bano-plaza',         emoji:'🚻', nombre:'Baños Plaza de Armas',         dir:'Plaza de Armas s/n',                  lat:-33.4378, lng:-70.6503, tipo:'baños',     subtipos:['🔓 Público libre','♿ Accesible'],           color:'#1D9E75', ciudad:'Santiago' },
+  { id:'stg-bano-ohiggins',      emoji:'🚻', nombre:"Baños Parque O'Higgins",       dir:'Av. Viel 610',                        lat:-33.4586, lng:-70.6660, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Santiago' },
+  { id:'stg-bano-forestal',      emoji:'🚻', nombre:'Baños Parque Forestal',        dir:'José Miguel de la Barra s/n',         lat:-33.4365, lng:-70.6380, tipo:'baños',     subtipos:['🔓 Público libre'],                         color:'#1D9E75', ciudad:'Santiago' },
+  { id:'stg-reciclaje-italia',   emoji:'♻️', nombre:'Punto Limpio Plaza Italia',   dir:'Av. Providencia s/n',                 lat:-33.4380, lng:-70.6291, tipo:'reciclaje', subtipos:['📦 Cartón','🍾 Vidrio','🥫 Latas','🧴 Plástico'], color:'#2e7d32', ciudad:'Santiago' },
+  { id:'stg-mirador-santalucia', emoji:'🏞️', nombre:'Mirador Cerro Santa Lucía',   dir:'Subida Vicuña Mackenna s/n',          lat:-33.4401, lng:-70.6448, tipo:'miradores', color:'#BA7517', ciudad:'Santiago' },
+  { id:'stg-mirador-sancristobal',emoji:'🏞️',nombre:'Mirador Cerro San Cristóbal', dir:'Cumbre Cerro San Cristóbal',          lat:-33.4240, lng:-70.6345, tipo:'miradores', color:'#BA7517', ciudad:'Santiago' },
+  { id:'stg-hospedaje-italia',   emoji:'🏨', nombre:'Hostal Barrio Italia',         dir:'Av. Italia 1200',                     lat:-33.4391, lng:-70.6278, tipo:'hospedaje', subtipos:['🛏️ Hostal','🌟 Económico'],                color:'#c0392b', ciudad:'Santiago' },
+];
+
+function sembrarDatosReales() {
+  if (!adminActivo) { mostrarToast('🔒 Necesitas modo admin'); return; }
+  if (!dbRef) { mostrarToast('Sin conexión a Firebase'); return; }
+  let agregados = 0;
+  let promesas = DATOS_REALES.map(p =>
+    dbRef.child(p.id).once('value').then(snap => {
+      if (!snap.exists()) { dbRef.child(p.id).set(p); agregados++; }
+    })
+  );
+  Promise.all(promesas).then(() => {
+    if (agregados > 0) mostrarToast(`✅ ${agregados} puntos nuevos agregados`);
+    else mostrarToast('ℹ️ Todos los puntos ya estaban cargados');
+  });
+}
+
 function guardarPins() { /* Firebase handles persistence */ }
 
 function iniciarFirebase() {
@@ -2225,6 +2288,7 @@ function pedirPinAdmin() {
     adminActivo = false;
     document.getElementById('btn-admin-mapa').classList.remove('activo');
     document.getElementById('btn-admin-mapa').textContent = '🔒 Admin';
+    document.getElementById('btn-sembrar-datos').style.display = 'none';
     mostrarToast('Modo admin desactivado');
     return;
   }
@@ -2239,6 +2303,8 @@ function verificarPinAdmin() {
     adminActivo = true;
     const btn = document.getElementById('btn-admin-mapa');
     if (btn) { btn.classList.add('activo'); btn.innerHTML = '🔓 Admin ON'; }
+    const btnSembrar = document.getElementById('btn-sembrar-datos');
+    if (btnSembrar) btnSembrar.style.display = 'flex';
     cerrarModalAdmin();
     mostrarToast('🔓 Modo admin activado');
     if (pendienteEditarDesdeDetalle) {
