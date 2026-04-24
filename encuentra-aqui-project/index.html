@@ -592,12 +592,12 @@
      SCREEN AVENTURA
   ════════════════════════════════════════════════════════ */
   #screen-aventura {
-    background: #0A0A0F;
+    background: #16161F;
     min-height: 100vh;
     padding-bottom: 100px;
   }
   .avt-header {
-    background: linear-gradient(160deg, #1a0a00 0%, #2d1200 50%, #1a0505 100%);
+    background: linear-gradient(160deg, #221408 0%, #2e1a08 50%, #1e1010 100%);
     padding: 20px 20px 24px;
     position: sticky; top: 0; z-index: 10;
     border-bottom: 1px solid rgba(255,107,0,0.2);
@@ -632,8 +632,8 @@
   }
   .avt-bienvenida {
     margin: 20px 16px 0;
-    background: linear-gradient(135deg, rgba(255,107,0,0.12), rgba(255,69,0,0.06));
-    border: 1px solid rgba(255,107,0,0.2);
+    background: linear-gradient(135deg, rgba(255,107,0,0.09), rgba(255,69,0,0.04));
+    border: 1px solid rgba(255,107,0,0.15);
     border-radius: 16px; padding: 18px;
   }
   .avt-bienvenida-titulo {
@@ -652,8 +652,8 @@
     gap: 12px; padding: 0 16px;
   }
   .avt-card {
-    background: linear-gradient(135deg, #141414, #1a1208);
-    border: 1px solid rgba(255,107,0,0.15);
+    background: linear-gradient(135deg, #1E1E28, #22201A);
+    border: 1px solid rgba(255,107,0,0.12);
     border-radius: 16px; padding: 18px 14px 16px;
     cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
   }
@@ -675,9 +675,17 @@
   }
   .avt-card.destacado {
     grid-column: span 2;
-    background: linear-gradient(135deg, #1f0d00, #2d1800);
-    border-color: rgba(255,107,0,0.35);
+    background: linear-gradient(135deg, #251508, #2e1c08);
+    border-color: rgba(255,107,0,0.28);
   }
+  /* MAPA AVENTURA */
+  .avt-mapa-wrap {
+    margin: 0 16px;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(255,107,0,0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  #mapa-aventura { height: 260px; width: 100%; }
   .avt-card.destacado .avt-card-emoji { font-size: 42px; }
   .avt-card.destacado .avt-card-nombre { font-size: 18px; }
   .avt-card.pronto { opacity: 0.45; cursor: default; }
@@ -975,7 +983,7 @@
 </div>
 
 <!-- PANTALLA AVENTURA -->
-<div id="screen-aventura" class="screen" style="display:none;flex-direction:column">
+<div id="screen-aventura" class="screen">
   <div class="avt-header">
     <div class="avt-header-top">
       <button class="avt-volver" onclick="cerrarAventura()">← Volver</button>
@@ -1034,12 +1042,29 @@
       <div class="avt-card-desc">Rápidos en el río Trancura, los mejores del sur.</div>
       <span class="avt-card-tag">🤿 Extremo</span>
     </div>
+    <div class="avt-card" onclick="verAventura('padel')">
+      <span class="avt-card-emoji">🏸</span>
+      <div class="avt-card-nombre">Pádel</div>
+      <div class="avt-card-desc">Canchas de pádel disponibles en la zona. Alquiler de raquetas incluido.</div>
+      <span class="avt-card-tag">🎾 Deporte</span>
+    </div>
+    <div class="avt-card" onclick="verAventura('minigolf')">
+      <span class="avt-card-emoji">⛳</span>
+      <div class="avt-card-nombre">Mini Golf</div>
+      <div class="avt-card-desc">Mini golf con vista al lago. Ideal para toda la familia.</div>
+      <span class="avt-card-tag">👨‍👩‍👧 Familiar</span>
+    </div>
     <div class="avt-card pronto">
       <span class="avt-card-emoji">🏹</span>
       <div class="avt-card-nombre">Tiro con arco</div>
       <div class="avt-card-desc">Próximamente...</div>
       <span class="avt-card-tag">🔜 Pronto</span>
     </div>
+  </div>
+
+  <div class="avt-seccion-titulo">📍 Mapa de actividades</div>
+  <div class="avt-mapa-wrap">
+    <div id="mapa-aventura"></div>
   </div>
 
   <div class="avt-proximamente">— más actividades pronto —</div>
@@ -2944,6 +2969,39 @@ function aplicarCiudad() {
 }
 
 // ── MODO AVENTURA ─────────────────────────────────────────
+let mapaAventuraIniciado = false;
+
+const PUNTOS_AVENTURA = [
+  { nombre: 'Trekking Volcán Villarrica', emoji: '🌋', coords: [-39.4197, -71.9404], desc: 'Ascenso al cráter activo' },
+  { nombre: 'Kayak Lago Villarrica',      emoji: '🛶', coords: [-39.2750, -72.0950], desc: 'Salida desde la costanera' },
+  { nombre: 'Paintball',                  emoji: '🎯', coords: [-39.2960, -72.2100], desc: 'Campos en el bosque' },
+  { nombre: 'Tirolesa',                   emoji: '🪂', coords: [-39.2820, -72.1850], desc: 'Sobre el río Turbio' },
+  { nombre: 'Mountain Bike',              emoji: '🚵', coords: [-39.3100, -72.1600], desc: 'Rutas ladera del volcán' },
+  { nombre: 'Rafting Río Trancura',       emoji: '🌊', coords: [-39.2700, -71.9800], desc: 'Rápidos clase III-IV' },
+  { nombre: 'Pádel',                      emoji: '🏸', coords: [-39.2870, -72.2200], desc: 'Canchas en la ciudad' },
+  { nombre: 'Mini Golf',                  emoji: '⛳', coords: [-39.2800, -72.2300], desc: 'Vista al lago Villarrica' },
+];
+
+function iniciarMapaAventura() {
+  if (mapaAventuraIniciado) return;
+  mapaAventuraIniciado = true;
+
+  const mapa = L.map('mapa-aventura', { zoomControl: true }).setView([-39.2845, -72.0500], 11);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(mapa);
+
+  PUNTOS_AVENTURA.forEach(p => {
+    const icono = L.divIcon({
+      html: `<div style="font-size:22px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${p.emoji}</div>`,
+      className: '', iconAnchor: [12, 12]
+    });
+    L.marker(p.coords, { icon: icono })
+      .addTo(mapa)
+      .bindPopup(`<b>${p.nombre}</b><br><span style="font-size:12px;color:#666">${p.desc}</span>`);
+  });
+}
+
 function abrirPortal() {
   const overlay = document.getElementById('portal-overlay');
   const flash   = document.getElementById('portal-flash');
@@ -2951,46 +3009,35 @@ function abrirPortal() {
 
   overlay.classList.add('show');
 
-  // acelerar anillos progresivamente
   let velocidad = 1;
   const acelerarInterval = setInterval(() => {
     velocidad = Math.max(0.08, velocidad * 0.82);
     rings.forEach((r, i) => {
       const base = [1.2, 0.9, 0.6, 0.4, 0.3][i];
-      const nueva = Math.max(0.06, base * velocidad);
-      r.style.animationDuration = nueva + 's';
+      r.style.animationDuration = Math.max(0.06, base * velocidad) + 's';
     });
   }, 120);
 
-  // destello y apertura
   setTimeout(() => {
     clearInterval(acelerarInterval);
     flash.classList.add('show');
     setTimeout(() => {
       overlay.classList.remove('show');
       flash.classList.remove('show');
-      // restaurar velocidad normal
       rings.forEach((r, i) => {
-        const base = [1.2, 0.9, 0.6, 0.4, 0.3][i];
-        r.style.animationDuration = base + 's';
+        r.style.animationDuration = [1.2, 0.9, 0.6, 0.4, 0.3][i] + 's';
       });
-      // mostrar pantalla aventura
-      document.querySelectorAll('.screen').forEach(s => {
-        s.style.display = 'none';
-        s.classList.remove('active');
-      });
-      const avt = document.getElementById('screen-aventura');
-      avt.style.display = 'flex';
-      avt.classList.add('active');
+      // navegar a aventura usando solo clases (sin inline styles)
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-aventura').classList.add('active');
       document.querySelector('.bottom-nav').style.display = 'none';
+      setTimeout(iniciarMapaAventura, 300);
     }, 280);
   }, 2200);
 }
 
 function cerrarAventura() {
-  const avt = document.getElementById('screen-aventura');
-  avt.style.display = 'none';
-  avt.classList.remove('active');
+  document.getElementById('screen-aventura').classList.remove('active');
   document.querySelector('.bottom-nav').style.display = 'flex';
   irPantalla('inicio');
 }
