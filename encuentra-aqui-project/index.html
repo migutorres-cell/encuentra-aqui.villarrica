@@ -684,8 +684,77 @@
     border-radius: 16px; overflow: hidden;
     border: 1px solid rgba(255,107,0,0.2);
     box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    position: relative;
   }
-  #mapa-aventura { height: 260px; width: 100%; }
+  #mapa-aventura { height: 300px; width: 100%; }
+  .avt-mapa-ubicacion {
+    position: absolute; bottom: 12px; right: 12px; z-index: 999;
+    background: #1E1E28; border: 1px solid rgba(255,107,0,0.4);
+    border-radius: 10px; padding: 8px 12px;
+    font-size: 12px; font-weight: 700; color: #FF8C40;
+    cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .avt-mapa-ubicacion:active { transform: scale(0.95); }
+
+  /* BOTTOM SHEET DETALLE AVENTURA */
+  .avt-detalle-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 8500; display: none; align-items: flex-end; justify-content: center;
+  }
+  .avt-detalle-overlay.show { display: flex; }
+  .avt-detalle-sheet {
+    background: #1E1E28; border-radius: 22px 22px 0 0;
+    padding: 0 0 36px; width: 100%; max-width: 430px;
+    border-top: 1px solid rgba(255,107,0,0.2);
+    animation: slideUp 0.25s ease;
+  }
+  .avt-detalle-handle {
+    width: 40px; height: 4px;
+    background: rgba(255,107,0,0.3); border-radius: 4px;
+    margin: 12px auto 0;
+  }
+  .avt-detalle-hero {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 20px 0;
+  }
+  .avt-detalle-emoji {
+    width: 60px; height: 60px; border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,107,0,0.2), rgba(255,69,0,0.1));
+    border: 1px solid rgba(255,107,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; flex-shrink: 0;
+  }
+  .avt-detalle-info { flex: 1; }
+  .avt-detalle-nombre {
+    font-size: 17px; font-weight: 800; color: white; margin-bottom: 4px;
+  }
+  .avt-detalle-tag {
+    display: inline-block; background: rgba(255,107,0,0.15);
+    border: 1px solid rgba(255,107,0,0.3); border-radius: 20px;
+    padding: 3px 10px; font-size: 11px; font-weight: 700; color: #FF8C40;
+  }
+  .avt-detalle-desc {
+    margin: 14px 20px 0; font-size: 13px;
+    color: rgba(255,255,255,0.55); line-height: 1.6;
+  }
+  .avt-detalle-acciones {
+    display: flex; gap: 10px; padding: 18px 20px 0;
+  }
+  .avt-btn-llegar {
+    flex: 2; background: #FF6B00; color: white; border: none;
+    border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 800;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .avt-btn-llegar:active { transform: scale(0.97); background: #e05c00; }
+  .avt-btn-cerrar {
+    flex: 1; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6); border-radius: 12px;
+    padding: 14px; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .avt-btn-cerrar:active { transform: scale(0.97); }
   .avt-card.destacado .avt-card-emoji { font-size: 42px; }
   .avt-card.destacado .avt-card-nombre { font-size: 18px; }
   .avt-card.pronto { opacity: 0.45; cursor: default; }
@@ -1065,6 +1134,26 @@
   <div class="avt-seccion-titulo">📍 Mapa de actividades</div>
   <div class="avt-mapa-wrap">
     <div id="mapa-aventura"></div>
+    <button class="avt-mapa-ubicacion" onclick="centrarMapaAventura()">📍 Mi ubicación</button>
+  </div>
+
+  <!-- BOTTOM SHEET DETALLE ACTIVIDAD -->
+  <div class="avt-detalle-overlay" id="avt-detalle-overlay" onclick="cerrarDetalleAventura(event)">
+    <div class="avt-detalle-sheet">
+      <div class="avt-detalle-handle"></div>
+      <div class="avt-detalle-hero">
+        <div class="avt-detalle-emoji" id="avt-det-emoji">⛰️</div>
+        <div class="avt-detalle-info">
+          <div class="avt-detalle-nombre" id="avt-det-nombre">Actividad</div>
+          <span class="avt-detalle-tag" id="avt-det-tag">Aventura</span>
+        </div>
+      </div>
+      <div class="avt-detalle-desc" id="avt-det-desc"></div>
+      <div class="avt-detalle-acciones">
+        <button class="avt-btn-llegar" onclick="comoLlegarAventura()">🗺️ Cómo llegar</button>
+        <button class="avt-btn-cerrar" onclick="cerrarDetalleAventura()">Cerrar</button>
+      </div>
+    </div>
   </div>
 
   <div class="avt-proximamente">— más actividades pronto —</div>
@@ -2970,36 +3059,106 @@ function aplicarCiudad() {
 
 // ── MODO AVENTURA ─────────────────────────────────────────
 let mapaAventuraIniciado = false;
+let mapaAventuraObj = null;
+let marcadorUsuarioAvt = null;
+let aventuraSeleccionada = null;
 
 const PUNTOS_AVENTURA = [
-  { nombre: 'Trekking Volcán Villarrica', emoji: '🌋', coords: [-39.4197, -71.9404], desc: 'Ascenso al cráter activo' },
-  { nombre: 'Kayak Lago Villarrica',      emoji: '🛶', coords: [-39.2750, -72.0950], desc: 'Salida desde la costanera' },
-  { nombre: 'Paintball',                  emoji: '🎯', coords: [-39.2960, -72.2100], desc: 'Campos en el bosque' },
-  { nombre: 'Tirolesa',                   emoji: '🪂', coords: [-39.2820, -72.1850], desc: 'Sobre el río Turbio' },
-  { nombre: 'Mountain Bike',              emoji: '🚵', coords: [-39.3100, -72.1600], desc: 'Rutas ladera del volcán' },
-  { nombre: 'Rafting Río Trancura',       emoji: '🌊', coords: [-39.2700, -71.9800], desc: 'Rápidos clase III-IV' },
-  { nombre: 'Pádel',                      emoji: '🏸', coords: [-39.2870, -72.2200], desc: 'Canchas en la ciudad' },
-  { nombre: 'Mini Golf',                  emoji: '⛳', coords: [-39.2800, -72.2300], desc: 'Vista al lago Villarrica' },
+  { nombre: 'Trekking Volcán Villarrica', emoji: '🌋', tag: '⭐ Imperdible', coords: [-39.4197, -71.9404], desc: 'Sube hasta el cráter activo más accesible de Chile. Vista 360° garantizada.' },
+  { nombre: 'Kayak Lago Villarrica',      emoji: '🛶', tag: '💧 Acuático',   coords: [-39.2750, -72.0950], desc: 'Paddling con vista al volcán. Salida desde la costanera. Disponible todo el año.' },
+  { nombre: 'Paintball',                  emoji: '🎯', tag: '🔫 Extremo',    coords: [-39.2960, -72.2100], desc: 'Campos en el bosque nativo. Grupos desde 6 personas. Equipo incluido.' },
+  { nombre: 'Tirolesa',                   emoji: '🪂', tag: '⚡ Adrenalina', coords: [-39.2820, -72.1850], desc: 'Vuela sobre el bosque y el río Turbio. Una experiencia única.' },
+  { nombre: 'Mountain Bike',              emoji: '🚵', tag: '🏔️ Montaña',   coords: [-39.3100, -72.1600], desc: 'Rutas para todos los niveles por las laderas del volcán Villarrica.' },
+  { nombre: 'Rafting Río Trancura',       emoji: '🌊', tag: '🤿 Extremo',    coords: [-39.2700, -71.9800], desc: 'Rápidos clase III-IV en el río Trancura. Los mejores del sur de Chile.' },
+  { nombre: 'Pádel',                      emoji: '🏸', tag: '🎾 Deporte',    coords: [-39.2870, -72.2200], desc: 'Canchas de pádel disponibles en la ciudad. Alquiler de raquetas incluido.' },
+  { nombre: 'Mini Golf',                  emoji: '⛳', tag: '👨‍👩‍👧 Familiar', coords: [-39.2800, -72.2300], desc: 'Mini golf con vista al lago Villarrica. Ideal para toda la familia.' },
 ];
 
 function iniciarMapaAventura() {
   if (mapaAventuraIniciado) return;
   mapaAventuraIniciado = true;
 
-  const mapa = L.map('mapa-aventura', { zoomControl: true }).setView([-39.2845, -72.0500], 11);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(mapa);
+  const userLat = parseFloat(localStorage.getItem('userLat'));
+  const userLng = parseFloat(localStorage.getItem('userLng'));
+  const centro  = (userLat && userLng) ? [userLat, userLng] : [-39.2845, -72.0500];
 
+  mapaAventuraObj = L.map('mapa-aventura', { zoomControl: false }).setView(centro, 11);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 19
+  }).addTo(mapaAventuraObj);
+
+  L.control.zoom({ position: 'topright' }).addTo(mapaAventuraObj);
+
+  // Marcador de usuario
+  if (userLat && userLng) {
+    marcadorUsuarioAvt = L.circleMarker([userLat, userLng], {
+      radius: 10, fillColor: '#FF4444', color: 'white', weight: 3, fillOpacity: 1
+    }).addTo(mapaAventuraObj).bindPopup('📍 Tú estás aquí');
+  }
+
+  // Pins de actividades
   PUNTOS_AVENTURA.forEach(p => {
     const icono = L.divIcon({
-      html: `<div style="font-size:22px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5))">${p.emoji}</div>`,
-      className: '', iconAnchor: [12, 12]
+      html: `<div style="background:#1E1E28;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2.5px solid #FF6B00;box-shadow:0 3px 10px rgba(255,107,0,0.4);cursor:pointer">${p.emoji}</div>`,
+      className: '', iconSize: [44, 44], iconAnchor: [22, 22]
     });
     L.marker(p.coords, { icon: icono })
-      .addTo(mapa)
-      .bindPopup(`<b>${p.nombre}</b><br><span style="font-size:12px;color:#666">${p.desc}</span>`);
+      .addTo(mapaAventuraObj)
+      .on('click', () => abrirDetalleAventura(p));
   });
+
+  // GPS en tiempo real
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(pos => {
+      const lat = pos.coords.latitude, lng = pos.coords.longitude;
+      localStorage.setItem('userLat', lat);
+      localStorage.setItem('userLng', lng);
+      if (!marcadorUsuarioAvt) {
+        marcadorUsuarioAvt = L.circleMarker([lat, lng], {
+          radius: 10, fillColor: '#FF4444', color: 'white', weight: 3, fillOpacity: 1
+        }).addTo(mapaAventuraObj).bindPopup('📍 Tú estás aquí');
+      } else {
+        marcadorUsuarioAvt.setLatLng([lat, lng]);
+      }
+    }, () => {}, { enableHighAccuracy: true, maximumAge: 5000 });
+  }
+
+  setTimeout(() => mapaAventuraObj.invalidateSize(), 200);
+}
+
+function centrarMapaAventura() {
+  const lat = parseFloat(localStorage.getItem('userLat'));
+  const lng = parseFloat(localStorage.getItem('userLng'));
+  if (lat && lng && mapaAventuraObj) {
+    mapaAventuraObj.setView([lat, lng], 13);
+    if (marcadorUsuarioAvt) marcadorUsuarioAvt.openPopup();
+  } else {
+    mostrarToast('📍 Activa el GPS para ver tu ubicación');
+  }
+}
+
+function abrirDetalleAventura(p) {
+  aventuraSeleccionada = p;
+  document.getElementById('avt-det-emoji').textContent  = p.emoji;
+  document.getElementById('avt-det-nombre').textContent = p.nombre;
+  document.getElementById('avt-det-tag').textContent    = p.tag;
+  document.getElementById('avt-det-desc').textContent   = p.desc;
+  document.getElementById('avt-detalle-overlay').classList.add('show');
+}
+
+function cerrarDetalleAventura(e) {
+  if (e && e.target !== document.getElementById('avt-detalle-overlay')) return;
+  document.getElementById('avt-detalle-overlay').classList.remove('show');
+  aventuraSeleccionada = null;
+}
+
+function comoLlegarAventura() {
+  if (!aventuraSeleccionada) return;
+  const [lat, lng] = aventuraSeleccionada.coords;
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
+  mostrarToast('🗺️ Abriendo Google Maps...');
+  setTimeout(() => window.open(url, '_blank'), 400);
 }
 
 function abrirPortal() {
