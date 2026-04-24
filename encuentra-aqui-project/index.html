@@ -504,6 +504,189 @@
   .qr-box { width: 160px; height: 160px; background: var(--gris-bg); border-radius: var(--radio); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 70px; border: 1px solid var(--gris-borde); }
   .qr-timer { font-size: 22px; font-weight: 700; color: var(--verde); margin-bottom: 6px; }
   .qr-nota { font-size: 13px; color: var(--gris-texto); margin-bottom: 20px; line-height: 1.5; }
+
+  /* ═══════════════════════════════════════════════════════
+     PORTAL AVENTURA
+  ════════════════════════════════════════════════════════ */
+  .portal-overlay {
+    position: fixed; inset: 0; z-index: 8000;
+    background: #000;
+    display: none; align-items: center; justify-content: center;
+  }
+  .portal-overlay.show { display: flex; }
+
+  .portal-centro {
+    position: relative; width: 160px; height: 160px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .portal-emoji {
+    font-size: 52px; z-index: 10; position: relative;
+    animation: portalEmoji 0.8s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 20px #FF6B00);
+  }
+  @keyframes portalEmoji {
+    from { transform: scale(1) rotate(-5deg); filter: drop-shadow(0 0 14px #FF6B00); }
+    to   { transform: scale(1.15) rotate(5deg); filter: drop-shadow(0 0 30px #FFD700); }
+  }
+
+  .portal-anillo {
+    position: absolute; border-radius: 50%;
+    border-style: solid; border-color: transparent;
+  }
+  .portal-anillo-1 {
+    width: 120px; height: 120px; border-width: 3px;
+    border-top-color: #FF6B00; border-right-color: #FF6B00;
+    animation: girar1 1.2s linear infinite;
+  }
+  .portal-anillo-2 {
+    width: 160px; height: 160px; border-width: 3px;
+    border-top-color: #FFD700; border-left-color: #FFD700;
+    animation: girar2 0.9s linear infinite;
+  }
+  .portal-anillo-3 {
+    width: 200px; height: 200px; border-width: 2px;
+    border-bottom-color: #FF4500; border-right-color: #FF4500;
+    animation: girar1 0.6s linear infinite;
+  }
+  .portal-anillo-4 {
+    width: 244px; height: 244px; border-width: 2px;
+    border-top-color: rgba(255,107,0,0.4); border-left-color: rgba(255,215,0,0.4);
+    animation: girar2 0.4s linear infinite;
+  }
+  .portal-anillo-5 {
+    width: 290px; height: 290px; border-width: 1.5px;
+    border-top-color: rgba(255,255,255,0.25); border-right-color: rgba(255,107,0,0.25);
+    animation: girar1 0.3s linear infinite;
+  }
+  @keyframes girar1 { to { transform: rotate(360deg); } }
+  @keyframes girar2 { to { transform: rotate(-360deg); } }
+
+  .portal-glow {
+    position: absolute; width: 130px; height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,0,0.35) 0%, transparent 70%);
+    animation: portalGlow 1s ease-in-out infinite alternate;
+  }
+  @keyframes portalGlow {
+    from { transform: scale(0.9); opacity: 0.6; }
+    to   { transform: scale(1.3); opacity: 1; }
+  }
+
+  .portal-texto {
+    position: absolute; bottom: 18%; color: rgba(255,200,100,0.85);
+    font-size: 13px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; animation: parpadeo 1s ease-in-out infinite;
+  }
+  @keyframes parpadeo { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes parpadeoBtn { 0%,100%{transform:rotate(0deg) scale(1)} 50%{transform:rotate(180deg) scale(1.2)} }
+  @keyframes gradientMove { 0%{background-position:0%} 100%{background-position:200%} }
+
+  .portal-flash {
+    position: absolute; inset: 0;
+    background: white; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .portal-flash.show { opacity: 1; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN AVENTURA
+  ════════════════════════════════════════════════════════ */
+  #screen-aventura {
+    background: #0A0A0F;
+    min-height: 100vh;
+    padding-bottom: 100px;
+  }
+  .avt-header {
+    background: linear-gradient(160deg, #1a0a00 0%, #2d1200 50%, #1a0505 100%);
+    padding: 20px 20px 24px;
+    position: sticky; top: 0; z-index: 10;
+    border-bottom: 1px solid rgba(255,107,0,0.2);
+  }
+  .avt-header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .avt-volver {
+    background: rgba(255,255,255,0.08); border: none;
+    border-radius: 10px; padding: 8px 14px;
+    color: rgba(255,200,100,0.8); font-size: 13px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .avt-volver:active { transform: scale(0.95); background: rgba(255,255,255,0.15); }
+  .avt-titulo {
+    font-size: 22px; font-weight: 900; color: white;
+    letter-spacing: -0.5px;
+    text-shadow: 0 0 20px rgba(255,107,0,0.5);
+  }
+  .avt-titulo span { color: #FF6B00; }
+  .avt-subtitulo {
+    font-size: 12px; color: rgba(255,200,100,0.6);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .avt-badge-villarrica {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(255,107,0,0.15); border: 1px solid rgba(255,107,0,0.3);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 12px; color: #FF8C40; font-weight: 600;
+  }
+  .avt-bienvenida {
+    margin: 20px 16px 0;
+    background: linear-gradient(135deg, rgba(255,107,0,0.12), rgba(255,69,0,0.06));
+    border: 1px solid rgba(255,107,0,0.2);
+    border-radius: 16px; padding: 18px;
+  }
+  .avt-bienvenida-titulo {
+    font-size: 16px; font-weight: 800; color: white; margin-bottom: 6px;
+  }
+  .avt-bienvenida-desc {
+    font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6;
+  }
+  .avt-seccion-titulo {
+    font-size: 11px; font-weight: 700; color: rgba(255,107,0,0.7);
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 22px 16px 10px;
+  }
+  .avt-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 12px; padding: 0 16px;
+  }
+  .avt-card {
+    background: linear-gradient(135deg, #141414, #1a1208);
+    border: 1px solid rgba(255,107,0,0.15);
+    border-radius: 16px; padding: 18px 14px 16px;
+    cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .avt-card:active { transform: scale(0.96); border-color: rgba(255,107,0,0.5); }
+  .avt-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at top left, rgba(255,107,0,0.08), transparent 70%);
+  }
+  .avt-card-emoji { font-size: 34px; margin-bottom: 10px; display: block; }
+  .avt-card-nombre {
+    font-size: 14px; font-weight: 800; color: white; margin-bottom: 4px;
+  }
+  .avt-card-desc { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.4; }
+  .avt-card-tag {
+    display: inline-block; margin-top: 10px;
+    background: rgba(255,107,0,0.15); border: 1px solid rgba(255,107,0,0.3);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 10px; font-weight: 700; color: #FF8C40;
+  }
+  .avt-card.destacado {
+    grid-column: span 2;
+    background: linear-gradient(135deg, #1f0d00, #2d1800);
+    border-color: rgba(255,107,0,0.35);
+  }
+  .avt-card.destacado .avt-card-emoji { font-size: 42px; }
+  .avt-card.destacado .avt-card-nombre { font-size: 18px; }
+  .avt-card.pronto { opacity: 0.45; cursor: default; }
+  .avt-card.pronto:active { transform: none; }
+  .avt-proximamente {
+    margin: 12px 16px 0;
+    text-align: center; color: rgba(255,255,255,0.2);
+    font-size: 12px; letter-spacing: 1px;
+  }
 </style>
 
 <div id="splash">
@@ -752,7 +935,115 @@
       <div class="servicio-badges"><span class="badge badge-gratis">Gratis</span><span class="badge badge-abierto">Abierto</span></div>
     </div>
   </div>
+  <!-- BOTÓN MODO AVENTURA -->
+  <div style="padding:20px 16px 8px">
+    <button onclick="abrirPortal()" style="
+      width:100%; border:none; border-radius:18px; padding:0; cursor:pointer;
+      background:linear-gradient(135deg,#1a0800,#2d1500,#1a0505);
+      box-shadow:0 4px 24px rgba(255,107,0,0.25), 0 0 0 1px rgba(255,107,0,0.2);
+      overflow:hidden; position:relative; transition:all 0.2s;
+    " onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(255,107,0,0.15),transparent 60%)"></div>
+      <div style="display:flex;align-items:center;gap:14px;padding:18px 20px;position:relative">
+        <div style="font-size:36px;animation:flotarGrande 2s ease-in-out infinite;filter:drop-shadow(0 0 10px #FF6B00)">⛰️</div>
+        <div style="text-align:left;flex:1">
+          <div style="font-size:16px;font-weight:900;color:white;letter-spacing:-0.3px">Modo <span style="color:#FF6B00">Aventura</span></div>
+          <div style="font-size:12px;color:rgba(255,200,100,0.6);margin-top:2px">Trekking · Kayak · Paintball · y más</div>
+        </div>
+        <div style="font-size:22px;animation:parpadeoBtn 1.5s ease-in-out infinite">🌀</div>
+      </div>
+      <div style="height:3px;background:linear-gradient(90deg,#FF4500,#FF6B00,#FFD700,#FF6B00,#FF4500);background-size:200%;animation:gradientMove 2s linear infinite"></div>
+    </button>
+  </div>
+
   <div style="height:16px"></div>
+</div>
+
+<!-- PORTAL AVENTURA OVERLAY -->
+<div class="portal-overlay" id="portal-overlay">
+  <div class="portal-centro">
+    <div class="portal-glow"></div>
+    <div class="portal-anillo portal-anillo-5"></div>
+    <div class="portal-anillo portal-anillo-4"></div>
+    <div class="portal-anillo portal-anillo-3"></div>
+    <div class="portal-anillo portal-anillo-2"></div>
+    <div class="portal-anillo portal-anillo-1"></div>
+    <div class="portal-emoji">🌀</div>
+  </div>
+  <div class="portal-texto">Entrando al portal...</div>
+  <div class="portal-flash" id="portal-flash"></div>
+</div>
+
+<!-- PANTALLA AVENTURA -->
+<div id="screen-aventura" class="screen" style="display:none;flex-direction:column">
+  <div class="avt-header">
+    <div class="avt-header-top">
+      <button class="avt-volver" onclick="cerrarAventura()">← Volver</button>
+      <div class="avt-badge-villarrica">🌋 Villarrica</div>
+    </div>
+    <div class="avt-titulo">Modo <span>Aventura</span></div>
+    <div class="avt-subtitulo">Experiencias extremas · Naturaleza · Deporte</div>
+  </div>
+
+  <div class="avt-bienvenida">
+    <div class="avt-bienvenida-titulo">⛰️ Bienvenido al otro lado</div>
+    <div class="avt-bienvenida-desc">Aquí encontrarás las actividades y aventuras más épicas de Villarrica y sus alrededores. Todo curado, todo real.</div>
+  </div>
+
+  <div class="avt-seccion-titulo">Actividades destacadas</div>
+  <div class="avt-grid">
+    <div class="avt-card destacado" onclick="verAventura('trekking-volcan')">
+      <span class="avt-card-emoji">🌋</span>
+      <div class="avt-card-nombre">Trekking Volcán Villarrica</div>
+      <div class="avt-card-desc">Sube hasta el cráter activo más accesible de Chile. Vista 360° garantizada.</div>
+      <span class="avt-card-tag">⭐ Imperdible</span>
+    </div>
+    <div class="avt-card" onclick="verAventura('kayak')">
+      <span class="avt-card-emoji">🛶</span>
+      <div class="avt-card-nombre">Kayak Lago Villarrica</div>
+      <div class="avt-card-desc">Paddling con vista al volcán. Disponible todo el año.</div>
+      <span class="avt-card-tag">💧 Acuático</span>
+    </div>
+    <div class="avt-card" onclick="verAventura('paintball')">
+      <span class="avt-card-emoji">🎯</span>
+      <div class="avt-card-nombre">Paintball</div>
+      <div class="avt-card-desc">Campos en el bosque nativo. Grupos desde 6 personas.</div>
+      <span class="avt-card-tag">🔫 Extremo</span>
+    </div>
+    <div class="avt-card" onclick="verAventura('tirolesa')">
+      <span class="avt-card-emoji">🪂</span>
+      <div class="avt-card-nombre">Tirolesa</div>
+      <div class="avt-card-desc">Vuela sobre el bosque y el río Turbio.</div>
+      <span class="avt-card-tag">⚡ Adrenalina</span>
+    </div>
+    <div class="avt-card" onclick="verAventura('bicicleta')">
+      <span class="avt-card-emoji">🚵</span>
+      <div class="avt-card-nombre">Mountain Bike</div>
+      <div class="avt-card-desc">Rutas para todos los niveles por las laderas del volcán.</div>
+      <span class="avt-card-tag">🏔️ Montaña</span>
+    </div>
+    <div class="avt-card" onclick="verAventura('escalada')">
+      <span class="avt-card-emoji">🧗</span>
+      <div class="avt-card-nombre">Escalada</div>
+      <div class="avt-card-desc">Rocódromos naturales y artificiales en la zona.</div>
+      <span class="avt-card-tag">💪 Fuerza</span>
+    </div>
+    <div class="avt-card" onclick="verAventura('rafting')">
+      <span class="avt-card-emoji">🌊</span>
+      <div class="avt-card-nombre">Rafting</div>
+      <div class="avt-card-desc">Rápidos en el río Trancura, los mejores del sur.</div>
+      <span class="avt-card-tag">🤿 Extremo</span>
+    </div>
+    <div class="avt-card pronto">
+      <span class="avt-card-emoji">🏹</span>
+      <div class="avt-card-nombre">Tiro con arco</div>
+      <div class="avt-card-desc">Próximamente...</div>
+      <span class="avt-card-tag">🔜 Pronto</span>
+    </div>
+  </div>
+
+  <div class="avt-proximamente">— más actividades pronto —</div>
+  <div style="height:20px"></div>
 </div>
 
 <!-- PANTALLA MAPA -->
@@ -2651,6 +2942,63 @@ function aplicarCiudad() {
   const rankingMenuDesc = document.getElementById('ranking-menu-desc');
   if (rankingMenuDesc) rankingMenuDesc.textContent = 'Top 10 de ' + c.nombre;
 }
+
+// ── MODO AVENTURA ─────────────────────────────────────────
+function abrirPortal() {
+  const overlay = document.getElementById('portal-overlay');
+  const flash   = document.getElementById('portal-flash');
+  const rings   = overlay.querySelectorAll('.portal-anillo');
+
+  overlay.classList.add('show');
+
+  // acelerar anillos progresivamente
+  let velocidad = 1;
+  const acelerarInterval = setInterval(() => {
+    velocidad = Math.max(0.08, velocidad * 0.82);
+    rings.forEach((r, i) => {
+      const base = [1.2, 0.9, 0.6, 0.4, 0.3][i];
+      const nueva = Math.max(0.06, base * velocidad);
+      r.style.animationDuration = nueva + 's';
+    });
+  }, 120);
+
+  // destello y apertura
+  setTimeout(() => {
+    clearInterval(acelerarInterval);
+    flash.classList.add('show');
+    setTimeout(() => {
+      overlay.classList.remove('show');
+      flash.classList.remove('show');
+      // restaurar velocidad normal
+      rings.forEach((r, i) => {
+        const base = [1.2, 0.9, 0.6, 0.4, 0.3][i];
+        r.style.animationDuration = base + 's';
+      });
+      // mostrar pantalla aventura
+      document.querySelectorAll('.screen').forEach(s => {
+        s.style.display = 'none';
+        s.classList.remove('active');
+      });
+      const avt = document.getElementById('screen-aventura');
+      avt.style.display = 'flex';
+      avt.classList.add('active');
+      document.querySelector('.bottom-nav').style.display = 'none';
+    }, 280);
+  }, 2200);
+}
+
+function cerrarAventura() {
+  const avt = document.getElementById('screen-aventura');
+  avt.style.display = 'none';
+  avt.classList.remove('active');
+  document.querySelector('.bottom-nav').style.display = 'flex';
+  irPantalla('inicio');
+}
+
+function verAventura(id) {
+  mostrarToast('🏔️ Próximamente más detalles de esta actividad');
+}
+// ── FIN MODO AVENTURA ──────────────────────────────────────
 
 window.addEventListener('load', () => {
   aplicarCiudad();
