@@ -1217,95 +1217,18 @@
         <div class="emerg-card-fono rojo-txt">📞 130</div>
       </a>
 
-      <div class="emerg-seccion-titulo">🏥 Salud Local</div>
-      <a class="emerg-card" href="tel:452555293">
-        <div class="emerg-card-ico rojo">🏥</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Hospital de Villarrica — Urgencias</div>
-          <div class="emerg-card-detalle">San Martín 460 · Villarrica</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 255 5293</div>
-      </a>
-      <a class="emerg-card" href="tel:6003607777">
+      <!-- Salud Responde siempre visible -->
+      <a class="emerg-card" href="tel:6003607777" style="margin-top:8px">
         <div class="emerg-card-ico azul">💊</div>
         <div class="emerg-card-info">
           <div class="emerg-card-nombre">Salud Responde</div>
-          <div class="emerg-card-detalle">Orientación médica telefónica · 24 horas</div>
+          <div class="emerg-card-detalle">Orientación médica · 24 horas · Todo Chile</div>
         </div>
         <div class="emerg-card-fono">📞 600 360 7777</div>
       </a>
 
-      <div class="emerg-seccion-titulo">👮 Seguridad Local</div>
-      <a class="emerg-card" href="tel:452466334">
-        <div class="emerg-card-ico azul">👮</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Carabineros Pucón</div>
-          <div class="emerg-card-detalle">Comisaría local · Pucón</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 246 6334</div>
-      </a>
-      <a class="emerg-card" href="tel:452441969">
-        <div class="emerg-card-ico naranja">🚒</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Bomberos Pucón</div>
-          <div class="emerg-card-detalle">Cuerpo de Bomberos local · Pucón</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 244 1969</div>
-      </a>
-
-      <div class="emerg-seccion-titulo">🚕 Taxis — Villarrica</div>
-      <a class="emerg-card" href="tel:452414141">
-        <div class="emerg-card-ico gris">🚖</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Radio Taxi de Villarrica</div>
-          <div class="emerg-card-detalle">Av. Juan Antonio Ríos 815 · 24 horas</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 241 4141</div>
-      </a>
-      <a class="emerg-card" href="tel:452412020">
-        <div class="emerg-card-ico gris">🚖</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Radio Taxi Andes</div>
-          <div class="emerg-card-detalle">Sgto. Aldea 705 · Villarrica</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 241 2020</div>
-      </a>
-      <a class="emerg-card" href="tel:452702700">
-        <div class="emerg-card-ico gris">🚖</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Radio Taxi Premium</div>
-          <div class="emerg-card-detalle">Villarrica · 24 horas</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 270 2700</div>
-      </a>
-
-      <div class="emerg-seccion-titulo">🚕 Taxis — Pucón</div>
-      <a class="emerg-card" href="tel:452442323">
-        <div class="emerg-card-ico gris">🚖</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Radio Taxi Tour</div>
-          <div class="emerg-card-detalle">Palguin 615 · Pucón</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 244 2323</div>
-      </a>
-      <a class="emerg-card" href="tel:452442222">
-        <div class="emerg-card-ico gris">🚖</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Radio Taxi Ansorena</div>
-          <div class="emerg-card-detalle">Av. O'Higgins · Pucón</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 244 2222</div>
-      </a>
-
-      <div class="emerg-seccion-titulo">🚕 Taxis — Temuco</div>
-      <a class="emerg-card" href="tel:452232323">
-        <div class="emerg-card-ico gris">🚖</div>
-        <div class="emerg-card-info">
-          <div class="emerg-card-nombre">Radio Taxi Araucanía</div>
-          <div class="emerg-card-detalle">Andrés Bello 133 · Temuco · 24 horas</div>
-        </div>
-        <div class="emerg-card-fono">📞 45 223 2323</div>
-      </a>
+      <!-- Sección dinámica según ubicación -->
+      <div id="emerg-locales"></div>
 
     </div>
   </div>
@@ -3372,8 +3295,156 @@ function cargarClima() {
 }
 
 // ── EMERGENCIAS ────────────────────────────────────────────
+const CONTACTOS_LOCALES = {
+  villarrica: {
+    nombre: 'Villarrica', coords: [-39.2845, -72.2271],
+    salud: [
+      { nombre: 'Hospital de Villarrica — Urgencias', detalle: 'San Martín 460', fono: '452555293', display: '45 255 5293', ico: '🏥', color: 'rojo' },
+    ],
+    seguridad: [
+      { nombre: 'Carabineros Villarrica', detalle: 'Comisaría local', fono: '133', display: '133', ico: '👮', color: 'azul' },
+      { nombre: 'Bomberos Villarrica', detalle: 'Cuerpo de Bomberos', fono: '132', display: '132', ico: '🚒', color: 'naranja' },
+    ],
+    taxis: [
+      { nombre: 'Radio Taxi de Villarrica', detalle: 'Av. Juan Antonio Ríos 815 · 24h', fono: '452414141', display: '45 241 4141', ico: '🚖', color: 'gris' },
+      { nombre: 'Radio Taxi Andes',         detalle: 'Sgto. Aldea 705',                 fono: '452412020', display: '45 241 2020', ico: '🚖', color: 'gris' },
+      { nombre: 'Radio Taxi Premium',       detalle: '24 horas',                         fono: '452702700', display: '45 270 2700', ico: '🚖', color: 'gris' },
+    ]
+  },
+  pucon: {
+    nombre: 'Pucón', coords: [-39.2750, -71.9572],
+    salud: [
+      { nombre: 'Hospital Villarrica — Urgencias', detalle: 'San Martín 460, Villarrica', fono: '452555293', display: '45 255 5293', ico: '🏥', color: 'rojo' },
+    ],
+    seguridad: [
+      { nombre: 'Carabineros Pucón', detalle: 'Comisaría local', fono: '452466334', display: '45 246 6334', ico: '👮', color: 'azul' },
+      { nombre: 'Bomberos Pucón',    detalle: 'Cuerpo de Bomberos', fono: '452441969', display: '45 244 1969', ico: '🚒', color: 'naranja' },
+    ],
+    taxis: [
+      { nombre: 'Radio Taxi Tour',     detalle: 'Palguin 615 · Pucón',    fono: '452442323', display: '45 244 2323', ico: '🚖', color: 'gris' },
+      { nombre: 'Radio Taxi Ansorena', detalle: 'Av. O\'Higgins · Pucón', fono: '452442222', display: '45 244 2222', ico: '🚖', color: 'gris' },
+    ]
+  },
+  licanray: {
+    nombre: 'Licán Ray', coords: [-39.4850, -72.1650],
+    salud: [
+      { nombre: 'Hospital Villarrica — Urgencias', detalle: 'San Martín 460, Villarrica (referencia)', fono: '452555293', display: '45 255 5293', ico: '🏥', color: 'rojo' },
+    ],
+    seguridad: [
+      { nombre: 'Carabineros Licán Ray', detalle: 'Retén local', fono: '133', display: '133', ico: '👮', color: 'azul' },
+      { nombre: 'Bomberos',              detalle: 'Emergencias',  fono: '132', display: '132', ico: '🚒', color: 'naranja' },
+    ],
+    taxis: [
+      { nombre: 'Radio Taxi de Villarrica', detalle: '24 horas · Villarrica', fono: '452414141', display: '45 241 4141', ico: '🚖', color: 'gris' },
+    ]
+  },
+  curarrehue: {
+    nombre: 'Curarrehue', coords: [-39.3527, -71.5603],
+    salud: [
+      { nombre: 'Hospital Villarrica — Urgencias', detalle: 'San Martín 460, Villarrica (referencia)', fono: '452555293', display: '45 255 5293', ico: '🏥', color: 'rojo' },
+    ],
+    seguridad: [
+      { nombre: 'Carabineros Curarrehue', detalle: 'Retén local', fono: '133', display: '133', ico: '👮', color: 'azul' },
+      { nombre: 'Bomberos',               detalle: 'Emergencias', fono: '132', display: '132', ico: '🚒', color: 'naranja' },
+    ],
+    taxis: [
+      { nombre: 'Radio Taxi de Villarrica', detalle: '24 horas · Villarrica', fono: '452414141', display: '45 241 4141', ico: '🚖', color: 'gris' },
+    ]
+  },
+  temuco: {
+    nombre: 'Temuco', coords: [-38.7359, -72.5904],
+    salud: [
+      { nombre: 'Hospital Hernán Henríquez Aravena', detalle: 'Manuel Montt 115 · Temuco', fono: '452585800', display: '45 258 5800', ico: '🏥', color: 'rojo' },
+    ],
+    seguridad: [
+      { nombre: 'Carabineros Temuco', detalle: 'Primera Comisaría', fono: '452297700', display: '45 229 7700', ico: '👮', color: 'azul' },
+      { nombre: 'Bomberos Temuco',    detalle: 'Primera Compañía',  fono: '132',       display: '132',          ico: '🚒', color: 'naranja' },
+    ],
+    taxis: [
+      { nombre: 'Radio Taxi Araucanía', detalle: 'Andrés Bello 133 · 24 horas', fono: '452232323', display: '45 223 2323', ico: '🚖', color: 'gris' },
+    ]
+  },
+};
+
+function distanciaKm(lat1, lng1, lat2, lng2) {
+  const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLng = (lng2-lng1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.asin(Math.sqrt(a));
+}
+
+function detectarCiudadCercana(lat, lng) {
+  let ciudadMasCercana = null, minDist = Infinity;
+  for (const [key, ciudad] of Object.entries(CONTACTOS_LOCALES)) {
+    const d = distanciaKm(lat, lng, ciudad.coords[0], ciudad.coords[1]);
+    if (d < minDist) { minDist = d; ciudadMasCercana = key; }
+  }
+  return minDist <= 80 ? ciudadMasCercana : null;
+}
+
+function tarjetaContacto(c) {
+  return `<a class="emerg-card" href="tel:${c.fono}">
+    <div class="emerg-card-ico ${c.color}">${c.ico}</div>
+    <div class="emerg-card-info">
+      <div class="emerg-card-nombre">${c.nombre}</div>
+      <div class="emerg-card-detalle">${c.detalle}</div>
+    </div>
+    <div class="emerg-card-fono">📞 ${c.display}</div>
+  </a>`;
+}
+
+function renderContactosLocales(ciudadKey) {
+  const cont = document.getElementById('emerg-locales');
+  if (!cont) return;
+
+  if (!ciudadKey) {
+    const lat = parseFloat(localStorage.getItem('userLat')) || CIUDAD_ACTIVA.coords[0];
+    const lng = parseFloat(localStorage.getItem('userLng')) || CIUDAD_ACTIVA.coords[1];
+    const query = encodeURIComponent('hospital urgencias');
+    const taxiQ  = encodeURIComponent('radio taxi');
+    cont.innerHTML = `
+      <div class="emerg-seccion-titulo">📍 Servicios locales cerca de ti</div>
+      <div style="background:var(--verde-claro);border-radius:var(--radio-sm);padding:13px 14px;margin-bottom:8px;font-size:13px;color:var(--verde-oscuro);line-height:1.5">
+        Estás fuera de las zonas con datos cargados. Usa los botones para encontrar servicios de emergencia cerca de ti.
+      </div>
+      <a class="emerg-card" href="https://www.google.com/maps/search/${query}/@${lat},${lng},14z" target="_blank">
+        <div class="emerg-card-ico rojo">🏥</div>
+        <div class="emerg-card-info">
+          <div class="emerg-card-nombre">Buscar hospital más cercano</div>
+          <div class="emerg-card-detalle">Abre Google Maps con tu ubicación</div>
+        </div>
+        <div class="emerg-card-fono" style="font-size:12px;color:var(--verde)">Abrir →</div>
+      </a>
+      <a class="emerg-card" href="https://www.google.com/maps/search/${taxiQ}/@${lat},${lng},14z" target="_blank">
+        <div class="emerg-card-ico gris">🚖</div>
+        <div class="emerg-card-info">
+          <div class="emerg-card-nombre">Buscar taxi más cercano</div>
+          <div class="emerg-card-detalle">Abre Google Maps con tu ubicación</div>
+        </div>
+        <div class="emerg-card-fono" style="font-size:12px;color:var(--verde)">Abrir →</div>
+      </a>`;
+    return;
+  }
+
+  const ciudad = CONTACTOS_LOCALES[ciudadKey];
+  cont.innerHTML = `
+    <div class="emerg-seccion-titulo" style="display:flex;align-items:center;justify-content:space-between">
+      <span>📍 Zona detectada</span>
+      <span style="font-size:12px;background:var(--verde);color:white;padding:3px 10px;border-radius:20px;font-weight:700">${ciudad.nombre}</span>
+    </div>
+    <div class="emerg-seccion-titulo">🏥 Salud Local</div>
+    ${ciudad.salud.map(tarjetaContacto).join('')}
+    <div class="emerg-seccion-titulo">👮 Seguridad Local</div>
+    ${ciudad.seguridad.map(tarjetaContacto).join('')}
+    <div class="emerg-seccion-titulo">🚕 Taxis</div>
+    ${ciudad.taxis.map(tarjetaContacto).join('')}`;
+}
+
 function abrirEmergencias() {
   document.getElementById('emerg-overlay').classList.add('show');
+  const lat = parseFloat(localStorage.getItem('userLat'));
+  const lng = parseFloat(localStorage.getItem('userLng'));
+  const ciudad = (lat && lng) ? detectarCiudadCercana(lat, lng) : 'villarrica';
+  renderContactosLocales(ciudad);
 }
 function cerrarEmergencias(e) {
   if (e && e.target !== document.getElementById('emerg-overlay')) return;
