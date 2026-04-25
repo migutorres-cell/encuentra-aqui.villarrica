@@ -786,6 +786,43 @@
   }
   body.dark .clima-widget { background: linear-gradient(135deg, #0d3d60 0%, #0F6E56 100%); }
 
+  .clima-semana {
+    margin: 8px 16px 0;
+    display: flex; gap: 8px;
+    overflow-x: auto; padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .clima-semana::-webkit-scrollbar { display: none; }
+  .clima-dia-card {
+    flex-shrink: 0; min-width: 56px;
+    background: linear-gradient(160deg, rgba(26,111,168,0.1), rgba(29,158,117,0.06));
+    border: 1px solid rgba(29,158,117,0.18);
+    border-radius: 12px; padding: 10px 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: default; transition: all 0.15s;
+  }
+  .clima-dia-card.hoy {
+    background: linear-gradient(160deg, rgba(26,111,168,0.2), rgba(29,158,117,0.16));
+    border-color: rgba(29,158,117,0.45);
+    box-shadow: 0 2px 8px rgba(29,158,117,0.12);
+  }
+  body.dark .clima-dia-card {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(29,158,117,0.2);
+  }
+  body.dark .clima-dia-card.hoy {
+    background: rgba(29,158,117,0.15);
+    border-color: rgba(29,158,117,0.4);
+  }
+  .clima-dia-nombre {
+    font-size: 10px; font-weight: 700; color: var(--gris-texto);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .clima-dia-card.hoy .clima-dia-nombre { color: var(--verde); }
+  .clima-dia-emoji { font-size: 20px; line-height: 1; }
+  .clima-dia-max { font-size: 13px; font-weight: 800; color: var(--texto); }
+  .clima-dia-min { font-size: 10px; color: var(--gris-texto); }
+
   /* ═══════════════════════════════════════════════════════
      EMERGENCIAS
   ════════════════════════════════════════════════════════ */
@@ -1041,6 +1078,29 @@
     background: linear-gradient(135deg, #251508, #2e1c08);
     border-color: rgba(255,107,0,0.28);
   }
+  .avt-card.patrocinado {
+    border-color: rgba(245,197,25,0.45);
+    box-shadow: 0 0 0 1px rgba(245,197,25,0.15), 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .avt-badge-patrocinado {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    background: linear-gradient(135deg, #C8860A, #F5C519);
+    color: #1A0E00; font-size: 9px; font-weight: 900;
+    border-radius: 20px; padding: 3px 8px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .avt-det-precio {
+    margin: 10px 20px 0;
+    font-size: 13px; font-weight: 700; color: #FF8C40;
+    display: none;
+  }
+  .avt-btn-whatsapp {
+    flex: 2; background: #25D366; color: white; border: none;
+    border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 800;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .avt-btn-whatsapp:active { transform: scale(0.97); background: #1ab358; }
   /* MAPA AVENTURA */
   .avt-mapa-wrap {
     margin: 0 16px;
@@ -1335,6 +1395,7 @@
       <div class="clima-detalle-item" id="clima-humedad">💧 --%</div>
     </div>
   </div>
+  <div class="clima-semana" id="clima-semana"></div>
 
   <div class="stats-row">
     <div class="stat-chip"><div class="stat-num">47</div><div class="stat-label">Puntos</div></div>
@@ -1550,68 +1611,7 @@
   </div>
 
   <div class="avt-seccion-titulo">Actividades destacadas</div>
-  <div class="avt-grid">
-    <div class="avt-card destacado" onclick="verAventura('trekking-volcan')">
-      <span class="avt-card-emoji">🌋</span>
-      <div class="avt-card-nombre">Trekking Volcán Villarrica</div>
-      <div class="avt-card-desc">¡Atrévase a conquistar el cráter activo más accesible de Chile! Una vista de 360° que cambiará su perspectiva para siempre.</div>
-      <span class="avt-card-tag">⭐ Imperdible</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('kayak')">
-      <span class="avt-card-emoji">🛶</span>
-      <div class="avt-card-nombre">Kayak Lago Villarrica</div>
-      <div class="avt-card-desc">Palé sobre aguas cristalinas con el volcán como telón de fondo. Una experiencia serena y poderosa a la vez.</div>
-      <span class="avt-card-tag">💧 Acuático</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('paintball')">
-      <span class="avt-card-emoji">🎯</span>
-      <div class="avt-card-nombre">Paintball</div>
-      <div class="avt-card-desc">¡Desafíe a su grupo en el bosque nativo! Táctica, trabajo en equipo y mucha adrenalina en un entorno natural único.</div>
-      <span class="avt-card-tag">🔫 Adrenalina</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('parapente')">
-      <span class="avt-card-emoji">🪂</span>
-      <div class="avt-card-nombre">Parapente</div>
-      <div class="avt-card-desc">¡Vuele sobre el bosque y el río Turbio! Sienta la libertad absoluta en uno de los recorridos más emocionantes de la región.</div>
-      <span class="avt-card-tag">⚡ Emoción pura</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('bicicleta')">
-      <span class="avt-card-emoji">🚵</span>
-      <div class="avt-card-nombre">Mountain Bike</div>
-      <div class="avt-card-desc">Recorra las laderas del volcán en dos ruedas. Rutas para todos los niveles que lo llevarán a paisajes inolvidables.</div>
-      <span class="avt-card-tag">🏔️ Montaña</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('escalada')">
-      <span class="avt-card-emoji">🧗</span>
-      <div class="avt-card-nombre">Escalada</div>
-      <div class="avt-card-desc">¡Supere sus propios límites! Rocódromos naturales y artificiales para principiantes y expertos en un entorno de excepción.</div>
-      <span class="avt-card-tag">💪 Superación</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('rafting')">
-      <span class="avt-card-emoji">🌊</span>
-      <div class="avt-card-nombre">Rafting</div>
-      <div class="avt-card-desc">¡Conquiste los rápidos del río Trancura, considerados los mejores del sur de Chile! Una aventura que no olvidará jamás.</div>
-      <span class="avt-card-tag">🌊 Adrenalina</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('padel')">
-      <span class="avt-card-emoji">🏸</span>
-      <div class="avt-card-nombre">Pádel</div>
-      <div class="avt-card-desc">Disfrute del deporte de moda en canchas de primer nivel. Alquiler de raquetas incluido, solo traiga sus ganas de competir.</div>
-      <span class="avt-card-tag">🎾 Deporte</span>
-    </div>
-    <div class="avt-card" onclick="verAventura('minigolf')">
-      <span class="avt-card-emoji">⛳</span>
-      <div class="avt-card-nombre">Mini Golf</div>
-      <div class="avt-card-desc">Un clásico con vista privilegiada al lago Villarrica. La actividad perfecta para compartir con toda la familia y crear momentos especiales.</div>
-      <span class="avt-card-tag">👨‍👩‍👧 Familiar</span>
-    </div>
-    <div class="avt-card pronto">
-      <span class="avt-card-emoji">🏹</span>
-      <div class="avt-card-nombre">Tiro con arco</div>
-      <div class="avt-card-desc">Próximamente disponible...</div>
-      <span class="avt-card-tag">🔜 Muy pronto</span>
-    </div>
-  </div>
+  <div class="avt-grid" id="avt-grid"></div>
 
   <div class="avt-seccion-titulo">📍 Mapa de actividades</div>
   <div class="avt-mapa-wrap">
@@ -1631,7 +1631,8 @@
         </div>
       </div>
       <div class="avt-detalle-desc" id="avt-det-desc"></div>
-      <div class="avt-detalle-acciones">
+      <div class="avt-det-precio" id="avt-det-precio"></div>
+      <div class="avt-detalle-acciones" id="avt-det-acciones">
         <button class="avt-btn-llegar" onclick="comoLlegarAventura()">🗺️ Cómo llegar</button>
         <button class="avt-btn-cerrar" onclick="cerrarDetalleAventura()">Cerrar</button>
       </div>
@@ -3727,7 +3728,11 @@ const WMO_DESC = {
 function cargarClima() {
   const lat = parseFloat(localStorage.getItem('userLat')) || CIUDAD_ACTIVA.coords[0];
   const lng = parseFloat(localStorage.getItem('userLng')) || CIUDAD_ACTIVA.coords[1];
-  fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code&timezone=America%2FSantiago`)
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}`
+    + `&current=temperature_2m,wind_speed_10m,relative_humidity_2m,weather_code`
+    + `&daily=temperature_2m_max,temperature_2m_min,weather_code`
+    + `&timezone=America%2FSantiago&forecast_days=7`;
+  fetch(url)
     .then(r => r.json())
     .then(data => {
       const c = data.current;
@@ -3737,6 +3742,27 @@ function cargarClima() {
       document.getElementById('clima-desc').textContent   = WMO_DESC[code] || 'Sin datos';
       document.getElementById('clima-viento').textContent = '💨 ' + Math.round(c.wind_speed_10m) + ' km/h';
       document.getElementById('clima-humedad').textContent= '💧 ' + c.relative_humidity_2m + '%';
+
+      // Pronóstico 7 días
+      if (data.daily) {
+        const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+        const contenedor = document.getElementById('clima-semana');
+        contenedor.innerHTML = '';
+        data.daily.time.forEach((fecha, i) => {
+          const d = new Date(fecha + 'T12:00:00');
+          const nombre = i === 0 ? 'Hoy' : dias[d.getDay()];
+          const emoji  = WMO_EMOJI[data.daily.weather_code[i]] || '🌡️';
+          const max    = Math.round(data.daily.temperature_2m_max[i]);
+          const min    = Math.round(data.daily.temperature_2m_min[i]);
+          contenedor.innerHTML += `
+            <div class="clima-dia-card ${i === 0 ? 'hoy' : ''}">
+              <div class="clima-dia-nombre">${nombre}</div>
+              <div class="clima-dia-emoji">${emoji}</div>
+              <div class="clima-dia-max">${max}°</div>
+              <div class="clima-dia-min">${min}°</div>
+            </div>`;
+        });
+      }
     })
     .catch(() => {
       document.getElementById('clima-desc').textContent = 'Sin conexión al clima';
@@ -3933,19 +3959,28 @@ const PUNTOS_AVENTURA = [
     nombre: 'Rafting Río Trancura – Baum Adventure',
     emoji: '🌊', tag: '🌊 Rafting · Pucón',
     coords: [-39.2180, -71.8820],
-    desc: 'Rápidos clase III y IV a 15 km de Pucón camino a Caburgua. Empresa Baum Adventure, O\'Higgins 461, Pucón. ¡Una aventura que no olvidará jamás!'
+    desc: 'Rápidos clase III y IV a 15 km de Pucón camino a Caburgua. Empresa Baum Adventure, O\'Higgins 461, Pucón. ¡Una aventura que no olvidará jamás!',
+    patrocinado: true,
+    precio: 'Desde $25.000 por persona',
+    whatsapp: '56945000001' // reemplazar con número real del operador
   },
   {
     nombre: 'Kayak Pucón – Río Trancura',
     emoji: '🛶', tag: '💧 Kayak · Pucón',
     coords: [-39.2750, -71.9572],
-    desc: 'Cursos de kayak básico, intermedio y avanzado en el río Trancura y Liucura. Empresa Kayak Pucón, en el centro de Pucón.'
+    desc: 'Cursos de kayak básico, intermedio y avanzado en el río Trancura y Liucura. Empresa Kayak Pucón, en el centro de Pucón.',
+    patrocinado: true,
+    precio: 'Desde $20.000 por persona',
+    whatsapp: '56945000002' // reemplazar con número real del operador
   },
   {
     nombre: 'Bosque Aventura – Paintball & Canopy',
     emoji: '🎯', tag: '🔫 Paintball · Pucón',
     coords: [-39.2420, -71.9230],
-    desc: '¡Desafíe a su grupo en la Isla Bosque Aventura! Ingreso por puente colgante de 70 m sobre el río Trancura. Km 10 camino a Caburgua, sector Metreñehue.'
+    desc: '¡Desafíe a su grupo en la Isla Bosque Aventura! Ingreso por puente colgante de 70 m sobre el río Trancura. Km 10 camino a Caburgua, sector Metreñehue.',
+    patrocinado: true,
+    precio: 'Desde $18.000 por persona',
+    whatsapp: '56945000003' // reemplazar con número real del operador
   },
   {
     nombre: 'Parapente Villarrica – La Barda',
@@ -4067,12 +4102,66 @@ function centrarMapaAventura() {
   }
 }
 
+function renderGridAventura() {
+  const grid = document.getElementById('avt-grid');
+  if (!grid) return;
+  const volcan    = PUNTOS_AVENTURA.find(p => p.emoji === '🌋');
+  const sponsor   = PUNTOS_AVENTURA.filter(p => p.patrocinado && p !== volcan);
+  const resto     = PUNTOS_AVENTURA.filter(p => !p.patrocinado && p !== volcan);
+  const orden     = [volcan, ...sponsor, ...resto].filter(Boolean);
+  grid.innerHTML  = orden.map(p => {
+    const idx     = PUNTOS_AVENTURA.indexOf(p);
+    const esVolcan = p === volcan;
+    const badge   = p.patrocinado
+      ? `<div class="avt-badge-patrocinado">⭐ Destacado</div>` : '';
+    const resumen = p.desc.length > 75 ? p.desc.substring(0, 75) + '…' : p.desc;
+    return `<div class="avt-card ${esVolcan ? 'destacado' : ''} ${p.patrocinado ? 'patrocinado' : ''}"
+      onclick="abrirDetalleAventura(PUNTOS_AVENTURA[${idx}])">
+      ${badge}
+      <span class="avt-card-emoji">${p.emoji}</span>
+      <div class="avt-card-nombre">${p.nombre}</div>
+      <div class="avt-card-desc">${resumen}</div>
+      <span class="avt-card-tag">${p.tag}</span>
+    </div>`;
+  }).join('');
+  grid.innerHTML += `<div class="avt-card pronto">
+    <span class="avt-card-emoji">🏹</span>
+    <div class="avt-card-nombre">Tiro con arco</div>
+    <div class="avt-card-desc">Próximamente disponible...</div>
+    <span class="avt-card-tag">🔜 Muy pronto</span>
+  </div>`;
+}
+
 function abrirDetalleAventura(p) {
   aventuraSeleccionada = p;
   document.getElementById('avt-det-emoji').textContent  = p.emoji;
   document.getElementById('avt-det-nombre').textContent = p.nombre;
   document.getElementById('avt-det-tag').textContent    = p.tag;
   document.getElementById('avt-det-desc').textContent   = p.desc;
+
+  const precioEl = document.getElementById('avt-det-precio');
+  if (p.precio) {
+    precioEl.textContent = '💰 ' + p.precio;
+    precioEl.style.display = 'block';
+  } else {
+    precioEl.style.display = 'none';
+  }
+
+  const accionesEl = document.getElementById('avt-det-acciones');
+  if (p.whatsapp) {
+    const msg = encodeURIComponent(`Hola, me interesa la actividad "${p.nombre}". Los contacto desde la app Encuentra Aquí.`);
+    accionesEl.innerHTML = `
+      <button class="avt-btn-whatsapp" onclick="window.open('https://wa.me/${p.whatsapp}?text=${msg}','_blank')">
+        📲 Reservar por WhatsApp
+      </button>
+      <button class="avt-btn-llegar" onclick="comoLlegarAventura()" style="flex:1">🗺️</button>
+      <button class="avt-btn-cerrar" onclick="cerrarDetalleAventura()" style="flex:1">✕</button>`;
+  } else {
+    accionesEl.innerHTML = `
+      <button class="avt-btn-llegar" onclick="comoLlegarAventura()">🗺️ Cómo llegar</button>
+      <button class="avt-btn-cerrar" onclick="cerrarDetalleAventura()">Cerrar</button>`;
+  }
+
   document.getElementById('avt-detalle-overlay').classList.add('show');
 }
 
@@ -4119,6 +4208,7 @@ function abrirPortal() {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('screen-aventura').classList.add('active');
       document.querySelector('.bottom-nav').style.display = 'none';
+      renderGridAventura();
       setTimeout(iniciarMapaAventura, 300);
     }, 280);
   }, 2200);
@@ -4130,9 +4220,6 @@ function cerrarAventura() {
   irPantalla('inicio');
 }
 
-function verAventura(id) {
-  mostrarToast('🏔️ Próximamente más detalles de esta actividad');
-}
 // ── FIN MODO AVENTURA ──────────────────────────────────────
 
 // ── MODO GASTRONOMÍA ───────────────────────────────────────
