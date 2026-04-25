@@ -506,6 +506,251 @@
   .qr-nota { font-size: 13px; color: var(--gris-texto); margin-bottom: 20px; line-height: 1.5; }
 
   /* ═══════════════════════════════════════════════════════
+     MODO GASTRONOMÍA — ANIMACIÓN PLATO
+  ════════════════════════════════════════════════════════ */
+  .gastro-anim-overlay {
+    position: fixed; inset: 0; z-index: 8000;
+    background: #1A0800;
+    display: none; align-items: center; justify-content: center;
+  }
+  .gastro-anim-overlay.show { display: flex; }
+  .gastro-anim-centro {
+    position: relative; display: flex;
+    align-items: center; justify-content: center;
+    width: 200px; height: 200px;
+  }
+  .gastro-plato {
+    font-size: 72px; z-index: 10; position: relative;
+    animation: platoBounce 1s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 18px rgba(232,160,32,0.6));
+  }
+  @keyframes platoBounce {
+    from { transform: scale(1) rotate(-4deg); filter: drop-shadow(0 0 14px rgba(232,160,32,0.5)); }
+    to   { transform: scale(1.1) rotate(4deg); filter: drop-shadow(0 0 28px rgba(255,200,60,0.9)); }
+  }
+  .gastro-vapor {
+    position: absolute; bottom: 60%; left: 50%;
+    display: flex; gap: 10px; transform: translateX(-50%);
+  }
+  .gastro-vapor-linea {
+    width: 4px; border-radius: 4px;
+    background: rgba(255,220,150,0.7);
+    animation: vapor 1.2s ease-in-out infinite;
+  }
+  .gastro-vapor-linea:nth-child(1) { height: 20px; animation-delay: 0s; }
+  .gastro-vapor-linea:nth-child(2) { height: 30px; animation-delay: 0.2s; }
+  .gastro-vapor-linea:nth-child(3) { height: 22px; animation-delay: 0.4s; }
+  @keyframes vapor {
+    0%   { transform: translateY(0) scaleX(1); opacity: 0.8; }
+    50%  { transform: translateY(-20px) scaleX(1.3); opacity: 0.5; }
+    100% { transform: translateY(-40px) scaleX(0.7); opacity: 0; }
+  }
+  .gastro-anillo {
+    position: absolute; border-radius: 50%;
+    border-style: solid; border-color: transparent;
+  }
+  .gastro-anillo-1 {
+    width: 110px; height: 110px; border-width: 3px;
+    border-top-color: #E8A020; border-right-color: #E8A020;
+    animation: girar1 1.4s linear infinite;
+  }
+  .gastro-anillo-2 {
+    width: 150px; height: 150px; border-width: 2.5px;
+    border-top-color: #C4622D; border-left-color: #C4622D;
+    animation: girar2 1s linear infinite;
+  }
+  .gastro-anillo-3 {
+    width: 190px; height: 190px; border-width: 2px;
+    border-bottom-color: rgba(232,160,32,0.5); border-right-color: rgba(232,160,32,0.3);
+    animation: girar1 0.7s linear infinite;
+  }
+  .gastro-glow {
+    position: absolute; width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,160,32,0.25) 0%, transparent 70%);
+    animation: portalGlow 1.2s ease-in-out infinite alternate;
+  }
+  .gastro-texto {
+    position: absolute; bottom: 14%;
+    color: rgba(255,210,120,0.85);
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    animation: parpadeo 1s ease-in-out infinite;
+  }
+  .gastro-flash {
+    position: absolute; inset: 0;
+    background: #FFF8F0; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .gastro-flash.show { opacity: 1; }
+
+  /* ═══════════════════════════════════════════════════════
+     SCREEN GASTRONOMÍA
+  ════════════════════════════════════════════════════════ */
+  #screen-gastro {
+    background: #FFF8F2;
+    min-height: 100vh; padding-bottom: 100px;
+  }
+  body.dark #screen-gastro { background: #1A1008; }
+
+  .gastro-header {
+    background: linear-gradient(160deg, #7B1A1A 0%, #C4622D 60%, #E8A020 100%);
+    padding: 20px 20px 24px;
+    position: sticky; top: 0; z-index: 10;
+    border-bottom: 1px solid rgba(232,160,32,0.3);
+  }
+  .gastro-header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .gastro-volver {
+    background: rgba(255,255,255,0.15); border: none;
+    border-radius: 10px; padding: 8px 14px;
+    color: rgba(255,240,200,0.9); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .gastro-volver:active { transform: scale(0.95); }
+  .gastro-titulo {
+    font-size: 22px; font-weight: 900; color: white;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .gastro-titulo span { color: #FFD878; }
+  .gastro-subtitulo {
+    font-size: 12px; color: rgba(255,230,180,0.75);
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  .gastro-badge {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 12px; color: #FFE8B0; font-weight: 600;
+  }
+  .gastro-bienvenida {
+    margin: 18px 16px 0;
+    background: linear-gradient(135deg, rgba(196,98,45,0.1), rgba(232,160,32,0.06));
+    border: 1px solid rgba(196,98,45,0.2);
+    border-radius: 16px; padding: 16px;
+  }
+  body.dark .gastro-bienvenida { background: rgba(196,98,45,0.08); }
+  .gastro-bienvenida-titulo {
+    font-size: 15px; font-weight: 800; color: #7B1A1A; margin-bottom: 5px;
+  }
+  body.dark .gastro-bienvenida-titulo { color: #E8A020; }
+  .gastro-bienvenida-desc {
+    font-size: 13px; color: #6B5040; line-height: 1.6;
+  }
+  body.dark .gastro-bienvenida-desc { color: rgba(255,220,160,0.6); }
+  .gastro-seccion-titulo {
+    font-size: 11px; font-weight: 700; color: #C4622D;
+    text-transform: uppercase; letter-spacing: 1.5px;
+    padding: 20px 16px 10px;
+  }
+  body.dark .gastro-seccion-titulo { color: #E8A020; }
+  .gastro-grid {
+    display: grid; grid-template-columns: repeat(2,1fr);
+    gap: 12px; padding: 0 16px;
+  }
+  .gastro-card {
+    background: white; border: 1px solid rgba(196,98,45,0.12);
+    border-radius: 16px; padding: 16px 14px;
+    cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  body.dark .gastro-card { background: #261810; border-color: rgba(232,160,32,0.15); }
+  .gastro-card:active { transform: scale(0.96); border-color: rgba(196,98,45,0.4); }
+  .gastro-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at top left, rgba(232,160,32,0.06), transparent 65%);
+  }
+  .gastro-card.destcado { grid-column: span 2; }
+  .gastro-card-emoji { font-size: 32px; margin-bottom: 8px; display: block; }
+  .gastro-card.destcado .gastro-card-emoji { font-size: 40px; }
+  .gastro-card-nombre {
+    font-size: 13px; font-weight: 800; color: #3A1A08; margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  body.dark .gastro-card-nombre { color: #FFE8C0; }
+  .gastro-card-desc { font-size: 11px; color: #8B6050; line-height: 1.4; }
+  body.dark .gastro-card-desc { color: rgba(255,200,140,0.5); }
+  .gastro-card-tag {
+    display: inline-block; margin-top: 10px;
+    background: rgba(196,98,45,0.12); border: 1px solid rgba(196,98,45,0.25);
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 10px; font-weight: 700; color: #C4622D;
+  }
+  body.dark .gastro-card-tag { background: rgba(232,160,32,0.12); color: #E8A020; border-color: rgba(232,160,32,0.25); }
+  .gastro-mapa-wrap {
+    margin: 0 16px; border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(196,98,45,0.25);
+    box-shadow: 0 4px 20px rgba(196,98,45,0.12);
+    position: relative;
+  }
+  #mapa-gastro { height: 280px; width: 100%; }
+  .gastro-mapa-ubicacion {
+    position: absolute; bottom: 12px; right: 12px; z-index: 999;
+    background: white; border: 1px solid rgba(196,98,45,0.35);
+    border-radius: 10px; padding: 8px 12px;
+    font-size: 12px; font-weight: 700; color: #C4622D;
+    cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    display: flex; align-items: center; gap: 6px;
+  }
+  body.dark .gastro-mapa-ubicacion { background: #261810; color: #E8A020; }
+  .gastro-mapa-ubicacion:active { transform: scale(0.95); }
+
+  /* BOTTOM SHEET DETALLE GASTRO */
+  .gastro-det-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 8500; display: none; align-items: flex-end; justify-content: center;
+  }
+  .gastro-det-overlay.show { display: flex; }
+  .gastro-det-sheet {
+    background: white; border-radius: 22px 22px 0 0;
+    padding: 0 0 36px; width: 100%; max-width: 430px;
+    border-top: 3px solid #E8A020;
+    animation: slideUp 0.25s ease;
+  }
+  body.dark .gastro-det-sheet { background: #261810; }
+  .gastro-det-handle {
+    width: 40px; height: 4px;
+    background: rgba(196,98,45,0.25); border-radius: 4px;
+    margin: 12px auto 0;
+  }
+  .gastro-det-hero {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 20px 0;
+  }
+  .gastro-det-emoji {
+    width: 58px; height: 58px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(232,160,32,0.15), rgba(196,98,45,0.1));
+    border: 1px solid rgba(196,98,45,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+  }
+  .gastro-det-nombre { font-size: 16px; font-weight: 800; color: #3A1A08; margin-bottom: 4px; }
+  body.dark .gastro-det-nombre { color: #FFE8C0; }
+  .gastro-det-tag {
+    display: inline-block; background: rgba(196,98,45,0.1);
+    border: 1px solid rgba(196,98,45,0.25); border-radius: 20px;
+    padding: 3px 10px; font-size: 11px; font-weight: 700; color: #C4622D;
+  }
+  .gastro-det-desc { margin: 14px 20px 0; font-size: 13px; color: #6B5040; line-height: 1.6; }
+  body.dark .gastro-det-desc { color: rgba(255,200,140,0.6); }
+  .gastro-det-acciones { display: flex; gap: 10px; padding: 16px 20px 0; }
+  .gastro-btn-llegar {
+    flex: 2; background: #C4622D; color: white; border: none;
+    border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 800;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .gastro-btn-llegar:active { transform: scale(0.97); background: #a8501f; }
+  .gastro-btn-cerrar {
+    flex: 1; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.08);
+    color: #8B6050; border-radius: 12px; padding: 14px;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  }
+  body.dark .gastro-btn-cerrar { background: rgba(255,255,255,0.06); color: rgba(255,200,140,0.6); border-color: rgba(255,255,255,0.08); }
+  .gastro-btn-cerrar:active { transform: scale(0.97); }
+
+  /* ═══════════════════════════════════════════════════════
      CLIMA WIDGET
   ════════════════════════════════════════════════════════ */
   .clima-widget {
@@ -1166,6 +1411,27 @@
     </button>
   </div>
 
+  <!-- BOTÓN MODO GASTRONOMÍA -->
+  <div style="padding:4px 16px 20px">
+    <button onclick="abrirGastro()" style="
+      width:100%; border:none; border-radius:18px; padding:0; cursor:pointer;
+      background:linear-gradient(135deg,#1a0800,#2d1200,#1c0c00);
+      box-shadow:0 4px 24px rgba(196,98,45,0.28), 0 0 0 1px rgba(220,140,50,0.22);
+      overflow:hidden; position:relative; transition:all 0.2s;
+    " onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(0.97)'" ontouchend="this.style.transform='scale(1)'">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 50%,rgba(232,160,32,0.14),transparent 60%)"></div>
+      <div style="display:flex;align-items:center;gap:14px;padding:18px 20px;position:relative">
+        <div style="font-size:36px;animation:platoBounce 2s ease-in-out infinite;filter:drop-shadow(0 0 10px rgba(232,160,32,0.7))">🍽️</div>
+        <div style="text-align:left;flex:1">
+          <div style="font-size:16px;font-weight:900;color:white;letter-spacing:-0.3px">Gastronomía <span style="color:#E8A020">Local</span></div>
+          <div style="font-size:12px;color:rgba(255,200,120,0.6);margin-top:2px">Mercados · Ferias · Cocina Mapuche · Tradición</div>
+        </div>
+        <div style="font-size:22px;animation:parpadeoBtn 1.8s ease-in-out infinite">🌶️</div>
+      </div>
+      <div style="height:3px;background:linear-gradient(90deg,#7B1A1A,#C4622D,#E8A020,#C4622D,#7B1A1A);background-size:200%;animation:gradientMove 2s linear infinite"></div>
+    </button>
+  </div>
+
   <div style="height:16px"></div>
 </div>
 
@@ -1247,6 +1513,24 @@
   </div>
   <div class="portal-texto">Entrando al portal...</div>
   <div class="portal-flash" id="portal-flash"></div>
+</div>
+
+<!-- ANIMACIÓN ENTRADA GASTRONOMÍA -->
+<div class="gastro-anim-overlay" id="gastro-anim-overlay">
+  <div class="gastro-anim-centro">
+    <div class="gastro-glow"></div>
+    <div class="gastro-anillo gastro-anillo-3"></div>
+    <div class="gastro-anillo gastro-anillo-2"></div>
+    <div class="gastro-anillo gastro-anillo-1"></div>
+    <div class="gastro-vapor">
+      <div class="gastro-vapor-linea"></div>
+      <div class="gastro-vapor-linea"></div>
+      <div class="gastro-vapor-linea"></div>
+    </div>
+    <div class="gastro-plato">🍽️</div>
+  </div>
+  <div class="gastro-texto">Descubriendo sabores...</div>
+  <div class="gastro-flash" id="gastro-flash"></div>
 </div>
 
 <!-- PANTALLA AVENTURA -->
@@ -1355,6 +1639,119 @@
   </div>
 
   <div class="avt-proximamente">— más actividades pronto —</div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- PANTALLA GASTRONOMÍA -->
+<div id="screen-gastro" class="screen">
+  <div class="gastro-header">
+    <div class="gastro-header-top">
+      <button class="gastro-volver" onclick="cerrarGastro()">← Volver</button>
+      <div class="gastro-badge">🍽️ Villarrica</div>
+    </div>
+    <div class="gastro-titulo">Gastronomía <span>Local</span></div>
+    <div class="gastro-subtitulo">Sabores auténticos · Cultura · Tradición mapuche</div>
+  </div>
+
+  <div class="gastro-bienvenida">
+    <div class="gastro-bienvenida-titulo">🌿 La riqueza cultural en cada bocado</div>
+    <div class="gastro-bienvenida-desc">Descubra mercados artesanales, ferias costumbristas y espacios que celebran la gastronomía local y la tradición mapuche. Una experiencia cultural única de la Región de La Araucanía.</div>
+  </div>
+
+  <div class="gastro-seccion-titulo">Espacios y galerías gastronómicas</div>
+  <div class="gastro-grid">
+
+    <div class="gastro-card destcado" onclick="abrirDetalleGastro(0)">
+      <span class="gastro-card-emoji">🏪</span>
+      <div class="gastro-card-nombre">Mercado Fritz</div>
+      <div class="gastro-card-desc">El corazón gastronómico de Villarrica. Carnes ahumadas, quesos artesanales y cocina chilena tradicional en un ambiente único.</div>
+      <span class="gastro-card-tag">⭐ Imperdible · Villarrica</span>
+    </div>
+
+    <div class="gastro-card" onclick="abrirDetalleGastro(1)">
+      <span class="gastro-card-emoji">🌿</span>
+      <div class="gastro-card-nombre">Ruka Newen</div>
+      <div class="gastro-card-desc">Cocina mapuche auténtica: milcao, muday y catutos ancestrales.</div>
+      <span class="gastro-card-tag">🫕 Mapuche · Villarrica</span>
+    </div>
+
+    <div class="gastro-card" onclick="abrirDetalleGastro(2)">
+      <span class="gastro-card-emoji">🎪</span>
+      <div class="gastro-card-nombre">Feria Artesanal Villarrica</div>
+      <div class="gastro-card-desc">Frente al lago, tejidos mapuches, cerámica y alimentos típicos de la zona.</div>
+      <span class="gastro-card-tag">🛍️ Feria · Villarrica</span>
+    </div>
+
+    <div class="gastro-card" onclick="abrirDetalleGastro(3)">
+      <span class="gastro-card-emoji">🌾</span>
+      <div class="gastro-card-nombre">Tradiciones Llau Llau</div>
+      <div class="gastro-card-desc">Muestra de tradiciones campesinas con gastronomía y artesanía local en temporada estival.</div>
+      <span class="gastro-card-tag">🎪 Ruta Villarrica</span>
+    </div>
+
+    <div class="gastro-card" onclick="abrirDetalleGastro(4)">
+      <span class="gastro-card-emoji">🫕</span>
+      <div class="gastro-card-nombre">Feria Huincacara</div>
+      <div class="gastro-card-desc">Asados al palo, empanadas criollas y sopaipillas. Gastronomía chilena en su máxima expresión.</div>
+      <span class="gastro-card-tag">🔥 Feria · Licán Ray</span>
+    </div>
+
+    <div class="gastro-card" onclick="abrirDetalleGastro(5)">
+      <span class="gastro-card-emoji">🔥</span>
+      <div class="gastro-card-nombre">Feria Escorial</div>
+      <div class="gastro-card-desc">La feria más popular del sector de Licán Ray con gastronomía y ambiente festivo.</div>
+      <span class="gastro-card-tag">🎪 Feria · Licán Ray</span>
+    </div>
+
+    <div class="gastro-card" onclick="abrirDetalleGastro(6)">
+      <span class="gastro-card-emoji">🍽️</span>
+      <div class="gastro-card-nombre">Trawen</div>
+      <div class="gastro-card-desc">Cocina de autor con ingredientes nativos de la Araucanía. Un espacio cultural y gastronómico en Pucón.</div>
+      <span class="gastro-card-tag">🌿 Cocina Local · Pucón</span>
+    </div>
+
+    <div class="gastro-card" onclick="abrirDetalleGastro(7)">
+      <span class="gastro-card-emoji">🏔️</span>
+      <div class="gastro-card-nombre">Aldea Nalcahué</div>
+      <div class="gastro-card-desc">Comunidad mapuche pehuenche con gastronomía ancestral y conexión profunda con el territorio.</div>
+      <span class="gastro-card-tag">🌿 Mapuche · Curarrehue</span>
+    </div>
+
+    <div class="gastro-card destcado" onclick="abrirDetalleGastro(8)">
+      <span class="gastro-card-emoji">🏛️</span>
+      <div class="gastro-card-nombre">Mercado Municipal de Temuco</div>
+      <div class="gastro-card-desc">Más de 100 años de historia. El mercado más emblemático del sur de Chile con gastronomía típica mapuche y chilena: cazuela, asado y empanadas.</div>
+      <span class="gastro-card-tag">⭐ Patrimonio · Temuco</span>
+    </div>
+
+  </div>
+
+  <div class="gastro-seccion-titulo">📍 Mapa gastronómico</div>
+  <div class="gastro-mapa-wrap">
+    <div id="mapa-gastro"></div>
+    <button class="gastro-mapa-ubicacion" onclick="centrarMapaGastro()">📍 Mi ubicación</button>
+  </div>
+
+  <!-- BOTTOM SHEET DETALLE GASTRO -->
+  <div class="gastro-det-overlay" id="gastro-det-overlay" onclick="cerrarDetalleGastro(event)">
+    <div class="gastro-det-sheet">
+      <div class="gastro-det-handle"></div>
+      <div class="gastro-det-hero">
+        <div class="gastro-det-emoji" id="gastro-det-emoji">🍽️</div>
+        <div>
+          <div class="gastro-det-nombre" id="gastro-det-nombre">Lugar</div>
+          <span class="gastro-det-tag" id="gastro-det-tag">Gastronomía</span>
+        </div>
+      </div>
+      <div class="gastro-det-desc" id="gastro-det-desc"></div>
+      <div class="gastro-det-acciones">
+        <button class="gastro-btn-llegar" onclick="comoLlegarGastro()">🗺️ Cómo llegar</button>
+        <button class="gastro-btn-cerrar" onclick="cerrarDetalleGastro()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:24px 16px 4px;font-size:11px;color:#A07060;letter-spacing:1px">— más espacios gastronómicos próximamente —</div>
   <div style="height:20px"></div>
 </div>
 
@@ -3737,6 +4134,200 @@ function verAventura(id) {
   mostrarToast('🏔️ Próximamente más detalles de esta actividad');
 }
 // ── FIN MODO AVENTURA ──────────────────────────────────────
+
+// ── MODO GASTRONOMÍA ───────────────────────────────────────
+let gastroSeleccionada   = null;
+let mapaGastroIniciado   = false;
+let mapaGastroObj        = null;
+let marcadorUsuarioGastro = null;
+
+const PUNTOS_GASTRO = [
+  // ── VILLARRICA ────────────────────────────────────────────
+  {
+    nombre: 'Mercado Fritz',
+    emoji: '🏪', tag: '🥩 Mercado · Villarrica',
+    coords: [-39.2837, -72.2247],
+    desc: 'El corazón gastronómico de Villarrica. Amplia variedad de locales con carnes ahumadas, quesos artesanales, longanizas y cocina chilena tradicional en un ambiente acogedor. Aviador Acevedo #612, Villarrica.'
+  },
+  {
+    nombre: 'Ruka Newen',
+    emoji: '🌿', tag: '🫕 Cocina Mapuche · Villarrica',
+    coords: [-39.2840, -72.2244],
+    desc: 'Dentro del Mercado Fritz, este espacio cultural ofrece gastronomía mapuche auténtica: milcao, muday, catutos y preparaciones ancestrales de la tradición pehuenche. Una vivencia cultural única.'
+  },
+  {
+    nombre: 'Feria Artesanal Villarrica',
+    emoji: '🎪', tag: '🛍️ Feria · Villarrica',
+    coords: [-39.2790, -72.2310],
+    desc: 'Frente al lago Villarrica, la feria artesanal reúne tejidos mapuches, cerámica, sopaipillas y alimentos típicos. El lugar perfecto para conocer la cultura local y llevarse un recuerdo auténtico.'
+  },
+  // ── RUTA VILLARRICA–LICÁN RAY ─────────────────────────────
+  {
+    nombre: 'Muestra Tradiciones Llau Llau',
+    emoji: '🌾', tag: '🎪 Tradiciones · Km 1.5',
+    coords: [-39.3000, -72.2020],
+    desc: 'A km 1.5 de la ruta Villarrica-Licán Ray, este evento cultural muestra las tradiciones campesinas del Valle de Llau Llau con gastronomía, música y artesanía local. Temporada estival.'
+  },
+  {
+    nombre: 'Feria Costumbrista Huincacara',
+    emoji: '🫕', tag: '🔥 Feria · Km 6 Licán Ray',
+    coords: [-39.3480, -72.1820],
+    desc: 'A km 6 de la ruta Villarrica-Licán Ray, esta feria celebra la gastronomía chilena con asados al palo, empanadas criollas, sopaipillas y productos de la temporada en un ambiente festivo al aire libre.'
+  },
+  {
+    nombre: 'Feria Costumbrista Escorial',
+    emoji: '🔥', tag: '🎪 Feria · Licán Ray',
+    coords: [-39.4900, -72.1510],
+    desc: 'A km 4 del camino a Coñaripe desde Licán Ray, la feria más popular del sector reúne gastronomía regional, artesanía y música chilena en un ambiente festivo a orillas del lago Calafquén.'
+  },
+  // ── PUCÓN ─────────────────────────────────────────────────
+  {
+    nombre: 'Trawen',
+    emoji: '🍽️', tag: '🌿 Cocina de Autor · Pucón',
+    coords: [-39.2755, -71.9565],
+    desc: 'Espacio gastronómico y cultural en O\'Higgins 311, Pucón. Cocina de autor con ingredientes nativos de la Araucanía, preparaciones que celebran el territorio y una experiencia sensorial completa.'
+  },
+  // ── CURARREHUE ────────────────────────────────────────────
+  {
+    nombre: 'Aldea Intercultural Nalcahué',
+    emoji: '🏔️', tag: '🌿 Cultura Mapuche · Curarrehue',
+    coords: [-39.3820, -71.6150],
+    desc: 'Comunidad mapuche pehuenche a 14 km de Curarrehue (ruta Mamuil Malal + 8 km interior). Gastronomía ancestral, alojamiento cultural y una conexión profunda con la cosmovisión del pueblo pehuenche.'
+  },
+  // ── TEMUCO ────────────────────────────────────────────────
+  {
+    nombre: 'Mercado Municipal de Temuco',
+    emoji: '🏛️', tag: '🥩 Mercado Histórico · Temuco',
+    coords: [-38.7340, -72.5905],
+    desc: 'Más de 100 años de historia culinaria. El mercado más emblemático del sur de Chile: cazuela mapuche, asado, empanadas, mariscos y el famoso ambiente del Barrio Estación. Prat 532, Temuco.'
+  },
+];
+
+function abrirGastro() {
+  const overlay = document.getElementById('gastro-anim-overlay');
+  const flash   = document.getElementById('gastro-flash');
+  const anillos = overlay.querySelectorAll('.gastro-anillo');
+
+  overlay.classList.add('show');
+
+  let velocidad = 1;
+  const acelerarInterval = setInterval(() => {
+    velocidad = Math.max(0.1, velocidad * 0.84);
+    anillos.forEach((r, i) => {
+      const base = [1.4, 1.0, 0.7][i];
+      r.style.animationDuration = Math.max(0.08, base * velocidad) + 's';
+    });
+  }, 120);
+
+  setTimeout(() => {
+    clearInterval(acelerarInterval);
+    flash.classList.add('show');
+    setTimeout(() => {
+      overlay.classList.remove('show');
+      flash.classList.remove('show');
+      anillos.forEach((r, i) => {
+        r.style.animationDuration = [1.4, 1.0, 0.7][i] + 's';
+      });
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-gastro').classList.add('active');
+      document.querySelector('.bottom-nav').style.display = 'none';
+      setTimeout(iniciarMapaGastro, 300);
+    }, 280);
+  }, 2200);
+}
+
+function cerrarGastro() {
+  document.getElementById('screen-gastro').classList.remove('active');
+  document.querySelector('.bottom-nav').style.display = 'flex';
+  irPantalla('inicio');
+}
+
+function iniciarMapaGastro() {
+  if (mapaGastroIniciado) return;
+  mapaGastroIniciado = true;
+
+  const userLat = parseFloat(localStorage.getItem('userLat'));
+  const userLng = parseFloat(localStorage.getItem('userLng'));
+  const centro  = (userLat && userLng) ? [userLat, userLng] : [-39.2800, -72.0000];
+
+  mapaGastroObj = L.map('mapa-gastro', { zoomControl: false }).setView(centro, 9);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap © CARTO', subdomains: 'abcd', maxZoom: 19
+  }).addTo(mapaGastroObj);
+
+  L.control.zoom({ position: 'topright' }).addTo(mapaGastroObj);
+
+  if (userLat && userLng) {
+    marcadorUsuarioGastro = L.circleMarker([userLat, userLng], {
+      radius: 10, fillColor: '#C4622D', color: 'white', weight: 3, fillOpacity: 1
+    }).addTo(mapaGastroObj).bindPopup('📍 Tú estás aquí');
+  }
+
+  PUNTOS_GASTRO.forEach((p, i) => {
+    const icono = L.divIcon({
+      html: `<div style="background:#2A1000;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;border:2.5px solid #E8A020;box-shadow:0 3px 10px rgba(232,160,32,0.4);cursor:pointer">${p.emoji}</div>`,
+      className: '', iconSize: [44, 44], iconAnchor: [22, 22]
+    });
+    L.marker(p.coords, { icon: icono })
+      .addTo(mapaGastroObj)
+      .on('click', () => abrirDetalleGastro(i));
+  });
+
+  if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(pos => {
+      const lat = pos.coords.latitude, lng = pos.coords.longitude;
+      localStorage.setItem('userLat', lat);
+      localStorage.setItem('userLng', lng);
+      if (!marcadorUsuarioGastro) {
+        marcadorUsuarioGastro = L.circleMarker([lat, lng], {
+          radius: 10, fillColor: '#C4622D', color: 'white', weight: 3, fillOpacity: 1
+        }).addTo(mapaGastroObj).bindPopup('📍 Tú estás aquí');
+      } else {
+        marcadorUsuarioGastro.setLatLng([lat, lng]);
+      }
+    }, () => {}, { enableHighAccuracy: true, maximumAge: 5000 });
+  }
+
+  setTimeout(() => mapaGastroObj.invalidateSize(), 200);
+}
+
+function centrarMapaGastro() {
+  const lat = parseFloat(localStorage.getItem('userLat'));
+  const lng = parseFloat(localStorage.getItem('userLng'));
+  if (lat && lng && mapaGastroObj) {
+    mapaGastroObj.setView([lat, lng], 13);
+    if (marcadorUsuarioGastro) marcadorUsuarioGastro.openPopup();
+  } else {
+    mostrarToast('📍 Activa el GPS para ver tu ubicación');
+  }
+}
+
+function abrirDetalleGastro(idx) {
+  const p = PUNTOS_GASTRO[idx];
+  if (!p) return;
+  gastroSeleccionada = p;
+  document.getElementById('gastro-det-emoji').textContent  = p.emoji;
+  document.getElementById('gastro-det-nombre').textContent = p.nombre;
+  document.getElementById('gastro-det-tag').textContent    = p.tag;
+  document.getElementById('gastro-det-desc').textContent   = p.desc;
+  document.getElementById('gastro-det-overlay').classList.add('show');
+}
+
+function cerrarDetalleGastro(e) {
+  if (e && e.target !== document.getElementById('gastro-det-overlay')) return;
+  document.getElementById('gastro-det-overlay').classList.remove('show');
+  gastroSeleccionada = null;
+}
+
+function comoLlegarGastro() {
+  if (!gastroSeleccionada) return;
+  const [lat, lng] = gastroSeleccionada.coords;
+  const url = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
+  mostrarToast('🗺️ Abriendo Google Maps...');
+  setTimeout(() => window.open(url, '_blank'), 400);
+}
+// ── FIN MODO GASTRONOMÍA ───────────────────────────────────
 
 window.addEventListener('load', () => {
   aplicarCiudad();
