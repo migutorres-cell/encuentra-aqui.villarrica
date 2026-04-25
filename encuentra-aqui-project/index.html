@@ -1930,18 +1930,24 @@ function actualizarPerfil() {
 }
 
 function renderRanking() {
-  const todos = [...rankingData].sort((a, b) => b.pts - a.pts).slice(0, 10);
-  const lista = document.getElementById('ranking-lista');
+  // Incluye al usuario real junto a los demás — filtra duplicado si ya estaba
+  const sinYo = rankingData.filter(u => u.id !== 'yo');
+  const todos  = [...sinYo, miPerfil].sort((a, b) => b.pts - a.pts).slice(0, 10);
+  const lista  = document.getElementById('ranking-lista');
   const medallas = ['🥇', '🥈', '🥉'];
   lista.innerHTML = todos.map((u, i) => {
-    const cls = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
-    const pos = medallas[i] || (i + 1);
-    const nv = getNivel(u.pts);
+    const esYo = u.id === 'yo';
+    const cls  = esYo ? 'yo' : i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+    const pos  = medallas[i] || (i + 1);
+    const nv   = getNivel(u.pts);
+    const avatarHTML = esYo
+      ? `<div class="ranking-avatar" style="font-size:20px">${u.avatar || '👤'}</div>`
+      : `<div class="ranking-avatar" style="font-size:20px">${u.avatar || '👤'}</div>`;
     return `<div class="ranking-item ${cls}">
-      <div class="ranking-pos">${pos}</div>
-      <div class="ranking-avatar" style="background:${AVATARES[i % AVATARES.length].bg};font-size:20px;display:flex;align-items:center;justify-content:center">${u.avatar || AVATARES[i % AVATARES.length].emoji}</div>
+      <div class="ranking-pos">${esYo ? '👤' : pos}</div>
+      ${avatarHTML}
       <div class="ranking-info">
-        <div class="ranking-nombre">${u.nombre}</div>
+        <div class="ranking-nombre">${u.nombre}${esYo ? ' <span style="font-size:10px;background:var(--verde);color:white;padding:2px 6px;border-radius:10px;font-weight:700">Tú</span>' : ''}</div>
         <div class="ranking-nivel">${nv.ico} ${nv.nombre} · ${u.agregados} lugares</div>
       </div>
       <div>
@@ -2079,8 +2085,16 @@ function verDetalle(id) {
   document.getElementById('detalle-titulo').textContent = d.nombre;
   document.getElementById('detalle-dir').innerHTML = '<i class="pin"></i> ' + d.dir;
   document.getElementById('detalle-desc').textContent = d.desc;
-  document.getElementById('detalle-hero').innerHTML = d.emoji;
-  document.getElementById('detalle-hero').style.background = d.bgGrad;
+
+  // Mostrar foto si existe, si no mostrar emoji
+  const hero = document.getElementById('detalle-hero');
+  if (pinData?.foto) {
+    hero.innerHTML = `<img src="${pinData.foto}" style="width:100%;height:100%;object-fit:cover;display:block" />`;
+    hero.style.background = 'none';
+  } else {
+    hero.innerHTML = d.emoji;
+    hero.style.background = d.bgGrad;
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
   document.getElementById('screen-detalle').classList.add('active');
@@ -2805,8 +2819,46 @@ function iniciarFirebase() {
         mapaLeaflet.eachLayer(l => { if (l instanceof L.Marker) mapaLeaflet.removeLayer(l); });
         serviciosPins.forEach(s => agregarPinMapa(s));
       }
-    }, () => { serviciosPins = PINS_INICIALES.slice(); });
+      renderServiciosCercanos();
+    }, () => {
+      serviciosPins = PINS_INICIALES.slice();
+      renderServiciosCercanos();
+    });
   } catch(e) { serviciosPins = PINS_INICIALES.slice(); }
+}
+
+function renderServiciosCercanos() {
+  const scroll = document.querySelector('.servicios-scroll');
+  if (!scroll || !serviciosPins.length) return;
+  const userLat = parseFloat(localStorage.getItem('userLat'));
+  const userLng = parseFloat(localStorage.getItem('userLng'));
+
+  let lista = [...serviciosPins];
+  if (userLat && userLng) {
+    lista = lista.map(s => ({
+      ...s,
+      _dist: distanciaKm(userLat, userLng, s.lat, s.lng)
+    })).sort((a, b) => a._dist - b._dist);
+  }
+
+  scroll.innerHTML = lista.slice(0, 8).map(s => {
+    const distTxt = (userLat && s._dist != null)
+      ? (s._dist < 1 ? Math.round(s._dist * 1000) + ' m' : s._dist.toFixed(1) + ' km')
+      : '';
+    const fotoHTML = s.foto
+      ? `<img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block" />`
+      : s.emoji;
+    const fotoStyle = s.foto ? 'padding:0;overflow:hidden' : '';
+    return `<div class="servicio-card" onclick="verDetalle('${s.id}')">
+      <div class="servicio-foto" style="${fotoStyle}">${fotoHTML}</div>
+      <div class="servicio-nombre">${s.nombre}</div>
+      <div class="servicio-dir"><i class="pin"></i> ${distTxt ? distTxt + ' · ' : ''}${s.dir || ''}</div>
+      <div class="servicio-badges">
+        <span class="badge ${s.precio === 'Gratis' || !s.precio ? 'badge-gratis' : ''}">${s.precio === 'Gratis' || !s.precio ? 'Gratis' : s.precio}</span>
+        <span class="badge badge-abierto">${s.estado || 'Abierto'}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function iniciarMapa() {
