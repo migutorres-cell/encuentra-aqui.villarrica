@@ -679,6 +679,31 @@
     font-size: 10px; font-weight: 700; color: #C4622D;
   }
   body.dark .gastro-card-tag { background: rgba(232,160,32,0.12); color: #E8A020; border-color: rgba(232,160,32,0.25); }
+  .gastro-card.patrocinado {
+    border-color: rgba(245,197,25,0.5);
+    box-shadow: 0 0 0 1px rgba(245,197,25,0.18), 0 4px 16px rgba(196,98,45,0.12);
+  }
+  body.dark .gastro-card.patrocinado { border-color: rgba(245,197,25,0.4); }
+  .gastro-badge-patrocinado {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    background: linear-gradient(135deg, #C8860A, #F5C519);
+    color: #1A0E00; font-size: 9px; font-weight: 900;
+    border-radius: 20px; padding: 3px 8px;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .gastro-det-precio {
+    margin: 8px 20px 0;
+    font-size: 13px; font-weight: 700; color: #C4622D;
+    display: none;
+  }
+  body.dark .gastro-det-precio { color: #E8A020; }
+  .gastro-btn-whatsapp {
+    flex: 2; background: #25D366; color: white; border: none;
+    border-radius: 12px; padding: 14px; font-size: 14px; font-weight: 800;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .gastro-btn-whatsapp:active { transform: scale(0.97); background: #1ab358; }
   .gastro-mapa-wrap {
     margin: 0 16px; border-radius: 16px; overflow: hidden;
     border: 1px solid rgba(196,98,45,0.25);
@@ -1746,72 +1771,7 @@
   </div>
 
   <div class="gastro-seccion-titulo">Espacios y galerías gastronómicas</div>
-  <div class="gastro-grid">
-
-    <div class="gastro-card destcado" onclick="abrirDetalleGastro(0)">
-      <span class="gastro-card-emoji">🏪</span>
-      <div class="gastro-card-nombre">Mercado Fritz</div>
-      <div class="gastro-card-desc">El corazón gastronómico de Villarrica. Carnes ahumadas, quesos artesanales y cocina chilena tradicional en un ambiente único.</div>
-      <span class="gastro-card-tag">⭐ Imperdible · Villarrica</span>
-    </div>
-
-    <div class="gastro-card" onclick="abrirDetalleGastro(1)">
-      <span class="gastro-card-emoji">🌿</span>
-      <div class="gastro-card-nombre">Ruka Newen</div>
-      <div class="gastro-card-desc">Cocina mapuche auténtica: milcao, muday y catutos ancestrales.</div>
-      <span class="gastro-card-tag">🫕 Mapuche · Villarrica</span>
-    </div>
-
-    <div class="gastro-card" onclick="abrirDetalleGastro(2)">
-      <span class="gastro-card-emoji">🎪</span>
-      <div class="gastro-card-nombre">Feria Artesanal Villarrica</div>
-      <div class="gastro-card-desc">Frente al lago, tejidos mapuches, cerámica y alimentos típicos de la zona.</div>
-      <span class="gastro-card-tag">🛍️ Feria · Villarrica</span>
-    </div>
-
-    <div class="gastro-card" onclick="abrirDetalleGastro(3)">
-      <span class="gastro-card-emoji">🌾</span>
-      <div class="gastro-card-nombre">Tradiciones Llau Llau</div>
-      <div class="gastro-card-desc">Muestra de tradiciones campesinas con gastronomía y artesanía local en temporada estival.</div>
-      <span class="gastro-card-tag">🎪 Ruta Villarrica</span>
-    </div>
-
-    <div class="gastro-card" onclick="abrirDetalleGastro(4)">
-      <span class="gastro-card-emoji">🫕</span>
-      <div class="gastro-card-nombre">Feria Huincacara</div>
-      <div class="gastro-card-desc">Asados al palo, empanadas criollas y sopaipillas. Gastronomía chilena en su máxima expresión.</div>
-      <span class="gastro-card-tag">🔥 Feria · Licán Ray</span>
-    </div>
-
-    <div class="gastro-card" onclick="abrirDetalleGastro(5)">
-      <span class="gastro-card-emoji">🔥</span>
-      <div class="gastro-card-nombre">Feria Escorial</div>
-      <div class="gastro-card-desc">La feria más popular del sector de Licán Ray con gastronomía y ambiente festivo.</div>
-      <span class="gastro-card-tag">🎪 Feria · Licán Ray</span>
-    </div>
-
-    <div class="gastro-card" onclick="abrirDetalleGastro(6)">
-      <span class="gastro-card-emoji">🍽️</span>
-      <div class="gastro-card-nombre">Trawen</div>
-      <div class="gastro-card-desc">Cocina de autor con ingredientes nativos de la Araucanía. Un espacio cultural y gastronómico en Pucón.</div>
-      <span class="gastro-card-tag">🌿 Cocina Local · Pucón</span>
-    </div>
-
-    <div class="gastro-card" onclick="abrirDetalleGastro(7)">
-      <span class="gastro-card-emoji">🏔️</span>
-      <div class="gastro-card-nombre">Aldea Nalcahué</div>
-      <div class="gastro-card-desc">Comunidad mapuche pehuenche con gastronomía ancestral y conexión profunda con el territorio.</div>
-      <span class="gastro-card-tag">🌿 Mapuche · Curarrehue</span>
-    </div>
-
-    <div class="gastro-card destcado" onclick="abrirDetalleGastro(8)">
-      <span class="gastro-card-emoji">🏛️</span>
-      <div class="gastro-card-nombre">Mercado Municipal de Temuco</div>
-      <div class="gastro-card-desc">Más de 100 años de historia. El mercado más emblemático del sur de Chile con gastronomía típica mapuche y chilena: cazuela, asado y empanadas.</div>
-      <span class="gastro-card-tag">⭐ Patrimonio · Temuco</span>
-    </div>
-
-  </div>
+  <div class="gastro-grid" id="gastro-grid"></div>
 
   <div class="gastro-seccion-titulo">📍 Mapa gastronómico</div>
   <div class="gastro-mapa-wrap">
@@ -1831,7 +1791,8 @@
         </div>
       </div>
       <div class="gastro-det-desc" id="gastro-det-desc"></div>
-      <div class="gastro-det-acciones">
+      <div class="gastro-det-precio" id="gastro-det-precio"></div>
+      <div class="gastro-det-acciones" id="gastro-det-acciones">
         <button class="gastro-btn-llegar" onclick="comoLlegarGastro()">🗺️ Cómo llegar</button>
         <button class="gastro-btn-cerrar" onclick="cerrarDetalleGastro()">Cerrar</button>
       </div>
@@ -2039,6 +2000,10 @@
       <div class="costo-btn" id="edit-estado-cerrado" onclick="selEstadoEdit('cerrado')">🔴 Cerrado</div>
     </div>
 
+    <!-- WHATSAPP (opcional, para hospedajes u otros con reserva) -->
+    <div style="font-size:12px;font-weight:600;color:var(--gris-texto);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">WhatsApp para reservas <span style="font-weight:400;text-transform:none">(opcional)</span></div>
+    <input type="tel" class="form-input" id="edit-whatsapp-input" placeholder="Ej: 56912345678 (sin + ni espacios)" style="margin-bottom:16px" />
+
     <!-- BOTONES -->
     <button class="btn-primario" onclick="guardarEditPin()" style="margin-bottom:10px">✅ Guardar cambios</button>
     <button onclick="eliminarPinAdmin()" style="width:100%;padding:13px;border:1.5px solid #FCEBEB;border-radius:var(--radio-sm);background:white;color:#A32D2D;font-weight:700;cursor:pointer;font-size:14px;margin-bottom:8px">🗑️ Eliminar este punto</button>
@@ -2103,6 +2068,10 @@
         <img id="agr-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
       </label>
       <input type="file" id="agr-foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFotoAgregar(event)" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">WhatsApp para reservas <span style="font-weight:400;color:var(--gris-texto)">(opcional)</span></label>
+      <input type="tel" id="agr-whatsapp" class="form-input" placeholder="Ej: 56912345678 (sin + ni espacios)" />
     </div>
     <button class="btn-primario" onclick="publicarServicio()"><i class="pin"></i> Publicar servicio</button>
   </div>
@@ -2274,7 +2243,7 @@
       <span class="star" onclick="calificarDetalle(5)">⭐</span>
     </div>
     <div style="height:16px"></div>
-    <button class="btn-primario" onclick="abrirQR()">📲 Reservar con QR</button>
+    <div id="detalle-acciones"></div>
     <button class="btn-secundario" onclick="abrirComoLlegar()">🗺️ Cómo llegar</button>
   </div>
 </div>
@@ -2626,6 +2595,14 @@ function verDetalle(id) {
     hero.innerHTML = d.emoji;
     hero.style.background = d.bgGrad;
   }
+  const accionesEl = document.getElementById('detalle-acciones');
+  if (pinData?.whatsapp) {
+    const msg = encodeURIComponent(`Hola, me interesa "${pinData.nombre}". Los contacto desde la app Encuentra Aquí.`);
+    accionesEl.innerHTML = `<button class="btn-primario" style="background:linear-gradient(135deg,#1a7a40,#25a550);margin-bottom:10px" onclick="window.open('https://wa.me/${pinData.whatsapp}?text=${msg}','_blank')">📲 Reservar por WhatsApp</button>`;
+  } else {
+    accionesEl.innerHTML = `<button class="btn-primario" style="margin-bottom:10px" onclick="abrirQR()">📲 Reservar con QR</button>`;
+  }
+
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
   document.getElementById('screen-detalle').classList.add('active');
@@ -2734,14 +2711,16 @@ function publicarServicio() {
   const emoji = tipoEl?.dataset?.emoji || '🚻';
   const color = tipoEl?.dataset?.color || '#1D9E75';
   const fotoImg = document.getElementById('agr-foto-img');
+  const agWa = (document.getElementById('agr-whatsapp')?.value?.trim() || '').replace(/\D/g,'');
   const nuevo = {
-    id:     'pin-' + Date.now(),
+    id:       'pin-' + Date.now(),
     nombre, emoji, tipo, color, lat, lng,
-    dir:    document.getElementById('agr-dir')?.value?.trim() || '',
-    desc:   document.getElementById('agr-desc')?.value?.trim() || '',
-    precio: document.querySelector('#agr-gratis.sel') ? 'Gratis' : (document.getElementById('agr-monto')?.value?.trim() || 'Con costo'),
-    ciudad: localStorage.getItem('ciudadUsuario') || 'Chile',
-    foto:   (fotoImg?.style?.display !== 'none' && fotoImg?.src) ? fotoImg.src : null
+    dir:      document.getElementById('agr-dir')?.value?.trim() || '',
+    desc:     document.getElementById('agr-desc')?.value?.trim() || '',
+    precio:   document.querySelector('#agr-gratis.sel') ? 'Gratis' : (document.getElementById('agr-monto')?.value?.trim() || 'Con costo'),
+    ciudad:   localStorage.getItem('ciudadUsuario') || 'Chile',
+    foto:     (fotoImg?.style?.display !== 'none' && fotoImg?.src) ? fotoImg.src : null,
+    whatsapp: agWa || null,
   };
   if (!dbRef) { mostrarToast('Sin conexión — intenta de nuevo'); return; }
   dbRef.child(nuevo.id).set(nuevo).then(() => {
@@ -2754,6 +2733,7 @@ function publicarServicio() {
     document.getElementById('agr-desc').value = '';
     document.getElementById('agr-foto-img').style.display = 'none';
     document.getElementById('agr-foto-file').value = '';
+    if (document.getElementById('agr-whatsapp')) document.getElementById('agr-whatsapp').value = '';
     document.getElementById('agr-gps-btn').textContent = '📡 Usar mi GPS';
     document.getElementById('agr-gps-btn').style.background = '';
     document.getElementById('agr-gps-btn').style.color = '';
@@ -3400,6 +3380,7 @@ function iniciarFirebase() {
   if (dbGastroRef) {
     dbGastroRef.on('value', snap => {
       puntosGastroFirebase = snap.val() ? Object.values(snap.val()) : [];
+      renderGridGastro();
       if (capaPinsGastroUser && mapaGastroObj) renderPinsGastroFirebase();
     });
   }
@@ -3632,6 +3613,7 @@ function abrirEditarPin(s, marker) {
   document.getElementById('edit-dir-input').value = s.dir || '';
   document.getElementById('edit-desc-input').value = s.desc || '';
   document.getElementById('edit-monto-input').value = s.monto || '';
+  document.getElementById('edit-whatsapp-input').value = s.whatsapp || '';
 
   // Foto
   const img = document.getElementById('edit-foto-img');
@@ -3700,15 +3682,17 @@ function guardarEditPin() {
   const esGratis = document.getElementById('edit-costo-gratis').classList.contains('sel');
   const estaAbierto = document.getElementById('edit-estado-abierto').classList.contains('sel');
 
+  const whatsappEdit = document.getElementById('edit-whatsapp-input').value.trim().replace(/\D/g,'');
   Object.assign(pinEditando.s, {
     nombre,
-    dir:    document.getElementById('edit-dir-input').value.trim(),
-    desc:   document.getElementById('edit-desc-input').value.trim(),
-    precio: esGratis ? 'Gratis' : (document.getElementById('edit-monto-input').value.trim() || 'Con costo'),
-    estado: estaAbierto ? 'Abierto' : 'Cerrado',
-    tipo:   pinSelTipo,
-    emoji:  pinSelEmoji,
-    color:  pinSelColor,
+    dir:      document.getElementById('edit-dir-input').value.trim(),
+    desc:     document.getElementById('edit-desc-input').value.trim(),
+    precio:   esGratis ? 'Gratis' : (document.getElementById('edit-monto-input').value.trim() || 'Con costo'),
+    estado:   estaAbierto ? 'Abierto' : 'Cerrado',
+    tipo:     pinSelTipo,
+    emoji:    pinSelEmoji,
+    color:    pinSelColor,
+    whatsapp: whatsappEdit || null,
   });
 
   // Actualizar el pin en el mapa
@@ -4455,7 +4439,10 @@ const PUNTOS_GASTRO = [
     nombre: 'Mercado Fritz',
     emoji: '🏪', tag: '🥩 Mercado · Villarrica',
     coords: [-39.2837, -72.2247],
-    desc: 'El corazón gastronómico de Villarrica. Amplia variedad de locales con carnes ahumadas, quesos artesanales, longanizas y cocina chilena tradicional en un ambiente acogedor. Aviador Acevedo #612, Villarrica.'
+    desc: 'El corazón gastronómico de Villarrica. Amplia variedad de locales con carnes ahumadas, quesos artesanales, longanizas y cocina chilena tradicional en un ambiente acogedor. Aviador Acevedo #612, Villarrica.',
+    patrocinado: true,
+    precio: 'Entrada liberada — consumo desde $3.000',
+    whatsapp: '56945100001' // reemplazar con número real
   },
   {
     nombre: 'Ruka Newen',
@@ -4493,7 +4480,10 @@ const PUNTOS_GASTRO = [
     nombre: 'Trawen',
     emoji: '🍽️', tag: '🌿 Cocina de Autor · Pucón',
     coords: [-39.2755, -71.9565],
-    desc: 'Espacio gastronómico y cultural en O\'Higgins 311, Pucón. Cocina de autor con ingredientes nativos de la Araucanía, preparaciones que celebran el territorio y una experiencia sensorial completa.'
+    desc: 'Espacio gastronómico y cultural en O\'Higgins 311, Pucón. Cocina de autor con ingredientes nativos de la Araucanía, preparaciones que celebran el territorio y una experiencia sensorial completa.',
+    patrocinado: true,
+    precio: 'Desde $12.000 por persona',
+    whatsapp: '56945100002' // reemplazar con número real
   },
   // ── CURARREHUE ────────────────────────────────────────────
   {
@@ -4539,6 +4529,7 @@ function abrirGastro() {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('screen-gastro').classList.add('active');
       document.querySelector('.bottom-nav').style.display = 'none';
+      renderGridGastro();
       setTimeout(iniciarMapaGastro, 300);
     }, 280);
   }, 2200);
@@ -4615,10 +4606,49 @@ function centrarMapaGastro() {
   }
 }
 
+function renderGridGastro() {
+  const grid = document.getElementById('gastro-grid');
+  if (!grid) return;
+  const sponsor = PUNTOS_GASTRO.filter(p => p.patrocinado);
+  const resto   = PUNTOS_GASTRO.filter(p => !p.patrocinado);
+  const fbExtra = puntosGastroFirebase.map(p => ({ ...p, _firebase: true }));
+  // Mercado Fritz siempre destcado (span 2) — índice 0
+  const fritz   = PUNTOS_GASTRO[0];
+  const sponsorSinFritz = sponsor.filter(p => p !== fritz);
+  const restoSinFritz   = resto.filter(p => p !== fritz);
+  const orden = [fritz, ...sponsorSinFritz, ...fbExtra, ...restoSinFritz].filter(Boolean);
+
+  grid.innerHTML = orden.map(p => {
+    const idx    = p._firebase ? -1 : PUNTOS_GASTRO.indexOf(p);
+    const onclick = p._firebase
+      ? `abrirDetalleGastro(${JSON.stringify(p).replace(/"/g, '&quot;')})`
+      : `abrirDetalleGastro(${idx})`;
+    const esFritz  = p === fritz;
+    const badge    = p.patrocinado
+      ? `<div class="gastro-badge-patrocinado">⭐ Destacado</div>` : '';
+    const resumen  = p.desc.length > 70 ? p.desc.substring(0, 70) + '…' : p.desc;
+    return `<div class="gastro-card ${esFritz ? 'destcado' : ''} ${p.patrocinado ? 'patrocinado' : ''}"
+      onclick="abrirDetalleGastro(${idx < 0 ? `Object.values((firebase.database().ref('puntos_gastro')))` : idx})">
+      ${badge}
+      <span class="gastro-card-emoji">${p.emoji}</span>
+      <div class="gastro-card-nombre">${p.nombre}</div>
+      <div class="gastro-card-desc">${resumen}</div>
+      <span class="gastro-card-tag">${p.tag}</span>
+    </div>`;
+  }).join('');
+
+  // Re-bind Firebase cards with direct object reference
+  const cards = grid.querySelectorAll('.gastro-card');
+  orden.forEach((p, i) => {
+    if (cards[i]) cards[i].onclick = () => abrirDetalleGastro(p._firebase ? p : PUNTOS_GASTRO.indexOf(p));
+  });
+}
+
 function abrirDetalleGastro(idx) {
-  const p = typeof idx === 'object' ? idx : PUNTOS_GASTRO[idx];
+  const p = (typeof idx === 'object' && idx !== null) ? idx : PUNTOS_GASTRO[idx];
   if (!p) return;
   gastroSeleccionada = p;
+
   const emojiEl = document.getElementById('gastro-det-emoji');
   if (p.foto) {
     emojiEl.innerHTML = `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;display:block" />`;
@@ -4630,6 +4660,30 @@ function abrirDetalleGastro(idx) {
   document.getElementById('gastro-det-nombre').textContent = p.nombre;
   document.getElementById('gastro-det-tag').textContent    = p.tag;
   document.getElementById('gastro-det-desc').textContent   = p.desc;
+
+  const precioEl = document.getElementById('gastro-det-precio');
+  if (p.precio) {
+    precioEl.textContent   = '💰 ' + p.precio;
+    precioEl.style.display = 'block';
+  } else {
+    precioEl.style.display = 'none';
+  }
+
+  const accionesEl = document.getElementById('gastro-det-acciones');
+  if (p.whatsapp) {
+    const msg = encodeURIComponent(`Hola, me interesa "${p.nombre}". Los contacto desde la app Encuentra Aquí.`);
+    accionesEl.innerHTML = `
+      <button class="gastro-btn-whatsapp" onclick="window.open('https://wa.me/${p.whatsapp}?text=${msg}','_blank')">
+        📲 Contactar por WhatsApp
+      </button>
+      <button class="gastro-btn-llegar" onclick="comoLlegarGastro()" style="flex:1">🗺️</button>
+      <button class="gastro-btn-cerrar" onclick="cerrarDetalleGastro()" style="flex:1">✕</button>`;
+  } else {
+    accionesEl.innerHTML = `
+      <button class="gastro-btn-llegar" onclick="comoLlegarGastro()">🗺️ Cómo llegar</button>
+      <button class="gastro-btn-cerrar" onclick="cerrarDetalleGastro()">Cerrar</button>`;
+  }
+
   document.getElementById('gastro-det-overlay').classList.add('show');
 }
 
