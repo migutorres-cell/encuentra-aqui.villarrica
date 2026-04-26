@@ -1945,6 +1945,18 @@
       <input type="text" class="nuevo-punto-campo" id="np-tag" placeholder="Etiqueta  (ej: 💦 Cascada · Pucón)" />
       <input type="text" class="nuevo-punto-campo" id="np-precio" placeholder="Precio  (opcional, ej: Desde $10.000)" />
       <input type="text" class="nuevo-punto-campo" id="np-whatsapp" placeholder="WhatsApp contacto  (opcional, ej: 56912345678)" />
+      <label for="np-foto-file" id="np-foto-preview" style="
+        width:100%;height:90px;border-radius:12px;
+        background:linear-gradient(135deg,#f0f4f0,#dde8dd);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        cursor:pointer;margin-bottom:10px;position:relative;overflow:hidden;
+        border:2px dashed rgba(0,0,0,0.18);box-sizing:border-box;
+      ">
+        <span id="np-foto-ico" style="font-size:24px">📷</span>
+        <span id="np-foto-txt" style="font-size:11px;color:#666;margin-top:3px">Toca para agregar foto (opcional)</span>
+        <img id="np-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+      </label>
+      <input type="file" id="np-foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFotoNuevoPunto(event)" />
       <button class="nuevo-punto-gps" onclick="usarGPSNuevoPunto()">📍 Capturar mi ubicación actual</button>
       <div class="nuevo-punto-coords" id="np-coords-info">Sin coordenadas — usa el GPS para marcar la ubicación</div>
       <button class="nuevo-punto-guardar" onclick="guardarNuevoPunto()">✅ Guardar punto</button>
@@ -2679,16 +2691,36 @@ function usarGPS() {
   }, { enableHighAccuracy: true, timeout: 15000 });
 }
 
+// Comprime imagen a máx 800px y calidad 72% antes de guardar en Firebase
+function comprimirFoto(file, callback) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+        else        { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.72));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function previewFotoAgregar(e) {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
+  comprimirFoto(file, base64 => {
     const img = document.getElementById('agr-foto-img');
-    img.src = ev.target.result;
+    img.src = base64;
     img.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 function publicarServicio() {
@@ -3168,6 +3200,7 @@ let capaPinsGastroUser     = null;
 let tipoPuntoActual        = null;
 let nuevoPuntoLat          = null;
 let nuevoPuntoLng          = null;
+let nuevoPuntoFoto         = null;
 try {
   if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
   dbRef        = firebase.database().ref('servicios');
@@ -3528,13 +3561,11 @@ function cerrarModalPin() {
 function previewFotoNuevoPin(e) {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
+  comprimirFoto(file, base64 => {
     const img = document.getElementById('pin-foto-img');
-    img.src = ev.target.result;
+    img.src = base64;
     img.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+  });
 }
 
 function confirmarNuevoPin() {
@@ -3653,15 +3684,13 @@ function editarFoto() { document.getElementById('edit-foto-file').click(); }
 function previewFotoEdit(e) {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
+  comprimirFoto(file, base64 => {
     const img = document.getElementById('edit-foto-img');
-    img.src = ev.target.result;
+    img.src = base64;
     img.style.display = 'block';
     document.getElementById('edit-foto-emoji').style.display = 'none';
-    if (pinEditando) pinEditando.s.foto = ev.target.result;
-  };
-  reader.readAsDataURL(file);
+    if (pinEditando) pinEditando.s.foto = base64;
+  });
 }
 
 function guardarEditPin() {
@@ -4319,7 +4348,14 @@ function renderGridAventura() {
 
 function abrirDetalleAventura(p) {
   aventuraSeleccionada = p;
-  document.getElementById('avt-det-emoji').textContent  = p.emoji;
+  const emojiEl = document.getElementById('avt-det-emoji');
+  if (p.foto) {
+    emojiEl.innerHTML = `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;display:block" />`;
+    emojiEl.style.padding = '0'; emojiEl.style.overflow = 'hidden';
+  } else {
+    emojiEl.textContent = p.emoji;
+    emojiEl.style.padding = ''; emojiEl.style.overflow = '';
+  }
   document.getElementById('avt-det-nombre').textContent = p.nombre;
   document.getElementById('avt-det-tag').textContent    = p.tag;
   document.getElementById('avt-det-desc').textContent   = p.desc;
@@ -4580,10 +4616,17 @@ function centrarMapaGastro() {
 }
 
 function abrirDetalleGastro(idx) {
-  const p = PUNTOS_GASTRO[idx];
+  const p = typeof idx === 'object' ? idx : PUNTOS_GASTRO[idx];
   if (!p) return;
   gastroSeleccionada = p;
-  document.getElementById('gastro-det-emoji').textContent  = p.emoji;
+  const emojiEl = document.getElementById('gastro-det-emoji');
+  if (p.foto) {
+    emojiEl.innerHTML = `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;display:block" />`;
+    emojiEl.style.padding = '0'; emojiEl.style.overflow = 'hidden';
+  } else {
+    emojiEl.textContent = p.emoji;
+    emojiEl.style.padding = ''; emojiEl.style.overflow = '';
+  }
   document.getElementById('gastro-det-nombre').textContent = p.nombre;
   document.getElementById('gastro-det-tag').textContent    = p.tag;
   document.getElementById('gastro-det-desc').textContent   = p.desc;
@@ -4641,10 +4684,24 @@ function renderPinsGastroFirebase() {
   });
 }
 
+function previewFotoNuevoPunto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  comprimirFoto(file, base64 => {
+    nuevoPuntoFoto = base64;
+    const img = document.getElementById('np-foto-img');
+    img.src = base64;
+    img.style.display = 'block';
+    document.getElementById('np-foto-ico').style.display = 'none';
+    document.getElementById('np-foto-txt').style.display = 'none';
+  });
+}
+
 function abrirFormNuevoPunto(tipo) {
   tipoPuntoActual = tipo;
-  nuevoPuntoLat = null;
-  nuevoPuntoLng = null;
+  nuevoPuntoLat  = null;
+  nuevoPuntoLng  = null;
+  nuevoPuntoFoto = null;
   const titulos = { aventura: '⛰️ Agregar actividad de aventura', gastro: '🍽️ Agregar espacio gastronómico' };
   const subs    = { aventura: 'El punto se agregará al mapa y la grilla del Modo Aventura', gastro: 'El punto se agregará al mapa y la grilla de Gastronomía Local' };
   document.getElementById('nuevo-punto-titulo').textContent = titulos[tipo] || '📍 Agregar punto';
@@ -4659,6 +4716,12 @@ function abrirFormNuevoPunto(tipo) {
   document.getElementById('np-precio').value  = '';
   document.getElementById('np-whatsapp').value = '';
   document.getElementById('np-coords-info').textContent = 'Sin coordenadas — usa el GPS para marcar la ubicación';
+  // Reset foto
+  document.getElementById('np-foto-file').value  = '';
+  document.getElementById('np-foto-img').src     = '';
+  document.getElementById('np-foto-img').style.display  = 'none';
+  document.getElementById('np-foto-ico').style.display  = '';
+  document.getElementById('np-foto-txt').style.display  = '';
   document.getElementById('nuevo-punto-overlay').classList.add('show');
   setTimeout(() => document.getElementById('nuevo-punto-pin').focus(), 300);
 }
@@ -4717,8 +4780,9 @@ function guardarNuevoPunto() {
     id, nombre, emoji, desc,
     tag: tag || (tipoPuntoActual === 'aventura' ? '📍 Aventura' : '📍 Gastronomía'),
     coords: [nuevoPuntoLat, nuevoPuntoLng],
-    ...(precio && { precio }),
-    ...(wapp   && { whatsapp: wapp }),
+    ...(precio         && { precio }),
+    ...(wapp           && { whatsapp: wapp }),
+    ...(nuevoPuntoFoto && { foto: nuevoPuntoFoto }),
   };
 
   ref.child(id).set(nuevo).then(() => {
