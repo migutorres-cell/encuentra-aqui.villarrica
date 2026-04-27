@@ -1500,12 +1500,13 @@
       <div class="clima-detalle-item" id="clima-humedad">💧 --%</div>
     </div>
   </div>
-  <div class="clima-semana" id="clima-semana"></div>
+  <button id="clima-toggle-btn" onclick="toggleSemanaClima()" style="display:none;margin:6px 16px 0;background:none;border:none;font-size:11.5px;color:var(--verde);font-weight:600;cursor:pointer;padding:4px 0;letter-spacing:0.2px">Ver semana completa ▾</button>
+  <div class="clima-semana" id="clima-semana" style="display:none"></div>
 
   <div class="stats-row">
-    <div class="stat-chip"><div class="stat-num">47</div><div class="stat-label">Puntos</div></div>
-    <div class="stat-chip"><div class="stat-num">9</div><div class="stat-label">Categorías</div></div>
-    <div class="stat-chip"><div class="stat-num">12</div><div class="stat-label">Nuevos</div></div>
+    <div class="stat-chip"><div class="stat-num" id="stat-total-puntos">—</div><div class="stat-label">Puntos</div></div>
+    <div class="stat-chip"><div class="stat-num" id="stat-total-cats">—</div><div class="stat-label">Categorías</div></div>
+    <div class="stat-chip"><div class="stat-num" id="stat-total-nuevos">—</div><div class="stat-label">Nuevos</div></div>
   </div>
 
   <div class="seccion-titulo">¿Qué buscas?</div>
@@ -1521,7 +1522,7 @@
     <div class="cat-card" onclick="irCategoria('agua')"><span class="cat-emoji">💧</span><span class="cat-nombre" data-i18n="agua">Agua gratis</span><span class="cat-count">4 puntos</span></div>
     <div class="cat-card" onclick="irCategoria('reciclaje')"><span class="cat-emoji">♻️</span><span class="cat-nombre" data-i18n="reciclaje">Reciclaje</span><span class="cat-count">4 puntos</span></div>
     <div class="cat-card" onclick="irCategoria('hospedaje')"><span class="cat-emoji">🏨</span><span class="cat-nombre">Hospedaje</span><span class="cat-count">0 puntos</span></div>
-    <div class="cat-ver-todo" onclick="irCategoria('todo')">🗺️ Ver todos los 47 puntos</div>
+    <div class="cat-ver-todo" id="cat-ver-todo" onclick="irCategoria('todo')">🗺️ Ver todos los puntos</div>
   </div>
 
   <div style="height:16px"></div>
@@ -2339,6 +2340,7 @@ const CIUDAD_ACTIVA = {
     { id:'fotografia',       emoji:'📷', nombre:'Fotografía'   },
     { id:'agua',             emoji:'💧', nombre:'Agua gratis'  },
     { id:'reciclaje',        emoji:'♻️', nombre:'Reciclaje'   },
+    { id:'hospedaje',        emoji:'🏨', nombre:'Hospedaje'   },
   ]
 };
 
@@ -3363,9 +3365,11 @@ function iniciarFirebase() {
         serviciosPins.forEach(s => agregarPinMapa(s));
       }
       renderServiciosCercanos();
+      actualizarStats();
     }, () => {
       serviciosPins = PINS_INICIALES.slice();
       renderServiciosCercanos();
+      actualizarStats();
     });
   } catch(e) { serviciosPins = PINS_INICIALES.slice(); }
 
@@ -3386,21 +3390,19 @@ function iniciarFirebase() {
   }
 }
 
-function renderServiciosCercanos() {
+let _cercaLista = [];
+let _cercaIdx   = 0;
+let _cercaTimer = null;
+
+function _renderCercaSlice() {
   const scroll = document.querySelector('.servicios-scroll');
-  if (!scroll || !serviciosPins.length) return;
+  if (!scroll || !_cercaLista.length) return;
+  const dos = [
+    _cercaLista[_cercaIdx % _cercaLista.length],
+    _cercaLista[(_cercaIdx + 1) % _cercaLista.length]
+  ].filter(Boolean);
   const userLat = parseFloat(localStorage.getItem('userLat'));
-  const userLng = parseFloat(localStorage.getItem('userLng'));
-
-  let lista = [...serviciosPins];
-  if (userLat && userLng) {
-    lista = lista.map(s => ({
-      ...s,
-      _dist: distanciaKm(userLat, userLng, s.lat, s.lng)
-    })).sort((a, b) => a._dist - b._dist);
-  }
-
-  scroll.innerHTML = lista.slice(0, 8).map(s => {
+  scroll.innerHTML = dos.map(s => {
     const distTxt = (userLat && s._dist != null)
       ? (s._dist < 1 ? Math.round(s._dist * 1000) + ' m' : s._dist.toFixed(1) + ' km')
       : '';
@@ -3418,6 +3420,62 @@ function renderServiciosCercanos() {
       </div>
     </div>`;
   }).join('');
+}
+
+function renderServiciosCercanos() {
+  if (!serviciosPins.length) return;
+  const userLat = parseFloat(localStorage.getItem('userLat'));
+  const userLng = parseFloat(localStorage.getItem('userLng'));
+
+  _cercaLista = [...serviciosPins];
+  if (userLat && userLng) {
+    _cercaLista = _cercaLista.map(s => ({
+      ...s,
+      _dist: distanciaKm(userLat, userLng, s.lat, s.lng)
+    })).sort((a, b) => a._dist - b._dist);
+  }
+
+  _cercaIdx = 0;
+  _renderCercaSlice();
+
+  // Rotar cada 4 s si hay más de 2 pins distintos
+  if (_cercaTimer) clearInterval(_cercaTimer);
+  if (_cercaLista.length > 2) {
+    _cercaTimer = setInterval(() => {
+      _cercaIdx = (_cercaIdx + 2) % _cercaLista.length;
+      _renderCercaSlice();
+    }, 4000);
+  }
+}
+
+function actualizarStats() {
+  const total = serviciosPins.length;
+  const nCats = CIUDAD_ACTIVA.categorias.length;
+  const ahora = Date.now();
+  const siete = 7 * 24 * 60 * 60 * 1000;
+  const nuevos = serviciosPins.filter(s => {
+    const ts = parseInt((s.id || '').replace('pin-', ''));
+    return !isNaN(ts) && (ahora - ts) < siete;
+  }).length;
+
+  const elPuntos  = document.getElementById('stat-total-puntos');
+  const elCats    = document.getElementById('stat-total-cats');
+  const elNuevos  = document.getElementById('stat-total-nuevos');
+  const elVerTodo = document.getElementById('cat-ver-todo');
+
+  if (elPuntos)  elPuntos.textContent  = total;
+  if (elCats)    elCats.textContent    = nCats;
+  if (elNuevos)  elNuevos.textContent  = nuevos;
+  if (elVerTodo) elVerTodo.textContent = `🗺️ Ver todos los ${total} puntos`;
+}
+
+function toggleSemanaClima() {
+  const semana = document.getElementById('clima-semana');
+  const btn    = document.getElementById('clima-toggle-btn');
+  if (!semana) return;
+  const abierto = semana.style.display !== 'none';
+  semana.style.display = abierto ? 'none' : 'flex';
+  if (btn) btn.textContent = abierto ? 'Ver semana completa ▾' : 'Ocultar semana ▴';
 }
 
 function iniciarMapa() {
@@ -3903,7 +3961,7 @@ function cargarClima() {
       document.getElementById('clima-viento').textContent = '💨 ' + Math.round(c.wind_speed_10m) + ' km/h';
       document.getElementById('clima-humedad').textContent= '💧 ' + c.relative_humidity_2m + '%';
 
-      // Pronóstico 7 días
+      // Pronóstico 7 días (oculto hasta que el usuario lo pida)
       if (data.daily) {
         const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
         const contenedor = document.getElementById('clima-semana');
@@ -3922,6 +3980,8 @@ function cargarClima() {
               <div class="clima-dia-min">${min}°</div>
             </div>`;
         });
+        const btn = document.getElementById('clima-toggle-btn');
+        if (btn) btn.style.display = 'block';
       }
     })
     .catch(() => {
