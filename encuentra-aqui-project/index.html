@@ -2229,10 +2229,10 @@
       <span class="detalle-badge badge-verif">✓ Verificado</span>
     </div>
     <div class="info-grid">
-      <div class="info-chip"><div class="info-chip-label">Precio</div><div class="info-chip-val">Gratis</div></div>
-      <div class="info-chip"><div class="info-chip-label">Estado</div><div class="info-chip-val" style="color:var(--verde)">✅ Abierto</div></div>
-      <div class="info-chip"><div class="info-chip-label">Reserva</div><div class="info-chip-val">⏱️ 15 min</div></div>
-      <div class="info-chip"><div class="info-chip-label">Distancia</div><div class="info-chip-val">250 m</div></div>
+      <div class="info-chip"><div class="info-chip-label">Precio</div><div class="info-chip-val" id="det-chip-precio">Gratis</div></div>
+      <div class="info-chip"><div class="info-chip-label">Estado</div><div class="info-chip-val" id="det-chip-estado" style="color:var(--verde)">✅ Abierto</div></div>
+      <div class="info-chip"><div class="info-chip-label" id="det-chip-reserva-lbl">Reserva</div><div class="info-chip-val" id="det-chip-reserva">⏱️ 15 min</div></div>
+      <div class="info-chip"><div class="info-chip-label">Distancia</div><div class="info-chip-val" id="det-chip-dist">—</div></div>
     </div>
     <div class="desc-box"><p id="detalle-desc">Baños públicos disponibles durante el horario comercial. Limpios y con papel. Accesibles para personas con movilidad reducida.</p></div>
     <div style="font-size:13px;font-weight:600;margin-bottom:8px">Calificación de usuarios</div>
@@ -2541,6 +2541,33 @@ const datos = {
 };
 
 let pantallaAnterior = 'inicio';
+let _navSkipPush = false;
+
+function _pushNav(state) {
+  if (!_navSkipPush) history.pushState(state, '');
+}
+
+window.addEventListener('popstate', function(e) {
+  _navSkipPush = true;
+  const s = e.state || { screen: 'inicio' };
+
+  // Si aventura o gastro estaban abiertas, cerrarlas sin pushear
+  if (document.getElementById('screen-aventura')?.classList.contains('active')) {
+    document.getElementById('screen-aventura').classList.remove('active');
+    document.querySelector('.bottom-nav').style.display = 'flex';
+  }
+  if (document.getElementById('screen-gastro')?.classList.contains('active')) {
+    document.getElementById('screen-gastro').classList.remove('active');
+    document.querySelector('.bottom-nav').style.display = 'flex';
+  }
+
+  if (s.screen === 'detalle' && s.id) {
+    verDetalle(s.id);
+  } else {
+    irPantalla(s.screen || 'inicio');
+  }
+  _navSkipPush = false;
+});
 let currentDetalleId = null;
 let currentDetalleLat = null;
 let currentDetalleLng = null;
@@ -2549,6 +2576,7 @@ let pendienteEditarDesdeDetalle = false;
 let qrInterval;
 
 function irPantalla(nombre) {
+  _pushNav({ screen: nombre });
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
   const scr = document.getElementById('screen-' + nombre);
@@ -2569,6 +2597,7 @@ function irMapa() { irPantalla('mapa'); }
 
 function verDetalle(id) {
   pantallaAnterior = document.querySelector('.screen.active')?.id?.replace('screen-','') || 'inicio';
+  _pushNav({ screen: 'detalle', id: id });
   currentDetalleId = id;
   const pinData = serviciosPins.find(s => s.id === id);
   if (pinData) {
@@ -2597,8 +2626,51 @@ function verDetalle(id) {
     hero.innerHTML = d.emoji;
     hero.style.background = d.bgGrad;
   }
+  // ── Chips dinámicos ──────────────────────────────
+  const TIPOS_247 = ['reciclaje', 'agua'];
+  const userLat = parseFloat(localStorage.getItem('userLat'));
+  const userLng = parseFloat(localStorage.getItem('userLng'));
+  let distTxt = '—';
+  if (userLat && userLng && pinData?.lat && pinData?.lng) {
+    const km = distanciaKm(userLat, userLng, pinData.lat, pinData.lng);
+    distTxt = km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km';
+  }
+  const precio  = d.precio || 'Gratis';
+  const esGratis   = precio === 'Gratis';
+  const esAbierto  = !pinData?.estado || pinData.estado !== 'Cerrado';
+  const es247      = TIPOS_247.includes(pinData?.tipo);
+
+  const chipP = document.getElementById('det-chip-precio');
+  const chipE = document.getElementById('det-chip-estado');
+  const chipD = document.getElementById('det-chip-dist');
+  const chipR = document.getElementById('det-chip-reserva');
+  const chipRL = document.getElementById('det-chip-reserva-lbl');
+  if (chipP) { chipP.textContent = precio; chipP.style.color = esGratis ? 'var(--verde)' : 'var(--texto)'; }
+  if (chipE) { chipE.textContent = esAbierto ? '✅ Abierto' : '🔴 Cerrado'; chipE.style.color = esAbierto ? 'var(--verde)' : '#A32D2D'; }
+  if (chipD) { chipD.textContent = distTxt; }
+  if (chipR && chipRL) {
+    if (es247) { chipRL.textContent = 'Horario'; chipR.textContent = '24/7'; chipR.style.color = 'var(--verde)'; }
+    else        { chipRL.textContent = 'Reserva'; chipR.textContent = '⏱️ 15 min'; chipR.style.color = ''; }
+  }
+
+  // ── Badges dinámicos ─────────────────────────────
+  const badgesEl = document.getElementById('detalle-badges');
+  if (badgesEl) {
+    let b = esGratis
+      ? `<span class="detalle-badge badge-gratis">Gratis</span>`
+      : `<span class="detalle-badge" style="background:#FAEEDA;color:#854F0B">${precio}</span>`;
+    b += esAbierto
+      ? `<span class="detalle-badge badge-abierto">Abierto ahora</span>`
+      : `<span class="detalle-badge" style="background:#FEECEC;color:#A32D2D">Cerrado</span>`;
+    b += `<span class="detalle-badge badge-verif">✓ Verificado</span>`;
+    badgesEl.innerHTML = b;
+  }
+
+  // ── Botón de acción ──────────────────────────────
   const accionesEl = document.getElementById('detalle-acciones');
-  if (pinData?.whatsapp) {
+  if (es247) {
+    accionesEl.innerHTML = `<div style="background:var(--verde-claro);color:var(--verde-oscuro);border-radius:10px;padding:12px;text-align:center;font-weight:600;margin-bottom:10px;font-size:14px">♻️ Disponible 24 horas · 7 días a la semana</div>`;
+  } else if (pinData?.whatsapp) {
     const msg = encodeURIComponent(`Hola, me interesa "${pinData.nombre}". Los contacto desde la app Encuentra Aquí.`);
     accionesEl.innerHTML = `<button class="btn-primario" style="background:linear-gradient(135deg,#1a7a40,#25a550);margin-bottom:10px" onclick="window.open('https://wa.me/${pinData.whatsapp}?text=${msg}','_blank')">📲 Reservar por WhatsApp</button>`;
   } else {
@@ -4473,6 +4545,7 @@ function abrirPortal() {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('screen-aventura').classList.add('active');
       document.querySelector('.bottom-nav').style.display = 'none';
+      _pushNav({ screen: 'aventura' });
       renderGridAventura();
       setTimeout(iniciarMapaAventura, 300);
     }, 280);
@@ -4589,6 +4662,7 @@ function abrirGastro() {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       document.getElementById('screen-gastro').classList.add('active');
       document.querySelector('.bottom-nav').style.display = 'none';
+      _pushNav({ screen: 'gastro' });
       renderGridGastro();
       setTimeout(iniciarMapaGastro, 300);
     }, 280);
@@ -4917,6 +4991,7 @@ window.addEventListener('load', () => {
   aplicarCiudad();
   aplicarIdioma();
   aplicarModoOscuro();
+  history.replaceState({ screen: 'inicio' }, '');
   actualizarPerfil();
   renderAvatar();
   actualizarBadge();
