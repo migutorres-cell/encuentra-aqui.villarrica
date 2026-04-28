@@ -248,8 +248,20 @@
   .info-chip-val { font-size: 15px; font-weight: 600; }
   .desc-box { background: var(--gris-bg); border-radius: var(--radio-sm); padding: 14px; margin-bottom: 16px; }
   .desc-box p { font-size: 14px; color: var(--gris-texto); line-height: 1.6; }
-  .stars-row { display: flex; gap: 4px; margin-bottom: 16px; }
-  .star { font-size: 22px; cursor: pointer; transition: transform 0.1s; }
+  .stars-row { display: flex; gap: 4px; align-items: center; }
+  .star { font-size: 22px; cursor: pointer; transition: transform 0.1s; filter: grayscale(1) opacity(0.35); }
+  .star.activa { filter: none; }
+  .star:active { transform: scale(1.3); }
+  .stars-info { font-size: 11px; color: var(--gris-texto); margin-top: 3px; margin-bottom: 14px; }
+  .btn-util { width: 100%; padding: 12px; border: 1.5px solid var(--gris-borde); border-radius: var(--radio-sm); background: var(--gris-bg); color: var(--texto); font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 8px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-util.ya-util { background: var(--verde-claro); border-color: var(--verde); color: var(--verde-oscuro); }
+  .btn-util:active { transform: scale(0.98); }
+  .btn-reportar { display: block; text-align: center; font-size: 11px; color: var(--gris-texto); cursor: pointer; padding: 6px; margin-bottom: 8px; text-decoration: underline; }
+  .reporte-overlay { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .reporte-overlay.show { opacity: 1; pointer-events: all; }
+  .reporte-sheet { background: var(--gris-card); border-radius: 20px 20px 0 0; padding: 20px 20px 40px; width: 100%; max-width: 540px; }
+  .reporte-opt { padding: 13px 16px; border: 1px solid var(--gris-borde); border-radius: var(--radio-sm); margin-bottom: 8px; cursor: pointer; font-size: 14px; transition: background 0.12s; }
+  .reporte-opt:active { background: var(--verde-claro); }
   .star:active { transform: scale(1.3); }
   .btn-primario { width: 100%; background: var(--verde); color: white; border: none; border-radius: var(--radio-sm); padding: 15px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.18s; margin-bottom: 10px; }
   .btn-primario:active { background: var(--verde-oscuro); transform: scale(0.98); }
@@ -1857,7 +1869,7 @@
     <label for="pin-foto-file" id="pin-foto-preview" style="width:100%;height:90px;border-radius:12px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:12px;position:relative;overflow:hidden;border:2px dashed #aaa;box-sizing:border-box">
       <span style="font-size:24px">📷</span>
       <span style="font-size:11px;color:#555;margin-top:3px">Toca para agregar foto (opcional)</span>
-      <img id="pin-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+      <img id="pin-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain" />
     </label>
     <input type="file" id="pin-foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFotoNuevoPin(event)" />
     <div style="display:flex;gap:10px">
@@ -1916,7 +1928,7 @@
       ">
         <span id="np-foto-ico" style="font-size:24px">📷</span>
         <span id="np-foto-txt" style="font-size:11px;color:#666;margin-top:3px">Toca para agregar foto (opcional)</span>
-        <img id="np-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+        <img id="np-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain" />
       </label>
       <input type="file" id="np-foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFotoNuevoPunto(event)" />
       <button class="nuevo-punto-gps" onclick="usarGPSNuevoPunto()">📍 Capturar mi ubicación actual</button>
@@ -1953,7 +1965,7 @@
     <div id="edit-foto-preview" onclick="editarFoto()" style="width:100%;height:120px;border-radius:12px;background:linear-gradient(135deg,#9FE1CB,#1D9E75);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;margin-bottom:14px;position:relative;overflow:hidden;border:2px dashed rgba(255,255,255,0.4)">
       <div id="edit-foto-emoji" style="font-size:36px">🚻</div>
       <div style="font-size:11px;color:rgba(255,255,255,0.85);margin-top:4px;font-weight:600">Tocar para cambiar foto</div>
-      <img id="edit-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+      <img id="edit-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain" />
     </div>
     <input type="file" id="edit-foto-file" accept="image/*" style="display:none" onchange="previewFotoEdit(event)" />
 
@@ -2004,6 +2016,12 @@
     <!-- WHATSAPP (opcional, para hospedajes u otros con reserva) -->
     <div style="font-size:12px;font-weight:600;color:var(--gris-texto);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">WhatsApp para reservas <span style="font-weight:400;text-transform:none">(opcional)</span></div>
     <input type="tel" class="form-input" id="edit-whatsapp-input" placeholder="Ej: 56912345678 (sin + ni espacios)" style="margin-bottom:16px" />
+
+    <!-- AVISO BLOQUEO (solo si está bloqueado) -->
+    <div id="edit-bloqueo-aviso" style="display:none;background:#FEECEC;border:1px solid #FFBDBD;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#A32D2D">
+      🚫 <strong>Punto bloqueado</strong> por 3 o más reportes. No es visible para usuarios.<br>
+      <button onclick="desbloquearPin()" style="margin-top:8px;padding:8px 16px;background:#A32D2D;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer">🔓 Desbloquear y restaurar</button>
+    </div>
 
     <!-- BOTONES -->
     <button class="btn-primario" onclick="guardarEditPin()" style="margin-bottom:10px">✅ Guardar cambios</button>
@@ -2066,7 +2084,7 @@
       <label for="agr-foto-file" style="width:100%;height:90px;border-radius:12px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;border:2px dashed #aaa;box-sizing:border-box">
         <span style="font-size:24px">📷</span>
         <span style="font-size:11px;color:#555;margin-top:3px">Toca para agregar foto</span>
-        <img id="agr-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+        <img id="agr-foto-img" src="" style="display:none;position:absolute;inset:0;width:100%;height:100%;object-fit:contain" />
       </label>
       <input type="file" id="agr-foto-file" accept="image/*" capture="environment" style="display:none" onchange="previewFotoAgregar(event)" />
     </div>
@@ -2236,16 +2254,27 @@
     </div>
     <div class="desc-box"><p id="detalle-desc">Baños públicos disponibles durante el horario comercial. Limpios y con papel. Accesibles para personas con movilidad reducida.</p></div>
     <div style="font-size:13px;font-weight:600;margin-bottom:8px">Calificación de usuarios</div>
-    <div class="stars-row" id="stars-detalle">
-      <span class="star" onclick="calificarDetalle(1)">⭐</span>
-      <span class="star" onclick="calificarDetalle(2)">⭐</span>
-      <span class="star" onclick="calificarDetalle(3)">⭐</span>
-      <span class="star" onclick="calificarDetalle(4)">⭐</span>
-      <span class="star" onclick="calificarDetalle(5)">⭐</span>
-    </div>
-    <div style="height:16px"></div>
+    <div class="stars-row" id="stars-detalle"></div>
+    <div class="stars-info" id="stars-info">Sin reseñas aún</div>
     <div id="detalle-acciones"></div>
+    <button class="btn-util" id="btn-util" onclick="marcarUtil()">
+      👍 <span id="btn-util-txt">Fue útil</span>&nbsp;·&nbsp;<span id="btn-util-count">0</span>
+    </button>
     <button class="btn-secundario" onclick="abrirComoLlegar()">🗺️ Cómo llegar</button>
+    <div class="btn-reportar" onclick="abrirModalReporte()">⚠️ Reportar contenido inapropiado</div>
+  </div>
+</div>
+
+<!-- MODAL REPORTE -->
+<div class="reporte-overlay" id="modal-reporte" onclick="cerrarModalReporte(event)">
+  <div class="reporte-sheet" onclick="event.stopPropagation()">
+    <div style="font-size:15px;font-weight:700;margin-bottom:4px">⚠️ Reportar contenido</div>
+    <div style="font-size:12px;color:var(--gris-texto);margin-bottom:16px">¿Por qué quieres reportar este punto?</div>
+    <div class="reporte-opt" onclick="confirmarReporte('Información incorrecta')">📌 Información incorrecta o desactualizada</div>
+    <div class="reporte-opt" onclick="confirmarReporte('Contenido inapropiado')">🚫 Contenido inapropiado u ofensivo</div>
+    <div class="reporte-opt" onclick="confirmarReporte('Lugar no existe')">❌ El lugar no existe o está cerrado</div>
+    <div class="reporte-opt" onclick="confirmarReporte('Spam o publicidad')">📢 Spam o publicidad no autorizada</div>
+    <button class="favz-btn-limpiar" style="width:100%;padding:12px;border-radius:var(--radio-sm);margin-top:4px" onclick="cerrarModalReporte(null)">Cancelar</button>
   </div>
 </div>
 
@@ -2529,6 +2558,174 @@ function simularNotifUso(nombrePin) {
   });
 }
 
+// ── SISTEMA REAL DE INTERACCIONES ─────────────────────────────
+
+function getDeviceId() {
+  let id = localStorage.getItem('deviceId');
+  if (!id) {
+    id = 'dev' + Date.now() + Math.random().toString(36).replace(/[^a-z0-9]/g, '').substring(0, 8);
+    localStorage.setItem('deviceId', id);
+  }
+  return id;
+}
+
+// Renderiza las estrellas y promedio desde Firebase
+function renderEstrellas(pinId) {
+  if (!dbRef || !pinId) return;
+  const safeId = pinId.replace(/[.#$/\[\]]/g, '_');
+  dbRef.child(safeId).child('ratings').once('value', snap => {
+    const data  = snap.val() || {};
+    const vals  = Object.values(data).filter(v => v >= 1 && v <= 5);
+    const count = vals.length;
+    const avg   = count ? Math.round((vals.reduce((a, b) => a + b, 0) / count) * 10) / 10 : 0;
+    const llenas = Math.round(avg);
+
+    const row  = document.getElementById('stars-detalle');
+    const info = document.getElementById('stars-info');
+    if (!row) return;
+
+    row.innerHTML = [1,2,3,4,5].map(i =>
+      `<span class="star ${i <= llenas ? 'activa' : ''}" onclick="calificarDetalle(${i})">⭐</span>`
+    ).join('');
+
+    if (info) {
+      info.textContent = count === 0
+        ? 'Sin reseñas aún — sé el primero'
+        : `${avg} / 5 · ${count} reseña${count !== 1 ? 's' : ''}`;
+    }
+  });
+}
+
+function calificarDetalle(n) {
+  const pinId   = currentDetalleId;
+  const safeId  = (pinId || '').replace(/[.#$/\[\]]/g, '_');
+  const devId   = getDeviceId();
+  const lsKey   = 'rated_' + pinId;
+
+  if (localStorage.getItem(lsKey)) {
+    mostrarToast('Ya enviaste una reseña para este punto');
+    return;
+  }
+  if (!dbRef || !safeId) { mostrarToast('Sin conexión'); return; }
+
+  localStorage.setItem(lsKey, '1');
+  dbRef.child(safeId).child('ratings').child(devId).set(n).then(() => {
+    sumarPuntos('resena');
+    mostrarToast('⭐ Reseña guardada — ¡Gracias!');
+    renderEstrellas(pinId);
+  }).catch(() => {
+    localStorage.removeItem(lsKey);
+    mostrarToast('Error al guardar — intenta de nuevo');
+  });
+}
+
+let currentDetallePinNombre = '';
+
+function marcarUtil() {
+  const pinId  = currentDetalleId;
+  const safeId = (pinId || '').replace(/[.#$/\[\]]/g, '_');
+  const lsKey  = 'util_' + pinId;
+
+  if (localStorage.getItem(lsKey)) {
+    mostrarToast('Ya marcaste este punto como útil');
+    return;
+  }
+  if (!dbRef || !safeId) { mostrarToast('Sin conexión'); return; }
+
+  localStorage.setItem(lsKey, '1');
+  dbRef.child(safeId).child('util_count').transaction(v => (v || 0) + 1).then(res => {
+    const nuevo = res.snapshot.val() || 1;
+    sumarPuntos('util');
+    agregarNotif('util', '👍', `¡El punto <b>${currentDetallePinNombre}</b> fue marcado como útil! +5 pts`);
+    mostrarToast('👍 ¡Gracias! +5 puntos');
+
+    const btn  = document.getElementById('btn-util');
+    const txt  = document.getElementById('btn-util-txt');
+    const cnt  = document.getElementById('btn-util-count');
+    if (btn) btn.classList.add('ya-util');
+    if (txt) txt.textContent = 'Útil ✓';
+    if (cnt) cnt.textContent = nuevo;
+
+    // Notificar al admin
+    _escribirNotifAdmin({ tipo: 'util', pinNombre: currentDetallePinNombre, pinId });
+  }).catch(() => {
+    localStorage.removeItem(lsKey);
+    mostrarToast('Error — intenta de nuevo');
+  });
+}
+
+function registrarVista(pinId) {
+  if (!dbRef || !pinId) return;
+  const safeId = pinId.replace(/[.#$/\[\]]/g, '_');
+  dbRef.child(safeId).child('vistas').transaction(v => (v || 0) + 1);
+}
+
+function _escribirNotifAdmin(datos) {
+  try {
+    firebase.database().ref('admin_notifs').push().set({ ...datos, ts: Date.now() });
+  } catch(e) {}
+}
+
+function verificarNotifAdmin() {
+  const lastCheck = parseInt(localStorage.getItem('admin_notif_last') || '0');
+  try {
+    firebase.database().ref('admin_notifs')
+      .orderByChild('ts').startAt(lastCheck + 1)
+      .once('value', snap => {
+        if (!snap.exists()) return;
+        Object.values(snap.val()).forEach(item => {
+          if (item.tipo === 'nuevo_pin') {
+            agregarNotif('admin', item.emoji || '📍', `Nuevo servicio agregado: <b>${item.nombre}</b>`);
+          } else if (item.tipo === 'reporte') {
+            agregarNotif('admin', '⚠️', `Punto reportado: <b>${item.pinNombre}</b> — ${item.razon}`);
+          } else if (item.tipo === 'util') {
+            agregarNotif('admin', '👍', `El punto <b>${item.pinNombre}</b> fue marcado como útil`);
+          }
+        });
+        localStorage.setItem('admin_notif_last', Date.now());
+      });
+  } catch(e) {}
+}
+
+function abrirModalReporte() {
+  document.getElementById('modal-reporte').classList.add('show');
+}
+
+function cerrarModalReporte(e) {
+  if (e && e.target !== document.getElementById('modal-reporte') && e !== null) return;
+  document.getElementById('modal-reporte').classList.remove('show');
+}
+
+function confirmarReporte(razon) {
+  cerrarModalReporte(null);
+  const pin = serviciosPins.find(s => s.id === currentDetalleId);
+  if (!pin) return;
+
+  // Notificar al admin
+  _escribirNotifAdmin({ tipo: 'reporte', pinId: currentDetalleId, pinNombre: pin.nombre, razon });
+
+  // Incrementar contador y auto-bloquear al llegar a 3
+  if (dbRef && currentDetalleId) {
+    const safeId = currentDetalleId.replace(/[.#$/\[\]]/g, '_');
+    dbRef.child(safeId).child('reportes_count').transaction(
+      val => (val || 0) + 1,
+      (err, committed, snap) => {
+        if (!err && committed && snap.val() >= 3 && !pin.bloqueado) {
+          dbRef.child(safeId).child('bloqueado').set(true);
+          _escribirNotifAdmin({ tipo: 'bloqueado', pinNombre: pin.nombre, pinId: currentDetalleId });
+          agregarNotif('admin', '🚫', `Punto bloqueado automáticamente: <b>${pin.nombre}</b> — acumuló 3 reportes. Revísalo.`);
+          mostrarToast('🚫 Este punto fue bloqueado por múltiples reportes');
+          irPantalla(pantallaAnterior || 'inicio');
+        }
+      }
+    );
+  }
+
+  mostrarToast('⚠️ Reporte enviado — lo revisaremos');
+}
+
+// ── FIN SISTEMA REAL DE INTERACCIONES ──────────────────────────
+
 // ── FIN SISTEMA DE PUNTOS ───────────────────────────────────
 
 const datos = {
@@ -2600,6 +2797,7 @@ function verDetalle(id) {
   _pushNav({ screen: 'detalle', id: id });
   currentDetalleId = id;
   const pinData = serviciosPins.find(s => s.id === id);
+  currentDetallePinNombre = pinData?.nombre || '';
   if (pinData) {
     datos[id] = {
       emoji: pinData.emoji, nombre: pinData.nombre,
@@ -2620,8 +2818,10 @@ function verDetalle(id) {
   // Mostrar foto si existe, si no mostrar emoji
   const hero = document.getElementById('detalle-hero');
   if (pinData?.foto) {
-    hero.innerHTML = `<img src="${pinData.foto}" style="width:100%;height:100%;object-fit:cover;display:block" />`;
-    hero.style.background = 'none';
+    hero.style.background = d.bgGrad;
+    hero.style.position = 'relative';
+    hero.style.overflow = 'hidden';
+    hero.innerHTML = imgConFondo(pinData.foto, '0px');
   } else {
     hero.innerHTML = d.emoji;
     hero.style.background = d.bgGrad;
@@ -2676,6 +2876,28 @@ function verDetalle(id) {
   } else {
     accionesEl.innerHTML = `<button class="btn-primario" style="margin-bottom:10px" onclick="abrirQR()">📲 Reservar con QR</button>`;
   }
+
+  // Estrellas reales desde Firebase
+  renderEstrellas(id);
+
+  // Botón útil — estado según device
+  const yaUtil = !!localStorage.getItem('util_' + id);
+  const btnUtil = document.getElementById('btn-util');
+  const txtUtil = document.getElementById('btn-util-txt');
+  if (btnUtil) btnUtil.classList.toggle('ya-util', yaUtil);
+  if (txtUtil) txtUtil.textContent = yaUtil ? 'Útil ✓' : 'Fue útil';
+
+  // Cargar contador de útiles desde Firebase
+  if (dbRef && id) {
+    const safeId = id.replace(/[.#$/\[\]]/g, '_');
+    dbRef.child(safeId).child('util_count').once('value', snap => {
+      const el = document.getElementById('btn-util-count');
+      if (el) el.textContent = snap.val() || 0;
+    });
+  }
+
+  // Registrar vista
+  registrarVista(id);
 
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('activo'));
@@ -2764,6 +2986,15 @@ function comprimirFoto(file, callback) {
   reader.readAsDataURL(file);
 }
 
+// Genera HTML con blur fill + imagen sin recorte para pantallas de display
+function imgConFondo(src, radio) {
+  const r = radio || '0px';
+  return `<div style="position:absolute;inset:0;overflow:hidden;border-radius:${r}">` +
+    `<div style="position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);background:url('${src}') center/cover no-repeat;filter:blur(18px);opacity:0.6"></div>` +
+    `<img src="${src}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none" />` +
+    `</div>`;
+}
+
 function previewFotoAgregar(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -2800,6 +3031,7 @@ function publicarServicio() {
   dbRef.child(nuevo.id).set(nuevo).then(() => {
     sumarPuntos('agregar');
     agregarNotif('nuevo_pin', emoji, `Nuevo punto agregado: <b>${nombre}</b>`);
+    _escribirNotifAdmin({ tipo: 'nuevo_pin', nombre, emoji, tipo_pin: tipo });
     mostrarToast('✅ ¡Punto publicado en el mapa para todos!');
     simularNotifUso(nombre);
     document.getElementById('agr-nombre').value = '';
@@ -3478,10 +3710,8 @@ function _renderCercaSlice() {
     const distTxt = (userLat && s._dist != null)
       ? (s._dist < 1 ? Math.round(s._dist * 1000) + ' m' : s._dist.toFixed(1) + ' km')
       : '';
-    const fotoHTML = s.foto
-      ? `<img src="${s.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;display:block" />`
-      : s.emoji;
-    const fotoStyle = s.foto ? 'padding:0;overflow:hidden' : '';
+    const fotoHTML = s.foto ? imgConFondo(s.foto, '8px') : s.emoji;
+    const fotoStyle = s.foto ? 'padding:0;overflow:hidden;position:relative' : '';
     return `<div class="servicio-card" onclick="verDetalle('${s.id}')">
       <div class="servicio-foto" style="${fotoStyle}">${fotoHTML}</div>
       <div class="servicio-nombre">${s.nombre}</div>
@@ -3499,7 +3729,7 @@ function renderServiciosCercanos() {
   const userLat = parseFloat(localStorage.getItem('userLat'));
   const userLng = parseFloat(localStorage.getItem('userLng'));
 
-  _cercaLista = [...serviciosPins];
+  _cercaLista = serviciosPins.filter(s => !s.bloqueado);
   if (userLat && userLng) {
     _cercaLista = _cercaLista.map(s => ({
       ...s,
@@ -3521,7 +3751,7 @@ function renderServiciosCercanos() {
 }
 
 function actualizarStats() {
-  const total = serviciosPins.length;
+  const total = serviciosPins.filter(s => !s.bloqueado).length;
   const nCats = CIUDAD_ACTIVA.categorias.length;
   const ahora = Date.now();
   const siete = 7 * 24 * 60 * 60 * 1000;
@@ -3620,9 +3850,11 @@ function atmPinHtml(color) {
 
 function agregarPinMapa(s) {
   if (!mapaLeaflet) return;
+  if (s.bloqueado && !adminActivo) return; // invisible para usuarios normales
+  const borde = s.bloqueado ? '3px solid #E53935' : '2.5px solid white';
   const html = s.tipo === 'cajeros'
     ? atmPinHtml(s.color)
-    : `<div style="background:${s.color};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2.5px solid white;box-shadow:0 3px 8px rgba(0,0,0,0.35);cursor:pointer">${s.emoji}</div>`;
+    : `<div style="background:${s.color};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:${borde};box-shadow:0 3px 8px rgba(0,0,0,0.35);cursor:pointer;opacity:${s.bloqueado ? 0.6 : 1}">${s.bloqueado ? '🚫' : s.emoji}</div>`;
   const icon = L.divIcon({ className:'', html, iconSize:[38,38], iconAnchor:[19,19] });
   const marker = L.marker([s.lat, s.lng], { icon }).addTo(mapaLeaflet);
   marker.on('click', () => {
@@ -3722,6 +3954,12 @@ function verificarPinAdmin() {
     if (btnSembrar) btnSembrar.style.display = 'flex';
     cerrarModalAdmin();
     mostrarToast('🔓 Modo admin activado');
+    verificarNotifAdmin();
+    // Re-renderizar mapa para mostrar pins bloqueados con borde rojo
+    if (mapaLeaflet) {
+      mapaLeaflet.eachLayer(l => { if (l instanceof L.Marker) mapaLeaflet.removeLayer(l); });
+      serviciosPins.forEach(s => agregarPinMapa(s));
+    }
     if (pendienteEditarDesdeDetalle) {
       pendienteEditarDesdeDetalle = false;
       setTimeout(editarDesdeDetalle, 300);
@@ -3768,6 +4006,9 @@ function abrirEditarPin(s, marker) {
   const estaAbierto = !s.estado || s.estado !== 'Cerrado';
   document.getElementById('edit-estado-abierto').classList.toggle('sel', estaAbierto);
   document.getElementById('edit-estado-cerrado').classList.toggle('sel', !estaAbierto);
+
+  const avisoBloqueo = document.getElementById('edit-bloqueo-aviso');
+  if (avisoBloqueo) avisoBloqueo.style.display = s.bloqueado ? 'block' : 'none';
 
   document.getElementById('modal-editar-pin').classList.add('show');
 }
@@ -3851,6 +4092,17 @@ function eliminarPinAdmin() {
   if (dbRef) dbRef.child(pinEditando.s.id).remove();
   cerrarEditarPin();
   mostrarToast('🗑️ Servicio eliminado');
+}
+
+function desbloquearPin() {
+  if (!pinEditando || !dbRef) return;
+  const safeId = pinEditando.s.id.replace(/[.#$/\[\]]/g, '_');
+  dbRef.child(safeId).update({ bloqueado: false, reportes_count: 0 });
+  pinEditando.s.bloqueado = false;
+  pinEditando.s.reportes_count = 0;
+  document.getElementById('edit-bloqueo-aviso').style.display = 'none';
+  mostrarToast('✅ Punto desbloqueado — ya es visible para todos');
+  cerrarEditarPin();
 }
 
 function centrarEnMiUbicacion() {
@@ -4466,8 +4718,8 @@ function abrirDetalleAventura(p) {
   aventuraSeleccionada = p;
   const emojiEl = document.getElementById('avt-det-emoji');
   if (p.foto) {
-    emojiEl.innerHTML = `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;display:block" />`;
-    emojiEl.style.padding = '0'; emojiEl.style.overflow = 'hidden';
+    emojiEl.style.padding = '0'; emojiEl.style.overflow = 'hidden'; emojiEl.style.position = 'relative';
+    emojiEl.innerHTML = imgConFondo(p.foto, '14px');
   } else {
     emojiEl.textContent = p.emoji;
     emojiEl.style.padding = ''; emojiEl.style.overflow = '';
@@ -4785,8 +5037,8 @@ function abrirDetalleGastro(idx) {
 
   const emojiEl = document.getElementById('gastro-det-emoji');
   if (p.foto) {
-    emojiEl.innerHTML = `<img src="${p.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;display:block" />`;
-    emojiEl.style.padding = '0'; emojiEl.style.overflow = 'hidden';
+    emojiEl.style.padding = '0'; emojiEl.style.overflow = 'hidden'; emojiEl.style.position = 'relative';
+    emojiEl.innerHTML = imgConFondo(p.foto, '12px');
   } else {
     emojiEl.textContent = p.emoji;
     emojiEl.style.padding = ''; emojiEl.style.overflow = '';
@@ -4998,6 +5250,7 @@ window.addEventListener('load', () => {
   iniciarFirebase();
   pedirUbicacion();
   cargarClima();
+  setTimeout(verificarNotifAdmin, 3000);
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
     setTimeout(iniciarOnboarding, 600);
