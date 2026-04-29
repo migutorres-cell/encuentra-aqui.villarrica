@@ -1659,6 +1659,8 @@
     <div class="cat-card" onclick="irCategoria('agua')"><span class="cat-emoji">💧</span><span class="cat-nombre" data-i18n="agua">Agua gratis</span><span class="cat-count">4 puntos</span></div>
     <div class="cat-card" onclick="irCategoria('reciclaje')"><span class="cat-emoji">♻️</span><span class="cat-nombre" data-i18n="reciclaje">Reciclaje</span><span class="cat-count">4 puntos</span></div>
     <div class="cat-card" onclick="irCategoria('hospedaje')"><span class="cat-emoji">🏨</span><span class="cat-nombre">Hospedaje</span><span class="cat-count">0 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('farmacia')"><span class="cat-emoji">💊</span><span class="cat-nombre">Farmacias</span><span class="cat-count">0 puntos</span></div>
+    <div class="cat-card" onclick="irCategoria('combustible')"><span class="cat-emoji">⛽</span><span class="cat-nombre">Combustible</span><span class="cat-count">0 puntos</span></div>
     <div class="cat-ver-todo" id="cat-ver-todo" onclick="irCategoria('todo')">🗺️ Ver todos los puntos</div>
   </div>
 
@@ -2002,6 +2004,7 @@
     <div id="mapa-real"></div>
     <button class="fab-admin-mapa" id="btn-admin-mapa" onclick="pedirPinAdmin()">🔒 Admin</button>
     <button class="fab-sembrar" id="btn-sembrar-datos" onclick="sembrarDatosReales()">🌱 Sembrar datos</button>
+    <button class="fab-sembrar" id="btn-sembrar-farcom" onclick="sembrarFarmaciaCombustible()" style="bottom:96px;background:#E53E3E">💊⛽ Sembrar Far+Com</button>
     <button class="fab-mi-ubicacion" onclick="centrarEnMiUbicacion()">📍 Mi ubicación</button>
     <button class="fab-falta" onclick="abrirFaltaAlgo()"><span class="fab-falta-ico">❓</span> ¿Falta algo aquí?</button>
   </div>
@@ -2023,6 +2026,8 @@
       <div class="tipo-mini" onclick="selTipoPin(this,'fotografia','📷','#6b5b95')">📷 Fotografía</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'reciclaje','♻️','#2e7d32')">♻️ Reciclaje</div>
       <div class="tipo-mini" onclick="selTipoPin(this,'hospedaje','🏨','#c0392b')">🏨 Hospedaje</div>
+      <div class="tipo-mini" onclick="selTipoPin(this,'farmacia','💊','#E53E3E')">💊 Farmacia</div>
+      <div class="tipo-mini" onclick="selTipoPin(this,'combustible','⛽','#DD6B20')">⛽ Combustible</div>
     </div>
     <input type="text" class="form-input" id="pin-nombre-input" placeholder="Nombre del lugar (ej: Punto Reciclaje)" style="margin-bottom:12px" />
     <div id="pin-subtipos" style="display:none;margin-bottom:12px"></div>
@@ -2142,6 +2147,8 @@
       <div class="tipo-mini" onclick="selTipoEdit(this,'fotografia','📷','#6b5b95')">📷 Fotografía</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'reciclaje','♻️','#2e7d32')">♻️ Reciclaje</div>
       <div class="tipo-mini" onclick="selTipoEdit(this,'hospedaje','🏨','#c0392b')">🏨 Hospedaje</div>
+      <div class="tipo-mini" onclick="selTipoEdit(this,'farmacia','💊','#E53E3E')">💊 Farmacia</div>
+      <div class="tipo-mini" onclick="selTipoEdit(this,'combustible','⛽','#DD6B20')">⛽ Combustible</div>
     </div>
 
     <!-- NOMBRE -->
@@ -2466,6 +2473,8 @@
         <div class="busq-tag" onclick="buscarTag('Veterinario')">🐾 Veterinario</div>
         <div class="busq-tag" onclick="buscarTag('Fotografía')">📷 Fotografía</div>
         <div class="busq-tag" onclick="buscarTag('Reciclaje')">♻️ Reciclaje</div>
+        <div class="busq-tag" onclick="buscarTag('Farmacia')">💊 Farmacia</div>
+        <div class="busq-tag" onclick="buscarTag('Combustible')">⛽ Combustible</div>
       </div>
       <div style="height:20px"></div>
       <div class="busq-seccion-lbl">Todos los servicios</div>
@@ -2535,6 +2544,8 @@ const CIUDAD_ACTIVA = {
     { id:'agua',             emoji:'💧', nombre:'Agua gratis'  },
     { id:'reciclaje',        emoji:'♻️', nombre:'Reciclaje'   },
     { id:'hospedaje',        emoji:'🏨', nombre:'Hospedaje'   },
+    { id:'farmacia',         emoji:'💊', nombre:'Farmacias'   },
+    { id:'combustible',      emoji:'⛽', nombre:'Combustible' },
   ]
 };
 
@@ -3994,7 +4005,67 @@ const DATOS_REALES = [
   { id:'osm-stg-mirador-caupolicán', emoji:'🏞️', nombre:'Terraza Caupolicán — Cerro Sta. Lucía', dir:'Cerro Santa Lucía',  lat:-33.4411, lng:-70.6436, tipo:'miradores', color:'#BA7517', ciudad:'Santiago' },
   { id:'osm-stg-mirador-neptuno',    emoji:'🏞️', nombre:'Terraza Neptuno — Cerro Sta. Lucía', dir:'Cerro Santa Lucía',      lat:-33.4417, lng:-70.6439, tipo:'miradores', color:'#BA7517', ciudad:'Santiago' },
   { id:'osm-stg-mirador-pedrovald',  emoji:'🏞️', nombre:'Terraza Pedro de Valdivia — Sta. Lucía', dir:'Cerro Santa Lucía', lat:-33.4403, lng:-70.6434, tipo:'miradores', color:'#BA7517', ciudad:'Santiago' },
+
+  // ── FARMACIAS ─────────────────────────────────────────────────────────────
+  // ── Villarrica ──────────────────────────────────────────────────────────
+  { id:'far-vll-cruzverde',     emoji:'💊', nombre:'Cruz Verde Villarrica',      dir:'Pedro de Valdivia 1022',     lat:-39.2849, lng:-72.2259, tipo:'farmacia',    subtipos:['🟢 Cruz Verde','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Villarrica' },
+  { id:'far-vll-salcobrand',    emoji:'💊', nombre:'Salcobrand Villarrica',      dir:'Valentín Letelier 660',      lat:-39.2843, lng:-72.2281, tipo:'farmacia',    subtipos:['🔵 Salcobrand','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Villarrica' },
+  { id:'far-vll-drsimi',        emoji:'💊', nombre:'Farmacia Dr. Simi',          dir:'Henríquez 390',              lat:-39.2855, lng:-72.2247, tipo:'farmacia',    subtipos:['🟠 Dr. Simi','💰 Precios bajos'],     color:'#E53E3E', ciudad:'Villarrica' },
+  { id:'far-vll-popular',       emoji:'💊', nombre:'Farmacia Popular Villarrica',dir:'General Körner 286',         lat:-39.2843, lng:-72.2294, tipo:'farmacia',    subtipos:['🏪 Local','💊 Stock básico'],          color:'#E53E3E', ciudad:'Villarrica' },
+  // ── Pucón ───────────────────────────────────────────────────────────────
+  { id:'far-puc-cruzverde',     emoji:'💊', nombre:'Cruz Verde Pucón',           dir:"O'Higgins 315",              lat:-39.2742, lng:-71.9768, tipo:'farmacia',    subtipos:['🟢 Cruz Verde','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Pucón' },
+  { id:'far-puc-salcobrand',    emoji:'💊', nombre:'Salcobrand Pucón',           dir:"O'Higgins 236",              lat:-39.2735, lng:-71.9761, tipo:'farmacia',    subtipos:['🔵 Salcobrand','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Pucón' },
+  { id:'far-puc-drsimi',        emoji:'💊', nombre:'Farmacia Dr. Simi Pucón',    dir:'Fresia 243',                 lat:-39.2751, lng:-71.9776, tipo:'farmacia',    subtipos:['🟠 Dr. Simi','💰 Precios bajos'],     color:'#E53E3E', ciudad:'Pucón' },
+  // ── Licán Ray ───────────────────────────────────────────────────────────
+  { id:'far-lkr-cruzverde',     emoji:'💊', nombre:'Cruz Verde Licán Ray',       dir:'Manquehue 158',              lat:-39.5208, lng:-72.1542, tipo:'farmacia',    subtipos:['🟢 Cruz Verde','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Licán Ray' },
+  { id:'far-lkr-local',         emoji:'💊', nombre:'Farmacia Licán Ray',         dir:'Av. Gustavino 85',           lat:-39.5212, lng:-72.1546, tipo:'farmacia',    subtipos:['🏪 Local','💊 Stock básico'],          color:'#E53E3E', ciudad:'Licán Ray' },
+  // ── Curarrehue ──────────────────────────────────────────────────────────
+  { id:'far-cur-posta',         emoji:'💊', nombre:'Farmacia Posta Curarrehue',  dir:'Ruta 119 s/n',               lat:-39.3592, lng:-71.5882, tipo:'farmacia',    subtipos:['🏥 Posta rural','💊 Medicamentos básicos'], color:'#E53E3E', ciudad:'Curarrehue' },
+  // ── Temuco ──────────────────────────────────────────────────────────────
+  { id:'far-tem-cruzverde-caup',emoji:'💊', nombre:'Cruz Verde Caupolicán',      dir:'Av. Caupolicán 466',         lat:-39.2355, lng:-72.5901, tipo:'farmacia',    subtipos:['🟢 Cruz Verde','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Temuco' },
+  { id:'far-tem-salcobrand-port',emoji:'💊', nombre:'Salcobrand Portales',       dir:'Portales 660',               lat:-38.7345, lng:-72.5914, tipo:'farmacia',    subtipos:['🔵 Salcobrand','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Temuco' },
+  { id:'far-tem-drsimi-bulnes', emoji:'💊', nombre:'Dr. Simi Bulnes',            dir:'Bulnes 455',                 lat:-38.7338, lng:-72.5879, tipo:'farmacia',    subtipos:['🟠 Dr. Simi','💰 Precios bajos'],     color:'#E53E3E', ciudad:'Temuco' },
+  { id:'far-tem-cruzverde-alem',emoji:'💊', nombre:'Cruz Verde Alemania',        dir:'Av. Alemania 0678',          lat:-38.7401, lng:-72.6218, tipo:'farmacia',    subtipos:['🟢 Cruz Verde','💳 Convenios Fonasa'], color:'#E53E3E', ciudad:'Temuco' },
+  { id:'far-tem-salcobrand-mall',emoji:'💊', nombre:'Salcobrand Portal Temuco',  dir:'Av. Alemania 0850',          lat:-38.7441, lng:-72.6093, tipo:'farmacia',    subtipos:['🔵 Salcobrand','🏬 Mall Portal'],     color:'#E53E3E', ciudad:'Temuco' },
+  { id:'far-tem-ahumada',       emoji:'💊', nombre:'Farmacias Ahumada',          dir:'Montt 850',                  lat:-38.7352, lng:-72.5895, tipo:'farmacia',    subtipos:['🟡 Ahumada','💳 Convenios Fonasa'],   color:'#E53E3E', ciudad:'Temuco' },
+
+  // ── COMBUSTIBLE ───────────────────────────────────────────────────────────
+  // ── Villarrica ──────────────────────────────────────────────────────────
+  { id:'com-vll-copec-norte',   emoji:'⛽', nombre:'Copec Villarrica Norte',     dir:'Anfión Muñoz 1580',          lat:-39.2785, lng:-72.2311, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Villarrica' },
+  { id:'com-vll-copec-sur',     emoji:'⛽', nombre:'Copec Villarrica Sur',       dir:'Pedro de Valdivia km2 sur',  lat:-39.2978, lng:-72.2192, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Villarrica' },
+  { id:'com-vll-enex',          emoji:'⛽', nombre:'ENEX Villarrica',            dir:'General Körner 855',         lat:-39.2832, lng:-72.2320, tipo:'combustible', subtipos:['🟡 ENEX','⛽ Bencina','🚗 Diesel'],  color:'#DD6B20', ciudad:'Villarrica' },
+  // ── Pucón ───────────────────────────────────────────────────────────────
+  { id:'com-puc-copec',         emoji:'⛽', nombre:'Copec Pucón',                dir:"O'Higgins con Colo Colo",    lat:-39.2790, lng:-71.9812, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Pucón' },
+  { id:'com-puc-enex',          emoji:'⛽', nombre:'ENEX Pucón',                 dir:'Fresia s/n salida sur',      lat:-39.2802, lng:-71.9829, tipo:'combustible', subtipos:['🟡 ENEX','⛽ Bencina','🚗 Diesel'],  color:'#DD6B20', ciudad:'Pucón' },
+  { id:'com-puc-petrobras',     emoji:'⛽', nombre:'Petrobras Pucón entrada',    dir:'Ruta entrada Pucón',         lat:-39.2758, lng:-71.9831, tipo:'combustible', subtipos:['🔵 Petrobras','⛽ Bencina','🚗 Diesel'],color:'#DD6B20', ciudad:'Pucón' },
+  // ── Licán Ray ───────────────────────────────────────────────────────────
+  { id:'com-lkr-copec',         emoji:'⛽', nombre:'Copec Licán Ray',            dir:'Av. Gustavino s/n',          lat:-39.5195, lng:-72.1555, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Licán Ray' },
+  // ── Curarrehue ──────────────────────────────────────────────────────────
+  { id:'com-cur-bencina',       emoji:'⛽', nombre:'Bencina Curarrehue',         dir:'Ruta 119 salida norte',      lat:-39.3575, lng:-71.5900, tipo:'combustible', subtipos:['⛽ Bencina','🚗 Diesel'],             color:'#DD6B20', ciudad:'Curarrehue' },
+  // ── Temuco ──────────────────────────────────────────────────────────────
+  { id:'com-tem-copec-caup',    emoji:'⛽', nombre:'Copec Caupolicán',           dir:'Av. Caupolicán 1800',        lat:-38.7432, lng:-72.5910, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Temuco' },
+  { id:'com-tem-enex-balm',     emoji:'⛽', nombre:'ENEX Balmaceda',             dir:'Av. Balmaceda 1050',         lat:-38.7278, lng:-72.5979, tipo:'combustible', subtipos:['🟡 ENEX','⛽ Bencina','🚗 Diesel'],  color:'#DD6B20', ciudad:'Temuco' },
+  { id:'com-tem-copec-alem',    emoji:'⛽', nombre:'Copec Alemania',             dir:'Av. Alemania 0654',          lat:-38.7393, lng:-72.6180, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Temuco' },
+  { id:'com-tem-shell-enc',     emoji:'⛽', nombre:'Shell Las Encinas',          dir:'Av. Las Encinas 650',        lat:-38.7469, lng:-72.6318, tipo:'combustible', subtipos:['🟡 ENEX','⛽ Bencina','🚗 Diesel'],  color:'#DD6B20', ciudad:'Temuco' },
+  { id:'com-tem-petrobras-rude',emoji:'⛽', nombre:'Petrobras Rudecindo',        dir:'Rudecindo Ortega 1620',      lat:-38.7382, lng:-72.6418, tipo:'combustible', subtipos:['🔵 Petrobras','⛽ Bencina','🚗 Diesel'],color:'#DD6B20', ciudad:'Temuco' },
+  { id:'com-tem-copec-ufro',    emoji:'⛽', nombre:'Copec sector UFRO',          dir:'Av. Francisco Salazar s/n',  lat:-38.7501, lng:-72.6165, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Temuco' },
 ];
+
+function sembrarFarmaciaCombustible() {
+  if (!adminActivo) { mostrarToast('🔒 Necesitas modo admin'); return; }
+  if (!dbRef) { mostrarToast('Sin conexión a Firebase'); return; }
+  const nuevos = DATOS_REALES.filter(p => p.tipo === 'farmacia' || p.tipo === 'combustible');
+  let agregados = 0;
+  const promesas = nuevos.map(p =>
+    dbRef.child(p.id).once('value').then(snap => {
+      if (!snap.exists()) { dbRef.child(p.id).set(p); agregados++; }
+    })
+  );
+  Promise.all(promesas).then(() => {
+    if (agregados > 0) mostrarToast(`✅ ${agregados} farmacias y bencineras agregadas`);
+    else mostrarToast('ℹ️ Ya estaban todos los datos');
+  });
+}
 
 function sembrarDatosReales() {
   if (!adminActivo) { mostrarToast('🔒 Necesitas modo admin'); return; }
@@ -4338,6 +4409,8 @@ function verificarPinAdmin() {
     if (btn) { btn.classList.add('activo'); btn.innerHTML = '🔓 Admin ON'; }
     const btnSembrar = document.getElementById('btn-sembrar-datos');
     if (btnSembrar) btnSembrar.style.display = 'flex';
+    const btnFarCom = document.getElementById('btn-sembrar-farcom');
+    if (btnFarCom) btnFarCom.style.display = 'flex';
     cerrarModalAdmin();
     mostrarToast('🔓 Modo admin activado');
     verificarNotifAdmin();
