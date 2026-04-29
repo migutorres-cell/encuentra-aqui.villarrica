@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
@@ -2006,6 +2006,8 @@
     <button class="fab-admin-mapa" id="btn-admin-mapa" onclick="pedirPinAdmin()">🔒 Admin</button>
     <button class="fab-sembrar" id="btn-sembrar-datos" onclick="sembrarDatosReales()">🌱 Sembrar datos</button>
     <button class="fab-sembrar" id="btn-sembrar-farcom" onclick="sembrarFarmaciaCombustible()" style="bottom:96px;background:#E53E3E">💊⛽ Sembrar Far+Com</button>
+    <button class="fab-sembrar" id="btn-cargar-avatares" onclick="document.getElementById('av-carga-input').click()" style="bottom:136px;background:#7C3AED">🧗 Cargar avatares</button>
+    <input type="file" id="av-carga-input" accept="image/*" multiple style="display:none" onchange="cargarImagenesAvatares(this)">
     <button class="fab-mi-ubicacion" onclick="centrarEnMiUbicacion()">📍 Mi ubicación</button>
     <button class="fab-falta" onclick="abrirFaltaAlgo()"><span class="fab-falta-ico">❓</span> ¿Falta algo aquí?</button>
   </div>
@@ -3586,18 +3588,18 @@ function leerTodasNotif() {
 
 // ── AVATARES SVG ──────────────────────────────────────────
 const AVATARES = [
-  { id:'av1',  nombre:'Valentina',  img:'av1.png'  },
-  { id:'av2',  nombre:'Camila',     img:'av2.png'  },
-  { id:'av3',  nombre:'Isidora',    img:'av3.png'  },
-  { id:'av4',  nombre:'Sofía',      img:'av4.png'  },
-  { id:'av5',  nombre:'Matías',     img:'av5.png'  },
-  { id:'av6',  nombre:'Andrés',     img:'av6.png'  },
-  { id:'av7',  nombre:'Felipe',     img:'av7.png'  },
-  { id:'av8',  nombre:'Diego',      img:'av8.png'  },
-  { id:'av9',  nombre:'Rocío',      img:'av9.png'  },
-  { id:'av10', nombre:'Catalina',   img:'av10.png' },
-  { id:'av11', nombre:'Sebastián',  img:'av11.png' },
-  { id:'av12', nombre:'Nicolás',    img:'av12.png' },
+  { id:'av1',  nombre:'Valentina'  },
+  { id:'av2',  nombre:'Camila'     },
+  { id:'av3',  nombre:'Isidora'    },
+  { id:'av4',  nombre:'Sofía'      },
+  { id:'av5',  nombre:'Matías'     },
+  { id:'av6',  nombre:'Andrés'     },
+  { id:'av7',  nombre:'Felipe'     },
+  { id:'av8',  nombre:'Diego'      },
+  { id:'av9',  nombre:'Rocío'      },
+  { id:'av10', nombre:'Catalina'   },
+  { id:'av11', nombre:'Sebastián'  },
+  { id:'av12', nombre:'Nicolás'    },
 ];
 
 // ── Helpers SVG ───────────────────────────────────────────
@@ -3632,7 +3634,9 @@ function _pelo(ep,pc,size){
 }
 
 function _caraFace(av, size=60){
-  if (av.img) return `<img src="${av.img}" style="width:${size}px;height:${size}px;object-fit:cover;object-position:top center;display:block;" />`;
+  const imgSrc = localStorage.getItem('av_img_' + av.id);
+  if (imgSrc) return `<img src="${imgSrc}" style="width:${size}px;height:${size}px;object-fit:cover;object-position:top center;display:block;" />`;
+  return `<div style="width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.55)}px;background:linear-gradient(135deg,#1D9E75,#0F6E56);">🧗</div>`;
   const sk=av.piel, hr=av.pelo, sc=_sombra(sk), s=size;
   const cx=s*.5, cy=s*.5;
   return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
@@ -3660,8 +3664,9 @@ function _caraFace(av, size=60){
 }
 
 function _cuerpoSVG(av){
-  if (av.img) return `<div style="animation:flotarGrande 3s ease-in-out infinite;filter:drop-shadow(0 8px 20px rgba(0,0,0,0.45))">
-    <img src="${av.img}" style="width:140px;height:auto;display:block;margin:0 auto;" />
+  const imgSrc = localStorage.getItem('av_img_' + av.id);
+  if (imgSrc) return `<div style="animation:flotarGrande 3s ease-in-out infinite;filter:drop-shadow(0 10px 24px rgba(0,0,0,0.5))">
+    <img src="${imgSrc}" style="width:150px;height:auto;display:block;margin:0 auto;" />
   </div>`;
   const sk=av.piel, hr=av.pelo, sc=_sombra(sk);
   let cabLat='';
@@ -4038,6 +4043,40 @@ const DATOS_REALES = [
   { id:'com-tem-copec-ufro',    emoji:'⛽', nombre:'Copec sector UFRO',          dir:'Av. Francisco Salazar s/n',  lat:-38.7501, lng:-72.6165, tipo:'combustible', subtipos:['🔴 Copec','⛽ Bencina','🚗 Diesel'], color:'#DD6B20', ciudad:'Temuco' },
 ];
 
+function cargarImagenesAvatares(input) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  let cargadas = 0;
+  files.forEach(file => {
+    const match = file.name.match(/av(\d+)/i);
+    if (!match) { cargadas++; return; }
+    const id = 'av' + match[1];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        const MAX = 420;
+        let w = img.width, h = img.height;
+        if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const comprimida = canvas.toDataURL('image/png', 0.88);
+        localStorage.setItem('av_img_' + id, comprimida);
+        cargadas++;
+        if (cargadas === files.length) {
+          mostrarToast(`✅ ${cargadas} avatares cargados correctamente`);
+          if (document.getElementById('modal-avatares').classList.contains('show')) abrirGaleriaAv();
+          renderAvatar();
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
 function sembrarFarmaciaCombustible() {
   if (!adminActivo) { mostrarToast('🔒 Necesitas modo admin'); return; }
   if (!dbRef) { mostrarToast('Sin conexión a Firebase'); return; }
@@ -4398,6 +4437,8 @@ function verificarPinAdmin() {
     if (btnSembrar) btnSembrar.style.display = 'flex';
     const btnFarCom = document.getElementById('btn-sembrar-farcom');
     if (btnFarCom) btnFarCom.style.display = 'flex';
+    const btnAv = document.getElementById('btn-cargar-avatares');
+    if (btnAv) btnAv.style.display = 'flex';
     cerrarModalAdmin();
     mostrarToast('🔓 Modo admin activado');
     verificarNotifAdmin();
