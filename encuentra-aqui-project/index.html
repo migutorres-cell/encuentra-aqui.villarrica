@@ -3637,30 +3637,6 @@ function _caraFace(av, size=60){
   const imgSrc = localStorage.getItem('av_img_' + av.id);
   if (imgSrc) return `<img src="${imgSrc}" style="width:${size}px;height:${size}px;object-fit:cover;object-position:top center;display:block;" />`;
   return `<div style="width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.55)}px;background:linear-gradient(135deg,#1D9E75,#0F6E56);">🧗</div>`;
-  const sk=av.piel, hr=av.pelo, sc=_sombra(sk), s=size;
-  const cx=s*.5, cy=s*.5;
-  return `<svg viewBox="0 0 ${s} ${s}" xmlns="http://www.w3.org/2000/svg" width="${s}" height="${s}">
-  <defs>
-    <radialGradient id="bg-${av.id}" cx="40%" cy="35%"><stop offset="0%" stop-color="${sk}" stop-opacity=".7"/><stop offset="100%" stop-color="${sc}"/></radialGradient>
-    <filter id="gf-${av.id}" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="1.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-  </defs>
-  <circle cx="${cx}" cy="${cy}" r="${cx}" fill="url(#bg-${av.id})"/>
-  ${_pelo(av.ep,hr,s)}
-  <ellipse cx="${cx}" cy="${(s*.58).toFixed(1)}" rx="${(s*.25).toFixed(1)}" ry="${(s*.28).toFixed(1)}" fill="${sk}"/>
-  <ellipse cx="${(s*.25).toFixed(1)}" cy="${(s*.58).toFixed(1)}" rx="${(s*.06).toFixed(1)}" ry="${(s*.075).toFixed(1)}" fill="${sk}"/>
-  <ellipse cx="${(s*.75).toFixed(1)}" cy="${(s*.58).toFixed(1)}" rx="${(s*.06).toFixed(1)}" ry="${(s*.075).toFixed(1)}" fill="${sk}"/>
-  <path d="M${(s*.37).toFixed(1)} ${(s*.44).toFixed(1)} Q${(s*.43).toFixed(1)} ${(s*.41).toFixed(1)} ${(s*.48).toFixed(1)} ${(s*.44).toFixed(1)}" stroke="${sc}" stroke-width="${(s*.03).toFixed(1)}" fill="none" stroke-linecap="round"/>
-  <path d="M${(s*.52).toFixed(1)} ${(s*.44).toFixed(1)} Q${(s*.57).toFixed(1)} ${(s*.41).toFixed(1)} ${(s*.63).toFixed(1)} ${(s*.44).toFixed(1)}" stroke="${sc}" stroke-width="${(s*.03).toFixed(1)}" fill="none" stroke-linecap="round"/>
-  <ellipse cx="${(s*.415).toFixed(1)}" cy="${(s*.53).toFixed(1)}" rx="${(s*.065).toFixed(1)}" ry="${(s*.072).toFixed(1)}" fill="white"/>
-  <ellipse cx="${(s*.585).toFixed(1)}" cy="${(s*.53).toFixed(1)}" rx="${(s*.065).toFixed(1)}" ry="${(s*.072).toFixed(1)}" fill="white"/>
-  <ellipse cx="${(s*.425).toFixed(1)}" cy="${(s*.535).toFixed(1)}" rx="${(s*.042).toFixed(1)}" ry="${(s*.048).toFixed(1)}" fill="#1A0A00"/>
-  <ellipse cx="${(s*.595).toFixed(1)}" cy="${(s*.535).toFixed(1)}" rx="${(s*.042).toFixed(1)}" ry="${(s*.048).toFixed(1)}" fill="#1A0A00"/>
-  <circle cx="${(s*.405).toFixed(1)}" cy="${(s*.515).toFixed(1)}" r="${(s*.016).toFixed(1)}" fill="white"/>
-  <circle cx="${(s*.575).toFixed(1)}" cy="${(s*.515).toFixed(1)}" r="${(s*.016).toFixed(1)}" fill="white"/>
-  <ellipse cx="${cx}" cy="${(s*.63).toFixed(1)}" rx="${(s*.033).toFixed(1)}" ry="${(s*.020).toFixed(1)}" fill="${sc}" opacity=".45"/>
-  <path d="M${(s*.43).toFixed(1)} ${(s*.70).toFixed(1)} Q${cx} ${(s*.76).toFixed(1)} ${(s*.57).toFixed(1)} ${(s*.70).toFixed(1)}" fill="none" stroke="${sc}" stroke-width="${(s*.03).toFixed(1)}" stroke-linecap="round"/>
-  ${_sim(av.sim, av.cs, cx, s*.37, s*.085, av.id)}
-  </svg>`;
 }
 
 function _cuerpoSVG(av){
@@ -3668,6 +3644,7 @@ function _cuerpoSVG(av){
   if (imgSrc) return `<div style="animation:flotarGrande 3s ease-in-out infinite;filter:drop-shadow(0 10px 24px rgba(0,0,0,0.5))">
     <img src="${imgSrc}" style="width:150px;height:auto;display:block;margin:0 auto;" />
   </div>`;
+  if (!av.piel) return `<div style="animation:flotarGrande 3s ease-in-out infinite;font-size:72px;text-align:center;padding:16px 0;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.3))">🧗</div>`;
   const sk=av.piel, hr=av.pelo, sc=_sombra(sk);
   let cabLat='';
   if(av.ep==='largo'||av.ep==='trenzas') cabLat=`<rect x="39" y="56" width="7" height="26" rx="4" fill="${hr}" opacity=".8"/><rect x="74" y="56" width="7" height="26" rx="4" fill="${hr}" opacity=".8"/>`;
