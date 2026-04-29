@@ -333,7 +333,44 @@
   .av-card.sel .av-burbuja { border-color:var(--verde);box-shadow:0 8px 20px rgba(29,158,117,0.5),0 0 0 3px var(--verde); }
 
   /* PERFIL */
-  .perfil-header { background: var(--verde-oscuro); padding: 30px 20px 24px; color: white; }
+  .perfil-header {
+    background: linear-gradient(135deg, #0a3d2e 0%, #1D9E75 40%, #0F6E56 70%, #0d4f3c 100%);
+    background-size: 300% 300%;
+    animation: perfil-gradiente 9s ease infinite;
+    padding: 30px 20px 24px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    min-height: 160px;
+  }
+  @keyframes perfil-gradiente {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .perfil-deco {
+    position: absolute; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,255,255,0.13) 0%, transparent 70%);
+  }
+  .perfil-deco-1 { width:200px; height:200px; top:-70px; right:-50px; animation: pf1 7s ease-in-out infinite; }
+  .perfil-deco-2 { width:140px; height:140px; bottom:-50px; left:-30px; animation: pf2 9s ease-in-out infinite; }
+  .perfil-deco-3 { width:90px;  height:90px;  top:30px; left:42%; animation: pf3 5s ease-in-out infinite; }
+  .perfil-deco-4 { width:220px; height:220px; bottom:-90px; right:15%; animation: pf1 11s ease-in-out infinite reverse; }
+  .perfil-deco-5 { width:60px;  height:60px;  top:10px; left:12%; animation: pf3 6s ease-in-out infinite 1s; background:radial-gradient(circle,rgba(255,255,255,0.09) 0%,transparent 70%); }
+  @keyframes pf1 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(18px,-18px) scale(1.12); }
+  }
+  @keyframes pf2 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%      { transform: translate(-12px,12px) scale(0.93); }
+  }
+  @keyframes pf3 {
+    0%,100% { transform: translate(0,0) scale(1); opacity:0.5; }
+    50%      { transform: translate(8px,-10px) scale(1.18); opacity:1; }
+  }
+  .perfil-header-contenido { position: relative; z-index: 1; }
+  #rpm-avatar-container { display: none; }
   .perfil-avatar { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; margin-bottom: 12px; border: 3px solid rgba(255,255,255,0.5); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
   .perfil-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .ranking-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
@@ -2139,12 +2176,17 @@
 <!-- PANTALLA PERFIL -->
 <div id="screen-perfil" class="screen">
   <div class="perfil-header">
-    <div id="rpm-avatar-container">
-      <!-- Se rellena dinámicamente según si hay avatar RPM o no -->
-    </div>
+    <div class="perfil-deco perfil-deco-1"></div>
+    <div class="perfil-deco perfil-deco-2"></div>
+    <div class="perfil-deco perfil-deco-3"></div>
+    <div class="perfil-deco perfil-deco-4"></div>
+    <div class="perfil-deco perfil-deco-5"></div>
+    <div class="perfil-header-contenido">
+    <div id="rpm-avatar-container"></div>
     <div class="perfil-nombre" id="perfil-nombre-txt">Colaborador</div>
     <div class="perfil-nivel" id="perfil-nivel-txt">🌟 Nivel Explorador</div>
     <div class="perfil-rango" id="perfil-rango-txt">📊 Sin posición aún</div>
+    </div><!-- /perfil-header-contenido -->
     <div class="perfil-ticker-wrap">
       <div class="perfil-ticker">
         <div class="ticker-card"><div class="ticker-emoji">🏧</div><div class="ticker-name">Cajeros</div></div>
