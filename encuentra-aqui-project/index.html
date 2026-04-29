@@ -93,10 +93,10 @@
   .onb-input::placeholder { color:rgba(255,255,255,0.5); }
   .onb-input:focus { border-color:white; background:rgba(255,255,255,0.25); }
   .onb-av-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; width:100%; margin-bottom:24px; }
-  .onb-av-card { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer; }
+  .onb-av-card { display:flex; flex-direction:column; align-items:center; gap:0; cursor:pointer; }
   .onb-av-burbuja { width:88px; height:110px; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; border:2.5px solid rgba(255,255,255,0.3); transition:all 0.2s; box-shadow:0 6px 16px rgba(0,0,0,0.35); background:rgba(255,255,255,0.08); }
   .onb-av-card.sel .onb-av-burbuja { border-color:white; transform:scale(1.08); box-shadow:0 10px 24px rgba(0,0,0,0.5); background:rgba(255,255,255,0.18); }
-  .onb-av-nombre { font-size:10px; color:rgba(255,255,255,0.75); font-weight:600; }
+  .onb-av-nombre { display:none; }
   .onb-btn { width:100%; background:white; color:var(--verde-oscuro); border:none; border-radius:14px; padding:16px; font-size:16px; font-weight:800; cursor:pointer; transition:all 0.15s; }
   .onb-btn:active { transform:scale(0.97); }
   .onb-btn-sec { background:transparent; color:rgba(255,255,255,0.7); border:none; font-size:13px; cursor:pointer; margin-top:12px; }
@@ -318,7 +318,7 @@
   @keyframes flotar { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-8px) scale(1.04)} }
   @keyframes flotarGrande { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
   .av-perfil-grande { width:90px;height:90px;border-radius:50%;overflow:hidden;margin:0 auto 10px;animation:flotarGrande 3s ease-in-out infinite;box-shadow:0 12px 30px rgba(0,0,0,0.4),0 4px 12px rgba(0,0,0,0.2);cursor:pointer;border:3px solid rgba(255,255,255,0.5); }
-  .av-cuerpo-wrap { display:flex;flex-direction:column;align-items:center;padding:10px 0 0; }
+  .av-cuerpo-wrap { display:flex;flex-direction:column;align-items:center;padding:0; }
   .av-cambiar-btn-wrap { margin-top:8px; }
   .av-cambiar-btn { font-size:11px;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.15);border:none;border-radius:20px;padding:4px 12px;cursor:pointer;margin-bottom:4px; }
   /* MODAL GALERÍA */
@@ -328,11 +328,11 @@
   .av-titulo { font-size:16px;font-weight:700;margin-bottom:4px; }
   .av-sub { font-size:13px;color:var(--gris-texto);margin-bottom:16px; }
   .av-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:14px;justify-items:center; }
-  .av-card { display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer; }
+  .av-card { display:flex;flex-direction:column;align-items:center;gap:0;cursor:pointer; }
   .av-burbuja { width:88px;height:110px;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;animation:flotar 3s ease-in-out infinite;box-shadow:0 8px 20px rgba(0,0,0,0.2),0 3px 8px rgba(0,0,0,0.1);border:2.5px solid rgba(0,0,0,0.08);transition:transform 0.15s;background:#f5f5f5; }
   .av-card.sel .av-burbuja { border-color:var(--verde);box-shadow:0 0 0 3px var(--verde-claro),0 8px 20px rgba(0,0,0,0.2); }
   .av-burbuja:active { transform:scale(0.92)!important; }
-  .av-card span { font-size:11px;font-weight:600;color:var(--gris-texto); }
+  .av-card span { display:none; }
   .av-card.sel .av-burbuja { border-color:var(--verde);box-shadow:0 8px 20px rgba(29,158,117,0.5),0 0 0 3px var(--verde); }
 
   /* PERFIL */
@@ -344,7 +344,7 @@
     color: white;
     position: relative;
     overflow: hidden;
-    min-height: 160px;
+    min-height: 300px;
   }
   @keyframes perfil-gradiente {
     0%   { background-position: 0% 50%; }
@@ -3641,10 +3641,10 @@ function _caraFace(av, size=60){
 
 function _cuerpoSVG(av){
   const imgSrc = av.img || localStorage.getItem('av_img_' + av.id);
-  if (imgSrc) return `<div style="animation:flotarGrande 3s ease-in-out infinite;filter:drop-shadow(0 10px 24px rgba(0,0,0,0.5))">
-    <img src="${imgSrc}" style="width:150px;height:auto;display:block;margin:0 auto;" />
+  if (imgSrc) return `<div style="animation:flotarGrande 3s ease-in-out infinite;filter:drop-shadow(0 14px 32px rgba(0,0,0,0.55))">
+    <img src="${imgSrc}" style="width:min(260px,72vw);height:auto;display:block;margin:0 auto;" />
   </div>`;
-  if (!av.piel) return `<div style="animation:flotarGrande 3s ease-in-out infinite;font-size:72px;text-align:center;padding:16px 0;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.3))">🧗</div>`;
+  if (!av.piel) return `<div style="animation:flotarGrande 3s ease-in-out infinite;font-size:100px;text-align:center;padding:20px 0;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.3))">🧗</div>`;
   const sk=av.piel, hr=av.pelo, sc=_sombra(sk);
   let cabLat='';
   if(av.ep==='largo'||av.ep==='trenzas') cabLat=`<rect x="39" y="56" width="7" height="26" rx="4" fill="${hr}" opacity=".8"/><rect x="74" y="56" width="7" height="26" rx="4" fill="${hr}" opacity=".8"/>`;
