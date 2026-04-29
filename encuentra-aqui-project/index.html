@@ -1069,15 +1069,51 @@
   }
   .avt-bienvenida {
     margin: 20px 16px 0;
-    background: linear-gradient(135deg, rgba(255,107,0,0.09), rgba(255,69,0,0.04));
-    border: 1px solid rgba(255,107,0,0.15);
-    border-radius: 16px; padding: 18px;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    min-height: 170px;
+    border: none;
+  }
+  .avt-bienvenida-foto {
+    position: absolute;
+    inset: 0;
+    /* ── Reemplaza esta URL con tu foto familiar ── */
+    background: url('familia_aventura.jpg') center/cover no-repeat,
+                linear-gradient(135deg,#c0392b 0%,#e74c3c 30%,#ff6b00 65%,#ff8c00 100%);
+    animation: avt-zoom 9s ease-in-out infinite alternate;
+    transform-origin: center center;
+  }
+  @keyframes avt-zoom {
+    0%   { transform: scale(1)    translate(0px, 0px); }
+    50%  { transform: scale(1.07) translate(-6px, -3px); }
+    100% { transform: scale(1.12) translate(4px, 2px); }
+  }
+  .avt-bienvenida-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg,
+      rgba(0,0,0,0.55) 0%,
+      rgba(0,0,0,0.30) 50%,
+      rgba(200,60,0,0.50) 100%);
+  }
+  .avt-bienvenida-contenido {
+    position: relative;
+    z-index: 1;
+    padding: 22px 18px 20px;
   }
   .avt-bienvenida-titulo {
-    font-size: 16px; font-weight: 800; color: white; margin-bottom: 6px;
+    font-size: 16px; font-weight: 800; color: white;
+    margin-bottom: 8px; text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+    line-height: 1.35;
   }
   .avt-bienvenida-desc {
-    font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.6;
+    font-size: 13px; color: rgba(255,255,255,0.82);
+    line-height: 1.65; text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .avt-ciudad-highlight {
+    color: #FFB347; font-weight: 800;
+    text-shadow: 0 0 12px rgba(255,150,0,0.7);
   }
   .avt-seccion-titulo {
     font-size: 11px; font-weight: 700; color: rgba(255,107,0,0.7);
@@ -1727,8 +1763,12 @@
   </div>
 
   <div class="avt-bienvenida">
-    <div class="avt-bienvenida-titulo">⛰️ Su próxima gran experiencia comienza aquí</div>
-    <div class="avt-bienvenida-desc">Villarrica tiene mucho más que ofrecer. Descubra actividades únicas que lo conectarán con la naturaleza, la adrenalina y el deporte en uno de los destinos más extraordinarios de Chile.</div>
+    <div class="avt-bienvenida-foto"></div>
+    <div class="avt-bienvenida-overlay"></div>
+    <div class="avt-bienvenida-contenido">
+      <div class="avt-bienvenida-titulo">⛰️ Su próxima gran experiencia comienza aquí</div>
+      <div class="avt-bienvenida-desc"><span class="avt-ciudad-highlight">Villarrica</span> tiene mucho más que ofrecer. Descubra actividades únicas que lo conectarán con la naturaleza, la adrenalina y el deporte en uno de los destinos más extraordinarios de <span class="avt-ciudad-highlight">Chile</span>.</div>
+    </div>
   </div>
 
   <div class="avt-seccion-titulo">Actividades destacadas</div>
