@@ -3634,13 +3634,13 @@ function _pelo(ep,pc,size){
 }
 
 function _caraFace(av, size=60){
-  const imgSrc = localStorage.getItem('av_img_' + av.id);
+  const imgSrc = av.img || localStorage.getItem('av_img_' + av.id);
   if (imgSrc) return `<img src="${imgSrc}" style="width:${size}px;height:${size}px;object-fit:cover;object-position:top center;display:block;" />`;
   return `<div style="width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;font-size:${Math.round(size*0.55)}px;background:linear-gradient(135deg,#1D9E75,#0F6E56);">🧗</div>`;
 }
 
 function _cuerpoSVG(av){
-  const imgSrc = localStorage.getItem('av_img_' + av.id);
+  const imgSrc = av.img || localStorage.getItem('av_img_' + av.id);
   if (imgSrc) return `<div style="animation:flotarGrande 3s ease-in-out infinite;filter:drop-shadow(0 10px 24px rgba(0,0,0,0.5))">
     <img src="${imgSrc}" style="width:150px;height:auto;display:block;margin:0 auto;" />
   </div>`;
@@ -4022,12 +4022,13 @@ const DATOS_REALES = [
 
 function cargarImagenesAvatares(input) {
   const files = Array.from(input.files);
-  if (!files.length) return;
-  let cargadas = 0;
-  files.forEach(file => {
-    const match = file.name.match(/av(\d+)/i);
-    if (!match) { cargadas++; return; }
-    const id = 'av' + match[1];
+  if (!files.length) { mostrarToast('⚠️ No se seleccionaron archivos'); return; }
+  const total = Math.min(files.length, 12);
+  mostrarToast(`⏳ Cargando ${total} imágenes...`);
+  files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+  let procesadas = 0;
+  files.slice(0, 12).forEach((file, index) => {
+    const id = 'av' + (index + 1);
     const reader = new FileReader();
     reader.onload = function(e) {
       const img = new Image();
@@ -4038,16 +4039,31 @@ function cargarImagenesAvatares(input) {
         if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const comprimida = canvas.toDataURL('image/png', 0.88);
+        const comprimida = canvas.toDataURL('image/jpeg', 0.82);
         localStorage.setItem('av_img_' + id, comprimida);
-        cargadas++;
-        if (cargadas === files.length) {
-          mostrarToast(`✅ ${cargadas} avatares cargados correctamente`);
-          if (document.getElementById('modal-avatares').classList.contains('show')) abrirGaleriaAv();
-          renderAvatar();
+        procesadas++;
+        mostrarToast(`⏳ Cargando ${procesadas} de ${total}...`);
+        if (procesadas === total) {
+          setTimeout(() => {
+            mostrarToast(`✅ ${procesadas} avatares cargados`);
+            if (document.getElementById('modal-avatares').classList.contains('show')) abrirGaleriaAv();
+            renderAvatar();
+          }, 300);
+        }
+      };
+      img.onerror = () => {
+        procesadas++;
+        if (procesadas === total) {
+          setTimeout(() => { mostrarToast(`✅ ${procesadas} avatares cargados`); renderAvatar(); }, 300);
         }
       };
       img.src = e.target.result;
+    };
+    reader.onerror = () => {
+      procesadas++;
+      if (procesadas === total) {
+        setTimeout(() => { mostrarToast(`✅ ${procesadas} avatares cargados`); renderAvatar(); }, 300);
+      }
     };
     reader.readAsDataURL(file);
   });
