@@ -225,7 +225,10 @@
   .fab:active { transform: scale(0.92); }
 
   /* BOTTOM NAV */
-  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: white; border-top: 0.5px solid var(--gris-borde); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: white; border-top: 0.5px solid var(--gris-borde); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); flex-direction: column; box-shadow: 0 -2px 12px rgba(0,0,0,0.12); }
+  .nav-handle-bar { width: 36px; height: 4px; background: rgba(0,0,0,0.15); border-radius: 2px; margin: 6px auto 4px; flex-shrink: 0; }
+  .nav-btns-row { display: flex; width: 100%; }
+  .nav-btns-row .nav-btn { flex: 1; }
   .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 0 12px; cursor: pointer; transition: all 0.15s; gap: 3px; border: none; background: transparent; }
   .nav-btn.activo .nav-icon { font-size: 20px; }
   .nav-icon { font-size: 20px; transition: transform 0.15s; }
@@ -1622,6 +1625,8 @@
     <div class="filtro-chip" onclick="toggleFiltro(this,'fotografia')">📷 Fotografía</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'reciclaje')">♻️ Reciclaje</div>
     <div class="filtro-chip" onclick="toggleFiltro(this,'hospedaje')">🏨 Hospedaje</div>
+    <div class="filtro-chip" onclick="toggleFiltro(this,'farmacia')">💊 Farmacia</div>
+    <div class="filtro-chip" onclick="toggleFiltro(this,'combustible')">⛽ Combustible</div>
   </div>
 
   <!-- WIDGET CLIMA -->
@@ -2219,6 +2224,9 @@
         <div class="tipo-btn" data-tipo="miradores" data-emoji="🏞️" data-color="#BA7517" onclick="selTipo(this)"><span>🏞️</span>Mirador</div>
         <div class="tipo-btn" data-tipo="barberia" data-emoji="💈" data-color="#9333ea" onclick="selTipo(this)"><span>💈</span>Barbería</div>
         <div class="tipo-btn" data-tipo="cajeros" data-emoji="🏧" data-color="#D85A30" onclick="selTipo(this)"><span>🏧</span>Cajero</div>
+        <div class="tipo-btn" data-tipo="caja_vecina" data-emoji="🏪" data-color="#D85A30" onclick="selTipo(this)"><span>🏪</span>Caja Vecina</div>
+        <div class="tipo-btn" data-tipo="farmacia" data-emoji="💊" data-color="#E53E3E" onclick="selTipo(this)"><span>💊</span>Farmacia</div>
+        <div class="tipo-btn" data-tipo="combustible" data-emoji="⛽" data-color="#DD6B20" onclick="selTipo(this)"><span>⛽</span>Combustible</div>
         <div class="tipo-btn" data-tipo="hospedaje" data-emoji="🏨" data-color="#c0392b" onclick="selTipo(this)"><span>🏨</span>Hospedaje</div>
       </div>
     </div>
@@ -2243,7 +2251,10 @@
     </div>
     <div class="form-group" id="campo-monto" style="display:none">
       <label class="form-label">¿Cuánto cuesta?</label>
-      <input type="text" id="agr-monto" class="form-input" placeholder="Ej: $500 por hora" />
+      <div style="display:flex;align-items:center;background:white;border:1.5px solid var(--gris-borde);border-radius:var(--radio-sm);padding:12px 14px;gap:6px">
+        <span style="font-weight:700;font-size:15px;color:var(--texto)">$</span>
+        <input type="text" id="agr-monto" style="border:none;outline:none;flex:1;font-size:14px;background:transparent;color:var(--texto)" placeholder="Ej: 500 por hora" />
+      </div>
     </div>
     <div class="form-group">
       <label class="form-label">Ubicación</label>
@@ -2499,26 +2510,29 @@
 
 <!-- NAVBAR -->
 <nav class="bottom-nav">
-  <button class="nav-btn activo" id="nav-inicio" onclick="irPantalla('inicio')">
-    <span class="nav-icon">🏠</span>
-    <span class="nav-label" data-i18n="nav_inicio">Inicio</span>
-  </button>
-  <button class="nav-btn" id="nav-mapa" onclick="irPantalla('mapa')">
-    <span class="nav-icon">🗺️</span>
-    <span class="nav-label" data-i18n="nav_mapa">Mapa</span>
-  </button>
-  <button class="nav-btn" id="nav-agregar" onclick="irPantalla('agregar')">
-    <span class="nav-icon">➕</span>
-    <span class="nav-label" data-i18n="nav_agregar">Agregar</span>
-  </button>
-  <button class="nav-btn" id="nav-ranking" onclick="irPantalla('ranking')">
-    <span class="nav-icon">🏆</span>
-    <span class="nav-label" data-i18n="nav_ranking">Ranking</span>
-  </button>
-  <button class="nav-btn" id="nav-perfil" onclick="irPantalla('perfil')">
-    <span class="nav-icon">👤</span>
-    <span class="nav-label" data-i18n="nav_perfil">Perfil</span>
-  </button>
+  <div class="nav-handle-bar"></div>
+  <div class="nav-btns-row">
+    <button class="nav-btn activo" id="nav-inicio" onclick="irPantalla('inicio')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label" data-i18n="nav_inicio">Inicio</span>
+    </button>
+    <button class="nav-btn" id="nav-mapa" onclick="irPantalla('mapa')">
+      <span class="nav-icon">🗺️</span>
+      <span class="nav-label" data-i18n="nav_mapa">Mapa</span>
+    </button>
+    <button class="nav-btn" id="nav-agregar" onclick="irPantalla('agregar')">
+      <span class="nav-icon">➕</span>
+      <span class="nav-label" data-i18n="nav_agregar">Agregar</span>
+    </button>
+    <button class="nav-btn" id="nav-ranking" onclick="irPantalla('ranking')">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label" data-i18n="nav_ranking">Ranking</span>
+    </button>
+    <button class="nav-btn" id="nav-perfil" onclick="irPantalla('perfil')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label" data-i18n="nav_perfil">Perfil</span>
+    </button>
+  </div>
 </nav>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -2556,22 +2570,40 @@ const CIUDAD_ACTIVA = {
 const PUNTOS = { agregar: 50, verificado: 30, resena: 10, foto: 15, util: 5, aventura: 20, gastro: 15 };
 
 const NIVELES = [
-  { nombre: 'Rookie',              ico: '🌱', min: 0    },
-  { nombre: 'Cacha la ciudad',     ico: '🗺️', min: 100  },
-  { nombre: 'Conoce de memoria',   ico: '🧠', min: 250  },
-  { nombre: 'Local Pro',           ico: '🏆', min: 500  },
+  { nombre: 'Rookie',                       ico: '🌱', min: 0    },
+  { nombre: 'Curioso',                      ico: '👀', min: 50   },
+  { nombre: 'Cacha la ciudad',              ico: '🗺️', min: 100  },
+  { nombre: 'Conoce de memoria',            ico: '🧠', min: 250  },
+  { nombre: 'Local Pro',                    ico: '🏆', min: 500  },
+  { nombre: 'Guardián urbano',              ico: '🛡️', min: 750  },
   { nombre: 'Leyenda ' + CIUDAD_ACTIVA.nombre, ico: CIUDAD_ACTIVA.emoji, min: 1000 },
+  { nombre: 'Maestro explorador',           ico: '🔭', min: 1500 },
+  { nombre: 'Héroe del territorio',         ico: '🦅', min: 2000 },
+  { nombre: 'Embajador del sur',            ico: '🌟', min: 3000 },
+  { nombre: 'Ícono de la región',           ico: '👑', min: 5000 },
 ];
 
 const INSIGNIAS = [
-  { id: 'primer_punto', ico: '📍', nombre: 'Primer punto', desc: 'Agregaste tu primer lugar', check: p => p.agregados >= 1 },
-  { id: 'cinco_puntos', ico: '🗺️', nombre: 'Cartógrafo',   desc: '5 lugares agregados',      check: p => p.agregados >= 5 },
-  { id: 'diez_puntos',  ico: '🏅', nombre: 'Top Mapper',   desc: '10 lugares agregados',     check: p => p.agregados >= 10 },
-  { id: 'primera_resena',ico:'⭐', nombre: 'Crítico',      desc: 'Dejaste tu primera reseña', check: p => p.resenas >= 1 },
-  { id: 'cinco_resenas', ico:'💬', nombre: 'Comentarista', desc: '5 reseñas escritas',        check: p => p.resenas >= 5 },
-  { id: 'nivel2', ico: '🗺️', nombre: 'Nivel 2',       desc: 'Llegaste a "Cacha la ciudad"',   check: p => p.pts >= 100 },
-  { id: 'nivel3', ico: '🧠', nombre: 'Nivel 3',       desc: 'Llegaste a "Conoce de memoria"', check: p => p.pts >= 250 },
-  { id: 'nivel4', ico: '🏆', nombre: 'Nivel 4',       desc: 'Llegaste a "Local Pro"',         check: p => p.pts >= 500 },
+  { id: 'primer_punto',   ico: '📍', nombre: 'Primer punto',    desc: 'Agregaste tu primer lugar',         check: p => p.agregados >= 1 },
+  { id: 'cinco_puntos',   ico: '🗺️', nombre: 'Cartógrafo',      desc: '5 lugares agregados',               check: p => p.agregados >= 5 },
+  { id: 'diez_puntos',    ico: '🏅', nombre: 'Top Mapper',      desc: '10 lugares agregados',              check: p => p.agregados >= 10 },
+  { id: 'primera_resena', ico: '⭐', nombre: 'Crítico',         desc: 'Dejaste tu primera reseña',         check: p => p.resenas >= 1 },
+  { id: 'cinco_resenas',  ico: '💬', nombre: 'Comentarista',    desc: '5 reseñas escritas',                check: p => p.resenas >= 5 },
+  { id: 'nivel2',         ico: '🗺️', nombre: 'Explorador',      desc: 'Llegaste a "Cacha la ciudad"',      check: p => p.pts >= 100 },
+  { id: 'nivel3',         ico: '🧠', nombre: 'Conocedor',       desc: 'Llegaste a "Conoce de memoria"',    check: p => p.pts >= 250 },
+  { id: 'nivel4',         ico: '🏆', nombre: 'Pro local',       desc: 'Llegaste a "Local Pro"',            check: p => p.pts >= 500 },
+  { id: 'nivel5',         ico: '👑', nombre: 'Ícono regional',  desc: 'Llegaste a "Ícono de la región"',   check: p => p.pts >= 5000 },
+  { id: 'mirador_3',      ico: '🏞️', nombre: 'Escalador',       desc: 'Agregaste 3 miradores',             check: p => (p.tiposAgregados?.miradores||0) >= 3 },
+  { id: 'bano_3',         ico: '🚻', nombre: 'Sanitarista',     desc: 'Agregaste 3 baños públicos',        check: p => (p.tiposAgregados?.baños||0) >= 3 },
+  { id: 'cajero_3',       ico: '🏧', nombre: 'Financiero',      desc: 'Agregaste 3 cajeros o caja vecinas', check: p => (p.tiposAgregados?.cajeros||0) >= 3 },
+  { id: 'parking_3',      ico: '🅿️', nombre: 'Estacionador',   desc: 'Agregaste 3 estacionamientos',      check: p => (p.tiposAgregados?.parking||0) >= 3 },
+  { id: 'agua_3',         ico: '💧', nombre: 'Aguatero',        desc: 'Agregaste 3 fuentes de agua gratis', check: p => (p.tiposAgregados?.agua||0) >= 3 },
+  { id: 'farmacia_3',     ico: '💊', nombre: 'Saludable',       desc: 'Agregaste 3 farmacias',             check: p => (p.tiposAgregados?.farmacia||0) >= 3 },
+  { id: 'combustible_3',  ico: '⛽', nombre: 'Piloto',          desc: 'Agregaste 3 bencineras',            check: p => (p.tiposAgregados?.combustible||0) >= 3 },
+  { id: 'reciclaje_3',    ico: '♻️', nombre: 'Ecologista',      desc: 'Agregaste 3 puntos de reciclaje',   check: p => (p.tiposAgregados?.reciclaje||0) >= 3 },
+  { id: 'vet_3',          ico: '🐾', nombre: 'Veterinario',     desc: 'Agregaste 3 veterinarias',          check: p => (p.tiposAgregados?.veterinario||0) >= 3 },
+  { id: 'foto_3',         ico: '📷', nombre: 'Fotógrafo',       desc: 'Agregaste 3 spots de fotografía',   check: p => (p.tiposAgregados?.fotografia||0) >= 3 },
+  { id: 'barberia_3',     ico: '💈', nombre: 'Barbero',         desc: 'Agregaste 3 barberías',             check: p => (p.tiposAgregados?.barberia||0) >= 3 },
 ];
 
 function getNivel(pts) {
@@ -3206,23 +3238,31 @@ function publicarServicio() {
   const lng = agrLng || parseFloat(localStorage.getItem('userLng'));
   if (!lat || !lng) { mostrarToast('Toca "Usar mi GPS" primero para marcar la ubicación'); return; }
   const tipoEl = document.querySelector('.tipo-btn.sel');
-  const tipo  = tipoEl?.dataset?.tipo  || 'baños';
+  const tipoRaw = tipoEl?.dataset?.tipo || 'baños';
+  const tipo  = tipoRaw === 'caja_vecina' ? 'cajeros' : tipoRaw;
   const emoji = tipoEl?.dataset?.emoji || '🚻';
   const color = tipoEl?.dataset?.color || '#1D9E75';
   const fotoImg = document.getElementById('agr-foto-img');
   const agWa = (document.getElementById('agr-whatsapp')?.value?.trim() || '').replace(/\D/g,'');
+  const montoRaw = document.getElementById('agr-monto')?.value?.trim() || '';
+  const precioFinal = document.querySelector('#agr-gratis.sel') ? 'Gratis'
+    : (montoRaw ? (montoRaw.startsWith('$') ? montoRaw : '$' + montoRaw) : 'Con costo');
   const nuevo = {
     id:       'pin-' + Date.now(),
     nombre, emoji, tipo, color, lat, lng,
     dir:      document.getElementById('agr-dir')?.value?.trim() || '',
     desc:     document.getElementById('agr-desc')?.value?.trim() || '',
-    precio:   document.querySelector('#agr-gratis.sel') ? 'Gratis' : (document.getElementById('agr-monto')?.value?.trim() || 'Con costo'),
+    precio:   precioFinal,
+    subtipos: tipoRaw === 'caja_vecina' ? ['🏪 Caja vecina','💰 Efectivo'] : undefined,
     ciudad:   localStorage.getItem('ciudadUsuario') || 'Chile',
     foto:     (fotoImg?.style?.display !== 'none' && fotoImg?.src) ? fotoImg.src : null,
     whatsapp: agWa || null,
   };
   if (!dbRef) { mostrarToast('Sin conexión — intenta de nuevo'); return; }
   dbRef.child(nuevo.id).set(nuevo).then(() => {
+    if (!miPerfil.tiposAgregados) miPerfil.tiposAgregados = {};
+    const tipoReal = tipo === 'caja_vecina' ? 'cajeros' : tipo;
+    miPerfil.tiposAgregados[tipoReal] = (miPerfil.tiposAgregados[tipoReal] || 0) + 1;
     sumarPuntos('agregar');
     agregarNotif('nuevo_pin', emoji, `Nuevo punto agregado: <b>${nombre}</b>`);
     _escribirNotifAdmin({ tipo: 'nuevo_pin', nombre, emoji, tipo_pin: tipo });
@@ -3336,8 +3376,22 @@ function toggleFiltro(el, cat) {
   const chips = el.closest('.filtros-bar').querySelectorAll('.filtro-chip');
   chips.forEach(c => c.classList.remove('activo'));
   el.classList.add('activo');
+  filtrarPinsEnMapa(cat);
   if (cat !== 'todo') mostrarToast('Mostrando: ' + el.textContent.trim());
   else mostrarToast('Mostrando todos los servicios');
+}
+
+function filtrarPinsEnMapa(cat) {
+  if (!mapaLeaflet) return;
+  serviciosPins.forEach(s => {
+    if (!s._marker) return;
+    const visible = cat === 'todo' || s.tipo === cat;
+    if (visible) {
+      if (!mapaLeaflet.hasLayer(s._marker)) s._marker.addTo(mapaLeaflet);
+    } else {
+      if (mapaLeaflet.hasLayer(s._marker)) mapaLeaflet.removeLayer(s._marker);
+    }
+  });
 }
 
 function abrirFiltrosAvanzados() {
@@ -3484,12 +3538,33 @@ function pedirUbicacion() {
   );
 }
 
+const CIUDADES_IMGS = {
+  'Villarrica':  'volcan_villarrica.jpg',
+  'Pucón':       'pucon.jpg',
+  'Licán Ray':   'lican_ray.jpg',
+  'Curarrehue':  'curarrehue.jpg',
+  'Temuco':      'temuco.jpg',
+  'Santiago':    'santiago.jpg',
+};
+
+function actualizarImagenCiudad(ciudad) {
+  const img = CIUDADES_IMGS[ciudad] || CIUDADES_IMGS['Villarrica'];
+  const header = document.querySelector('#screen-inicio .header');
+  if (!header) return;
+  const testImg = new Image();
+  testImg.onload = () => { header.style.backgroundImage = `url('${img}')`; };
+  testImg.onerror = () => { header.style.backgroundImage = `url('volcan_villarrica.jpg')`; };
+  testImg.src = img;
+}
+
 function actualizarCiudadUsuario(lat, lng) {
   fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=es`)
     .then(r => r.json())
     .then(data => {
       const ciudad = data.address?.city || data.address?.town || data.address?.village || data.address?.county || 'Mi ciudad';
       document.querySelectorAll('.ciudad-nombre').forEach(el => el.textContent = ciudad);
+      localStorage.setItem('ciudadUsuario', ciudad);
+      actualizarImagenCiudad(ciudad);
     })
     .catch(() => {});
 }
@@ -5769,6 +5844,17 @@ function cerrarFormNuevoPunto(e) {
 // ── FIN MODO GASTRONOMÍA ───────────────────────────────────
 
 window.addEventListener('load', () => {
+  // Swipe-down para cerrar panel de notificaciones
+  const notifSheet = document.querySelector('.notif-sheet');
+  if (notifSheet) {
+    let _ntStartY = 0;
+    notifSheet.addEventListener('touchstart', e => { _ntStartY = e.touches[0].clientY; }, { passive: true });
+    notifSheet.addEventListener('touchend', e => {
+      if (e.changedTouches[0].clientY - _ntStartY > 80)
+        document.getElementById('modal-notif').classList.remove('show');
+    }, { passive: true });
+  }
+
   aplicarCiudad();
   aplicarIdioma();
   aplicarModoOscuro();
