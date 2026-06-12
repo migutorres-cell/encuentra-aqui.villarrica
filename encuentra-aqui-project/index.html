@@ -1652,6 +1652,16 @@
     <div class="stat-chip"><div class="stat-num" id="stat-total-nuevos">—</div><div class="stat-label">Nuevos</div></div>
   </div>
 
+  <!-- TOP SERVICIOS -->
+  <div class="top-servicios-wrap" id="top-servicios-wrap">
+    <div class="seccion-titulo">🔥 Más visitados</div>
+    <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px" id="top-servicios-lista"></div>
+  </div>
+
+  <!-- EVENTOS LOCALES -->
+  <div class="seccion-titulo">📅 Eventos en la zona</div>
+  <div style="padding:0 16px 4px;display:flex;gap:12px;overflow-x:auto;scrollbar-width:none" id="eventos-lista"></div>
+
   <div class="seccion-titulo">¿Qué buscas?</div>
 
   <div class="cats-grid">
@@ -2447,8 +2457,28 @@
       👍 <span id="btn-util-txt">Fue útil</span>&nbsp;·&nbsp;<span id="btn-util-count">0</span>
     </button>
     <button class="btn-secundario" onclick="abrirComoLlegar()">🗺️ Cómo llegar</button>
+    <button class="btn-secundario" style="background:#25D366;color:white;border:none" onclick="compartirServicio()">📲 Compartir por WhatsApp</button>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #FFA500;background:white;color:#CC7700;font-size:12px;font-weight:700;cursor:pointer" onclick="reportarEstado('Cerrado')">🔴 Marcar como cerrado</button>
+      <button style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #E53E3E;background:white;color:#A32D2D;font-size:12px;font-weight:700;cursor:pointer" onclick="reportarEstado('NoExiste')">❌ Ya no existe</button>
+    </div>
     <div class="btn-reportar" onclick="abrirModalReporte()">⚠️ Reportar contenido inapropiado</div>
   </div>
+</div>
+
+<!-- OVERLAY FOTO FULLSCREEN -->
+<div id="foto-fullscreen" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center" onclick="cerrarFotoFullscreen()">
+  <img id="foto-fullscreen-img" src="" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:8px" />
+  <button style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;border-radius:50%;width:36px;height:36px;font-size:20px;color:white;cursor:pointer" onclick="cerrarFotoFullscreen()">✕</button>
+</div>
+
+<!-- OVERLAY INSIGNIA DESBLOQUEADA -->
+<div id="badge-up-overlay" class="nivel-up-overlay" onclick="cerrarBadgeUp()">
+  <div class="nivel-up-ico" id="badge-up-ico">🏅</div>
+  <div class="nivel-up-titulo">¡Nueva insignia desbloqueada!</div>
+  <div class="nivel-up-nombre" id="badge-up-nombre">Top Mapper</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:20px" id="badge-up-desc">10 lugares agregados</div>
+  <button class="nivel-up-btn" onclick="cerrarBadgeUp()">¡Genial! 🎉</button>
 </div>
 
 <!-- MODAL REPORTE -->
@@ -2724,14 +2754,74 @@ function verificarInsignias() {
   });
   if (nuevas.length) {
     localStorage.setItem('insignias', JSON.stringify(obtenidas));
-    nuevas.forEach(ins => {
+    nuevas.forEach((ins, i) => {
       setTimeout(() => {
         agregarNotif('insignia', ins.ico, `¡Nueva insignia desbloqueada: <b>${ins.nombre}</b>!`);
-        mostrarToast(ins.ico + ' ¡Insignia desbloqueada: ' + ins.nombre + '!');
-      }, 1200);
+        mostrarBadgeUp(ins);
+      }, 1200 + i * 2000);
     });
     renderInsignias();
   }
+}
+
+function mostrarBadgeUp(ins) {
+  document.getElementById('badge-up-ico').textContent = ins.ico;
+  document.getElementById('badge-up-nombre').textContent = ins.nombre;
+  document.getElementById('badge-up-desc').textContent = ins.desc;
+  document.getElementById('badge-up-overlay').classList.add('show');
+}
+
+function cerrarBadgeUp() {
+  document.getElementById('badge-up-overlay').classList.remove('show');
+}
+
+function abrirFotoFullscreen(src) {
+  const overlay = document.getElementById('foto-fullscreen');
+  document.getElementById('foto-fullscreen-img').src = src;
+  overlay.style.display = 'flex';
+}
+
+function cerrarFotoFullscreen() {
+  document.getElementById('foto-fullscreen').style.display = 'none';
+}
+
+function compartirServicio() {
+  const pin = serviciosPins.find(s => s.id === currentDetalleId);
+  if (!pin) return;
+  const texto = `📍 *${pin.nombre}*\n${pin.dir ? pin.dir + '\n' : ''}${pin.precio && pin.precio !== 'Gratis' ? '💰 ' + pin.precio + '\n' : '✅ Gratis\n'}¡Encontrado en Encuentra Aquí Villarrica!`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+}
+
+function reportarEstado(estado) {
+  if (!dbRef || !currentDetalleId) return;
+  const safeId = currentDetalleId.replace(/[.#$/\[\]]/g, '_');
+  const pin = serviciosPins.find(s => s.id === currentDetalleId);
+  if (estado === 'Cerrado') {
+    dbRef.child(safeId).child('estado').set('Cerrado');
+    _escribirNotifAdmin({ tipo: 'reporte', pinId: currentDetalleId, pinNombre: pin?.nombre, razon: 'Marcado como cerrado por usuario' });
+    mostrarToast('🔴 Marcado como cerrado — gracias por avisar');
+    document.getElementById('det-chip-estado').textContent = '🔴 Cerrado';
+    document.getElementById('det-chip-estado').style.color = '#A32D2D';
+  } else {
+    confirmarReporte('Lugar no existe');
+    mostrarToast('❌ Reporte enviado — lo revisaremos pronto');
+  }
+}
+
+function renderTopServicios() {
+  const cont = document.getElementById('top-servicios-lista');
+  if (!cont || !serviciosPins.length) return;
+  const conVistas = serviciosPins.filter(s => s.vistas > 0 && !s.bloqueado);
+  const top = [...conVistas].sort((a, b) => (b.vistas || 0) - (a.vistas || 0)).slice(0, 5);
+  if (!top.length) { cont.closest('.top-servicios-wrap')?.style && (cont.closest('.top-servicios-wrap').style.display = 'none'); return; }
+  cont.innerHTML = top.map((s, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:10px;border:0.5px solid var(--gris-borde);cursor:pointer" onclick="verDetalle('${s.id}')">
+      <div style="font-size:22px;width:36px;text-align:center">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600">${s.emoji} ${s.nombre}</div>
+        <div style="font-size:11px;color:var(--gris-texto)">${s.vistas} visitas · ${s.ciudad || ''}</div>
+      </div>
+    </div>`).join('');
 }
 
 function mostrarNivelUp(nivel) {
@@ -3032,10 +3122,14 @@ function verDetalle(id) {
     hero.style.background = d.bgGrad;
     hero.style.position = 'relative';
     hero.style.overflow = 'hidden';
-    hero.innerHTML = imgConFondo(pinData.foto, '0px');
+    hero.style.cursor = 'zoom-in';
+    hero.innerHTML = imgConFondo(pinData.foto, '0px') + '<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.45);color:white;font-size:11px;padding:3px 8px;border-radius:10px">🔍 Toca para ampliar</div>';
+    hero.onclick = () => abrirFotoFullscreen(pinData.foto);
   } else {
     hero.innerHTML = d.emoji;
     hero.style.background = d.bgGrad;
+    hero.style.cursor = '';
+    hero.onclick = null;
   }
   // ── Chips dinámicos ──────────────────────────────
   const TIPOS_247 = ['reciclaje', 'agua'];
@@ -3044,7 +3138,10 @@ function verDetalle(id) {
   let distTxt = '—';
   if (userLat && userLng && pinData?.lat && pinData?.lng) {
     const km = distanciaKm(userLat, userLng, pinData.lat, pinData.lng);
-    distTxt = km < 1 ? Math.round(km * 1000) + ' m' : km.toFixed(1) + ' km';
+    const mins = Math.round(km / 5 * 60);
+    if (km < 1) distTxt = Math.round(km * 1000) + ' m · ' + Math.max(1, mins) + ' min a pie';
+    else if (km < 3) distTxt = km.toFixed(1) + ' km · ' + mins + ' min a pie';
+    else distTxt = km.toFixed(1) + ' km';
   }
   const precio  = d.precio || 'Gratis';
   const esGratis   = precio === 'Gratis';
@@ -3536,6 +3633,31 @@ function pedirUbicacion() {
     () => mostrarToast('📍 Activa el GPS para ver servicios cerca tuyo'),
     { enableHighAccuracy: true, timeout: 10000 }
   );
+}
+
+const EVENTOS_LOCALES = [
+  { ciudad:'Villarrica', emoji:'🌋', nombre:'Festival de Invierno Villarrica', fecha:'Jul 2026', desc:'Música, gastronomía y artesanía local en la plaza principal', color:'#0F6E56' },
+  { ciudad:'Villarrica', emoji:'🎨', nombre:'Feria Artesanal Costanera',        fecha:'Cada sáb.', desc:'Artesanos locales y mapuches en la costanera del lago',     color:'#BA7517' },
+  { ciudad:'Villarrica', emoji:'🎭', nombre:'Semana Villarrica',               fecha:'Ago 2026', desc:'Celebración anual con shows, deportes y actividades culturales', color:'#185FA5' },
+  { ciudad:'Pucón',      emoji:'🏊', nombre:'Ironman Pucón',                  fecha:'Ene 2027', desc:'Triatlón internacional de fama mundial en el lago Villarrica', color:'#D85A30' },
+  { ciudad:'Pucón',      emoji:'🎵', nombre:'Festival de la Patagonia',        fecha:'Feb 2027', desc:'Festival de música y cultura en el corazón de Pucón',         color:'#9333ea' },
+  { ciudad:'Pucón',      emoji:'🏔️', nombre:'Expo Aventura Pucón',            fecha:'Mar 2027', desc:'Feria de deportes de aventura y turismo activo',              color:'#D85A30' },
+];
+
+function renderEventos() {
+  const cont = document.getElementById('eventos-lista');
+  if (!cont) return;
+  cont.innerHTML = EVENTOS_LOCALES.map(e => `
+    <div style="min-width:200px;background:white;border-radius:14px;border:0.5px solid var(--gris-borde);overflow:hidden;box-shadow:var(--shadow-sm);flex-shrink:0">
+      <div style="background:${e.color};padding:12px 14px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:24px">${e.emoji}</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:white">${e.nombre}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.8)">${e.ciudad} · ${e.fecha}</div>
+        </div>
+      </div>
+      <div style="padding:10px 14px;font-size:11px;color:var(--gris-texto);line-height:1.4">${e.desc}</div>
+    </div>`).join('');
 }
 
 const CIUDADES_IMGS = {
@@ -4193,14 +4315,22 @@ function iniciarFirebase() {
     dbRef.on('value', snap => {
       const data = snap.val() || {};
       serviciosPins = Object.values(data);
+      try { localStorage.setItem('ea_cache_servicios', JSON.stringify(serviciosPins)); } catch(e) {}
       if (mapaLeaflet) {
         mapaLeaflet.eachLayer(l => { if (l instanceof L.Marker) mapaLeaflet.removeLayer(l); });
         serviciosPins.forEach(s => agregarPinMapa(s));
       }
       renderServiciosCercanos();
       actualizarStats();
+      renderTopServicios();
     }, () => {
-      serviciosPins = PINS_INICIALES.slice();
+      const cached = JSON.parse(localStorage.getItem('ea_cache_servicios') || 'null');
+      if (cached && cached.length) {
+        serviciosPins = cached;
+        mostrarToast('📴 Sin conexión — mostrando datos guardados');
+      } else {
+        serviciosPins = PINS_INICIALES.slice();
+      }
       renderServiciosCercanos();
       actualizarStats();
     });
@@ -5855,6 +5985,7 @@ window.addEventListener('load', () => {
     }, { passive: true });
   }
 
+  renderEventos();
   aplicarCiudad();
   aplicarIdioma();
   aplicarModoOscuro();
