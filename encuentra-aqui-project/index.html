@@ -1432,6 +1432,44 @@
     text-align: center; color: rgba(255,255,255,0.2);
     font-size: 12px; letter-spacing: 1px;
   }
+  /* TIP DEL DÍA */
+  .tip-dia-wrap { margin: 0 16px 14px; background: linear-gradient(135deg, #FFFBEC, #FFF3CD); border-radius: 16px; padding: 14px 16px; border-left: 4px solid #F5A623; position: relative; }
+  .tip-dia-label { font-size: 10px; font-weight: 700; color: #F5A623; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; }
+  .tip-dia-cuerpo { display: flex; gap: 10px; align-items: flex-start; }
+  .tip-dia-emoji-big { font-size: 26px; line-height: 1; }
+  .tip-dia-texto { font-size: 13.5px; color: #333; line-height: 1.5; flex: 1; }
+  .tip-dia-btn-edit { position: absolute; top: 10px; right: 12px; font-size: 11px; color: #F5A623; cursor: pointer; background: none; border: none; font-weight: 600; display: none; padding: 0; }
+  body.dark .tip-dia-wrap { background: linear-gradient(135deg, #2A2310, #1E1A0A); border-left-color: #F5A623; }
+  body.dark .tip-dia-texto { color: #E0E0E0; }
+  /* ESTADO VOLCÁN */
+  .volcan-widget { margin: 0 16px 14px; border-radius: 16px; padding: 14px 16px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.07); display: flex; align-items: center; gap: 14px; position: relative; }
+  .volcan-sema { width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .volcan-sema.verde { background: #E8F5E9; }
+  .volcan-sema.amarillo { background: #FFF8E1; }
+  .volcan-sema.naranja { background: #FFF3E0; }
+  .volcan-sema.rojo { background: #FFEBEE; }
+  .volcan-widget-info { flex: 1; }
+  .volcan-widget-nombre { font-size: 13px; font-weight: 700; color: #333; }
+  .volcan-widget-nivel { font-size: 12px; font-weight: 700; margin: 2px 0; }
+  .volcan-widget-nivel.verde { color: #2E7D32; }
+  .volcan-widget-nivel.amarillo { color: #F57F17; }
+  .volcan-widget-nivel.naranja { color: #E64A19; }
+  .volcan-widget-nivel.rojo { color: #B71C1C; }
+  .volcan-widget-desc { font-size: 11.5px; color: var(--gris-texto); }
+  .volcan-widget-fuente { font-size: 10px; color: #aaa; margin-top: 3px; }
+  .volcan-btn-edit { position: absolute; top: 10px; right: 12px; font-size: 11px; color: var(--verde); cursor: pointer; background: none; border: none; font-weight: 600; display: none; padding: 0; }
+  body.dark .volcan-widget { background: #1E1E1E; }
+  body.dark .volcan-widget-nombre { color: #E0E0E0; }
+  /* MODALES TIP / VOLCÁN */
+  .tv-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1002; display: none; align-items: center; justify-content: center; }
+  .tv-modal-overlay.show { display: flex; }
+  .tv-modal-box { background: white; border-radius: 20px; padding: 24px; width: 90%; max-width: 340px; }
+  .tv-modal-titulo { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .tv-modal-campo { width: 100%; border: 1.5px solid var(--gris-borde); border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; }
+  .tv-modal-campo:focus { border-color: var(--verde); }
+  .tv-modal-select { width: 100%; border: 1.5px solid var(--gris-borde); border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; background: white; }
+  body.dark .tv-modal-box { background: #1E1E1E; }
+  body.dark .tv-modal-campo, body.dark .tv-modal-select { background: #2A2A2A; color: white; border-color: #444; }
 </style>
 
 <div id="splash">
@@ -1471,7 +1509,7 @@
     </svg>
   </div>
   <div class="splash-titulo">Encuentra Aquí</div>
-  <div class="splash-sub">Servicios ocultos de tu ciudad</div>
+  <div class="splash-sub">Lo necesario para continuar tu aventura</div>
   <div class="splash-loader"></div>
 </div>
 
@@ -1652,10 +1690,26 @@
     <div class="stat-chip"><div class="stat-num" id="stat-total-nuevos">—</div><div class="stat-label">Nuevos</div></div>
   </div>
 
-  <!-- TOP SERVICIOS -->
-  <div class="top-servicios-wrap" id="top-servicios-wrap">
-    <div class="seccion-titulo">🔥 Más visitados</div>
-    <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px" id="top-servicios-lista"></div>
+  <!-- TIP DEL DÍA -->
+  <div class="tip-dia-wrap" id="tip-dia-wrap">
+    <div class="tip-dia-label">💡 Tip del día</div>
+    <div class="tip-dia-cuerpo">
+      <div class="tip-dia-emoji-big" id="tip-dia-emoji">💡</div>
+      <div class="tip-dia-texto" id="tip-dia-texto">Cargando consejo...</div>
+    </div>
+    <button class="tip-dia-btn-edit" id="tip-dia-btn-edit" onclick="editarTipDelDia()">✏️ Editar</button>
+  </div>
+
+  <!-- ESTADO VOLCÁN -->
+  <div class="volcan-widget" id="volcan-widget">
+    <div class="volcan-sema verde" id="volcan-sema">🌋</div>
+    <div class="volcan-widget-info">
+      <div class="volcan-widget-nombre">Volcán Villarrica</div>
+      <div class="volcan-widget-nivel verde" id="volcan-nivel-txt">● Alerta Verde</div>
+      <div class="volcan-widget-desc" id="volcan-desc-txt">Actividad normal, sin anomalías</div>
+      <div class="volcan-widget-fuente" id="volcan-actualizado">SERNAGEOMIN</div>
+    </div>
+    <button class="volcan-btn-edit" id="volcan-btn-edit" onclick="editarEstadoVolcan()">✏️ Editar</button>
   </div>
 
   <!-- EVENTOS LOCALES -->
@@ -2565,6 +2619,33 @@
   </div>
 </nav>
 
+<!-- MODAL EDITAR TIP DEL DÍA -->
+<div id="modal-tip-dia" class="tv-modal-overlay">
+  <div class="tv-modal-box">
+    <div class="tv-modal-titulo">✏️ Editar Tip del día</div>
+    <input class="tv-modal-campo" id="tip-emoji-input" placeholder="Emoji (ej: 💡)" maxlength="4" />
+    <textarea class="tv-modal-campo" id="tip-texto-input" rows="3" placeholder="Escribe el consejo para los visitantes..." style="resize:none"></textarea>
+    <button class="btn-primario" onclick="guardarTipDelDia()" style="margin-bottom:10px">✅ Guardar</button>
+    <button class="btn-secundario" onclick="cerrarModalTip()">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR ESTADO VOLCÁN -->
+<div id="modal-volcan" class="tv-modal-overlay">
+  <div class="tv-modal-box">
+    <div class="tv-modal-titulo">🌋 Estado del volcán</div>
+    <select class="tv-modal-select" id="volcan-nivel-input">
+      <option value="verde">🟢 Verde — Sin anomalías</option>
+      <option value="amarillo">🟡 Amarillo — Inestabilidad</option>
+      <option value="naranja">🟠 Naranja — Actividad mayor probable</option>
+      <option value="rojo">🔴 Rojo — Erupción en curso</option>
+    </select>
+    <textarea class="tv-modal-campo" id="volcan-desc-input" rows="2" placeholder="Descripción (ej: Columna de gases a 800m)" style="resize:none"></textarea>
+    <button class="btn-primario" onclick="guardarEstadoVolcan()" style="margin-bottom:10px">✅ Guardar</button>
+    <button class="btn-secundario" onclick="cerrarModalVolcan()">Cancelar</button>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script>
@@ -2808,20 +2889,96 @@ function reportarEstado(estado) {
   }
 }
 
-function renderTopServicios() {
-  const cont = document.getElementById('top-servicios-lista');
-  if (!cont || !serviciosPins.length) return;
-  const conVistas = serviciosPins.filter(s => s.vistas > 0 && !s.bloqueado);
-  const top = [...conVistas].sort((a, b) => (b.vistas || 0) - (a.vistas || 0)).slice(0, 5);
-  if (!top.length) { cont.closest('.top-servicios-wrap')?.style && (cont.closest('.top-servicios-wrap').style.display = 'none'); return; }
-  cont.innerHTML = top.map((s, i) => `
-    <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:white;border-radius:10px;border:0.5px solid var(--gris-borde);cursor:pointer" onclick="verDetalle('${s.id}')">
-      <div style="font-size:22px;width:36px;text-align:center">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]}</div>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:600">${s.emoji} ${s.nombre}</div>
-        <div style="font-size:11px;color:var(--gris-texto)">${s.vistas} visitas · ${s.ciudad || ''}</div>
-      </div>
-    </div>`).join('');
+// ── TIP DEL DÍA ──────────────────────────────────────────
+function cargarTipDelDia() {
+  if (!dbTipRef) return;
+  dbTipRef.on('value', snap => {
+    const d = snap.val();
+    if (d && d.texto) {
+      document.getElementById('tip-dia-emoji').textContent = d.emoji || '💡';
+      document.getElementById('tip-dia-texto').textContent = d.texto;
+    } else {
+      document.getElementById('tip-dia-texto').textContent = 'El volcán Villarrica se ve mejor desde la costanera al amanecer, antes de las 8am.';
+    }
+    if (adminActivo) document.getElementById('tip-dia-btn-edit').style.display = 'block';
+  });
+}
+
+function editarTipDelDia() {
+  if (!adminActivo) return;
+  if (!dbTipRef) { mostrarToast('Sin conexión'); return; }
+  dbTipRef.once('value', snap => {
+    const d = snap.val() || {};
+    document.getElementById('tip-emoji-input').value = d.emoji || '💡';
+    document.getElementById('tip-texto-input').value = d.texto || '';
+    document.getElementById('modal-tip-dia').classList.add('show');
+  });
+}
+
+function guardarTipDelDia() {
+  const emoji = document.getElementById('tip-emoji-input').value.trim() || '💡';
+  const texto = document.getElementById('tip-texto-input').value.trim();
+  if (!texto) { mostrarToast('Escribe un consejo'); return; }
+  dbTipRef.set({ emoji, texto, fecha: new Date().toLocaleDateString('es-CL') }).then(() => {
+    mostrarToast('✅ Tip actualizado');
+    cerrarModalTip();
+  });
+}
+
+function cerrarModalTip() {
+  document.getElementById('modal-tip-dia').classList.remove('show');
+}
+
+// ── ESTADO VOLCÁN ──────────────────────────────────────────
+const VOLCAN_NIVELES = {
+  verde:    { emoji: '🌋', texto: 'Alerta Verde',    desc: 'Actividad normal, sin anomalías' },
+  amarillo: { emoji: '⚠️', texto: 'Alerta Amarilla', desc: 'Inestabilidad detectada' },
+  naranja:  { emoji: '🔥', texto: 'Alerta Naranja',  desc: 'Actividad mayor probable' },
+  rojo:     { emoji: '🚨', texto: 'Alerta Roja',     desc: 'Erupción en curso' }
+};
+
+function cargarEstadoVolcan() {
+  if (!dbVolcanRef) return;
+  dbVolcanRef.on('value', snap => {
+    const d = snap.val();
+    const nivel = d?.nivel || 'verde';
+    const info = VOLCAN_NIVELES[nivel] || VOLCAN_NIVELES.verde;
+    const desc = (d?.descripcion && d.descripcion.trim()) ? d.descripcion : info.desc;
+    const actualizado = d?.actualizado ? `Actualizado: ${d.actualizado} · SERNAGEOMIN` : 'SERNAGEOMIN';
+    const sema = document.getElementById('volcan-sema');
+    sema.className = `volcan-sema ${nivel}`;
+    sema.textContent = info.emoji;
+    const nivelEl = document.getElementById('volcan-nivel-txt');
+    nivelEl.className = `volcan-widget-nivel ${nivel}`;
+    nivelEl.textContent = `● ${info.texto}`;
+    document.getElementById('volcan-desc-txt').textContent = desc;
+    document.getElementById('volcan-actualizado').textContent = actualizado;
+    if (adminActivo) document.getElementById('volcan-btn-edit').style.display = 'block';
+  });
+}
+
+function editarEstadoVolcan() {
+  if (!adminActivo) return;
+  if (!dbVolcanRef) { mostrarToast('Sin conexión'); return; }
+  dbVolcanRef.once('value', snap => {
+    const d = snap.val() || {};
+    document.getElementById('volcan-nivel-input').value = d.nivel || 'verde';
+    document.getElementById('volcan-desc-input').value = d.descripcion || '';
+    document.getElementById('modal-volcan').classList.add('show');
+  });
+}
+
+function guardarEstadoVolcan() {
+  const nivel = document.getElementById('volcan-nivel-input').value;
+  const descripcion = document.getElementById('volcan-desc-input').value.trim();
+  dbVolcanRef.set({ nivel, descripcion, actualizado: new Date().toLocaleDateString('es-CL') }).then(() => {
+    mostrarToast('✅ Estado del volcán actualizado');
+    cerrarModalVolcan();
+  });
+}
+
+function cerrarModalVolcan() {
+  document.getElementById('modal-volcan').classList.remove('show');
 }
 
 function mostrarNivelUp(nivel) {
@@ -4020,6 +4177,8 @@ const firebaseConfig = {
 let dbRef = null;
 let dbAventuraRef = null;
 let dbGastroRef   = null;
+let dbTipRef      = null;
+let dbVolcanRef   = null;
 let puntosAventuraFirebase = [];
 let puntosGastroFirebase   = [];
 let capaPinsAventuraUser   = null;
@@ -4033,6 +4192,8 @@ try {
   dbRef        = firebase.database().ref('servicios');
   dbAventuraRef = firebase.database().ref('puntos_aventura');
   dbGastroRef   = firebase.database().ref('puntos_gastro');
+  dbTipRef     = firebase.database().ref('tip_del_dia');
+  dbVolcanRef  = firebase.database().ref('estado_volcan');
 } catch(e) { console.warn('Firebase no disponible:', e); }
 
 // ── MAPA LEAFLET ──────────────────────────────────────────
@@ -4322,7 +4483,6 @@ function iniciarFirebase() {
       }
       renderServiciosCercanos();
       actualizarStats();
-      renderTopServicios();
     }, () => {
       const cached = JSON.parse(localStorage.getItem('ea_cache_servicios') || 'null');
       if (cached && cached.length) {
@@ -4617,6 +4777,8 @@ function pedirPinAdmin() {
     document.getElementById('btn-admin-mapa').classList.remove('activo');
     document.getElementById('btn-admin-mapa').textContent = '🔒 Admin';
     document.getElementById('btn-sembrar-datos').style.display = 'none';
+    document.getElementById('tip-dia-btn-edit').style.display = 'none';
+    document.getElementById('volcan-btn-edit').style.display = 'none';
     mostrarToast('Modo admin desactivado');
     return;
   }
@@ -4640,6 +4802,8 @@ function verificarPinAdmin() {
     cerrarModalAdmin();
     mostrarToast('🔓 Modo admin activado');
     verificarNotifAdmin();
+    document.getElementById('tip-dia-btn-edit').style.display = 'block';
+    document.getElementById('volcan-btn-edit').style.display = 'block';
     // Re-renderizar mapa para mostrar pins bloqueados con borde rojo
     if (mapaLeaflet) {
       mapaLeaflet.eachLayer(l => { if (l instanceof L.Marker) mapaLeaflet.removeLayer(l); });
@@ -5996,6 +6160,8 @@ window.addEventListener('load', () => {
   iniciarFirebase();
   pedirUbicacion();
   cargarClima();
+  cargarTipDelDia();
+  cargarEstadoVolcan();
   const gastroBgGuardado = localStorage.getItem('gastro_bg_img');
   if (gastroBgGuardado) aplicarFondoGastro(gastroBgGuardado);
   setTimeout(verificarNotifAdmin, 3000);
